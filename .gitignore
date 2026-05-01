@@ -1,0 +1,22 @@
+# Node / React Native
+node_modules/
+.expo/
+dist/
+build/
+
+# Java
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Env
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
