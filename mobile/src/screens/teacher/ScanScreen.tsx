@@ -200,11 +200,11 @@ export const ScanScreen = ({ route, navigation }: any) => {
       >
       <Surface style={styles.detailsCard} elevation={1}>
         <Text style={styles.detailsTitle}>Exam Details</Text>
-        <Text style={styles.detailsLine}>Subject: {examDetails.subject}</Text>
-        <Text style={styles.detailsLine}>Branch: {examDetails.branch}</Text>
-        <Text style={styles.detailsLine}>Semester: {examDetails.semester}</Text>
         <Text style={styles.detailsLine}>Year: {examDetails.year}</Text>
+        <Text style={styles.detailsLine}>Semester: {examDetails.semester}</Text>
+        <Text style={styles.detailsLine}>Branch: {examDetails.branch}</Text>
         <Text style={styles.detailsLine}>Section: {examDetails.section}</Text>
+        <Text style={styles.detailsLine}>Subject: {examDetails.subject}</Text>
       </Surface>
 
       <CameraView style={styles.camera} barcodeScannerSettings={{ barcodeTypes: ['qr', 'code128', 'ean13'] }} onBarcodeScanned={onBarcodeScanned} />
