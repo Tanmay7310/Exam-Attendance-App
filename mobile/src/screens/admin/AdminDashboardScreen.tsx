@@ -25,6 +25,10 @@ export const AdminDashboardScreen = ({ navigation }: any) => {
         Attendance Monitoring
       </Button>
 
+      <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('AddSubjects')} contentStyle={buttonStyles.content}>
+        Add Subjects
+      </Button>
+
       <Button mode="outlined" textColor={colors.danger} style={styles.logout} onPress={logout}>
         Logout
       </Button>

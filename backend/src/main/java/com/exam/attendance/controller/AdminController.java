@@ -2,10 +2,12 @@ package com.exam.attendance.controller;
 
 import com.exam.attendance.dto.admin.AdminAttendanceResponse;
 import com.exam.attendance.dto.admin.CreateStudentRequest;
+import com.exam.attendance.dto.admin.CreateSubjectRequest;
 import com.exam.attendance.dto.admin.CreateTeacherRequest;
 import com.exam.attendance.dto.admin.ImportStudentsResponse;
 import com.exam.attendance.dto.admin.ImportTeachersResponse;
 import com.exam.attendance.dto.admin.StudentResponse;
+import com.exam.attendance.dto.admin.SubjectResponse;
 import com.exam.attendance.dto.admin.TeacherResponse;
 import com.exam.attendance.dto.teacher.ScanAttendanceRequest;
 import com.exam.attendance.dto.teacher.ScanAttendanceResponse;
@@ -65,6 +67,16 @@ public class AdminController {
     @PostMapping("/students")
     public StudentResponse createStudent(@Valid @RequestBody CreateStudentRequest request) {
         return adminService.createStudent(request);
+    }
+
+    @PostMapping("/subjects")
+    public SubjectResponse createSubject(@Valid @RequestBody CreateSubjectRequest request) {
+        return adminService.createSubject(request);
+    }
+
+    @GetMapping("/subjects")
+    public List<SubjectResponse> subjects() {
+        return adminService.getSubjects();
     }
 
     @GetMapping("/students")

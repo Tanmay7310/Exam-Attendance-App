@@ -52,3 +52,11 @@ export interface AdminAttendance {
   date: string;
   scannedAt: string;
 }
+
+export interface SubjectItem {
+  id: number;
+  name: string;
+  subjectCode: string;
+  branch: string;
+  semester: string;
+}

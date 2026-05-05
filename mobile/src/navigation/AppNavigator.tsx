@@ -19,6 +19,11 @@ import { AdminAttendanceDetailsScreen } from '../screens/admin/AdminAttendanceDe
 import { StudentManagementScreen } from '../screens/admin/StudentManagementScreen';
 import { AddStudentScreen } from '../screens/admin/AddStudentScreen';
 import { StudentsScreen } from '../screens/admin/StudentsScreen';
+import { AddSubjectsScreen } from '../screens/admin/AddSubjectsScreen';
+import { AddNewSubjectsScreen } from '../screens/admin/AddNewSubjectsScreen';
+import { SubjectsCoursesScreen } from '../screens/admin/SubjectsCoursesScreen';
+import { SubjectsSemestersScreen } from '../screens/admin/SubjectsSemestersScreen';
+import { SubjectsListScreen } from '../screens/admin/SubjectsListScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -67,6 +72,11 @@ export const AppNavigator = () => {
           <Stack.Screen name="StudentManagement" component={StudentManagementScreen} options={{ title: 'Student Management' }} />
           <Stack.Screen name="AddStudent" component={AddStudentScreen} options={{ title: 'Add Student' }} />
           <Stack.Screen name="Students" component={StudentsScreen} options={{ title: 'Students' }} />
+          <Stack.Screen name="AddSubjects" component={AddSubjectsScreen} options={{ title: 'Add Subjects' }} />
+          <Stack.Screen name="AddNewSubjects" component={AddNewSubjectsScreen} options={{ title: 'Add New Subjects' }} />
+          <Stack.Screen name="SubjectsCourses" component={SubjectsCoursesScreen} options={{ title: 'Courses' }} />
+          <Stack.Screen name="SubjectsSemesters" component={SubjectsSemestersScreen} options={{ title: 'Semesters' }} />
+          <Stack.Screen name="SubjectsList" component={SubjectsListScreen} options={{ title: 'Subjects' }} />
           <Stack.Screen name="AttendanceMonitoring" component={AttendanceMonitoringScreen} options={{ title: 'Attendance Monitoring' }} />
           <Stack.Screen name="AdminAttendanceSubjects" component={AdminAttendanceSubjectsScreen} options={{ title: 'Attendance Subjects' }} />
           <Stack.Screen name="AdminAttendanceDetails" component={AdminAttendanceDetailsScreen} options={{ title: 'Attendance Details' }} />

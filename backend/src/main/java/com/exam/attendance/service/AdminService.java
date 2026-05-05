@@ -6,16 +6,20 @@ import com.exam.attendance.dto.admin.CreateStudentRequest;
 import com.exam.attendance.dto.admin.ImportStudentsResponse;
 import com.exam.attendance.dto.admin.ImportTeachersResponse;
 import com.exam.attendance.dto.admin.StudentResponse;
+import com.exam.attendance.dto.admin.CreateSubjectRequest;
+import com.exam.attendance.dto.admin.SubjectResponse;
 import com.exam.attendance.dto.admin.TeacherResponse;
 import com.exam.attendance.entity.AttendanceRecord;
 import com.exam.attendance.entity.AttendanceSession;
 import com.exam.attendance.entity.Role;
 import com.exam.attendance.entity.Student;
+import com.exam.attendance.entity.SubjectMaster;
 import com.exam.attendance.entity.Teacher;
 import com.exam.attendance.entity.User;
 import com.exam.attendance.exception.ApiException;
 import com.exam.attendance.repository.AttendanceRecordRepository;
 import com.exam.attendance.repository.StudentRepository;
+import com.exam.attendance.repository.SubjectMasterRepository;
 import com.exam.attendance.repository.TeacherRepository;
 import com.exam.attendance.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +53,7 @@ public class AdminService {
     private final PasswordEncoder passwordEncoder;
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final StudentRepository studentRepository;
+    private final SubjectMasterRepository subjectMasterRepository;
     private final PdfService pdfService;
 
     @Transactional
@@ -128,6 +133,64 @@ public class AdminService {
                 .semester(student.getSemester())
                 .section(student.getSection())
                 .build();
+    }
+
+    @Transactional
+    public SubjectResponse createSubject(CreateSubjectRequest request) {
+        String name = request.getName().trim();
+        String subjectCode = request.getSubjectCode().trim();
+        String branch = request.getBranch().trim();
+        String semester = request.getSemester().trim();
+
+        if (subjectMasterRepository.existsByNameIgnoreCaseAndBranchIgnoreCaseAndSemesterIgnoreCase(name, branch, semester)) {
+            throw new ApiException("Subject already exists for this branch and semester");
+        }
+        if (subjectMasterRepository.existsBySubjectCodeIgnoreCase(subjectCode)) {
+            throw new ApiException("Subject code already exists");
+        }
+
+        SubjectMaster subject = SubjectMaster.builder()
+                .name(name)
+                .subjectCode(subjectCode)
+                .branch(branch)
+                .semester(semester)
+                .build();
+        subject = subjectMasterRepository.save(subject);
+
+        return SubjectResponse.builder()
+                .id(subject.getId())
+                .name(subject.getName())
+                .subjectCode(subject.getSubjectCode())
+                .branch(subject.getBranch())
+                .semester(subject.getSemester())
+                .build();
+    }
+
+    public List<SubjectResponse> getSubjects() {
+        return subjectMasterRepository.findAll().stream()
+                .sorted((a, b) -> {
+                    String branchA = StringUtils.hasText(a.getBranch()) ? a.getBranch().trim() : "";
+                    String branchB = StringUtils.hasText(b.getBranch()) ? b.getBranch().trim() : "";
+                    int byBranch = branchA.compareToIgnoreCase(branchB);
+                    if (byBranch != 0) return byBranch;
+
+                    String semA = StringUtils.hasText(a.getSemester()) ? a.getSemester().trim() : "";
+                    String semB = StringUtils.hasText(b.getSemester()) ? b.getSemester().trim() : "";
+                    int bySemester = semA.compareToIgnoreCase(semB);
+                    if (bySemester != 0) return bySemester;
+
+                    String nameA = StringUtils.hasText(a.getName()) ? a.getName().trim() : "";
+                    String nameB = StringUtils.hasText(b.getName()) ? b.getName().trim() : "";
+                    return nameA.compareToIgnoreCase(nameB);
+                })
+                .map(subject -> SubjectResponse.builder()
+                        .id(subject.getId())
+                        .name(StringUtils.hasText(subject.getName()) ? subject.getName().trim() : "")
+                        .subjectCode(StringUtils.hasText(subject.getSubjectCode()) ? subject.getSubjectCode().trim() : "")
+                        .branch(StringUtils.hasText(subject.getBranch()) ? subject.getBranch().trim() : "")
+                        .semester(StringUtils.hasText(subject.getSemester()) ? subject.getSemester().trim() : "")
+                        .build())
+                .toList();
     }
 
     public List<StudentResponse> getStudents() {
