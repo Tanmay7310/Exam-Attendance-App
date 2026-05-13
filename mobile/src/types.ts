@@ -38,6 +38,7 @@ export interface StudentItem {
   scholarNumber: string;
   enrollmentNumber: string;
   department: string;
+  year?: string;
   semester?: string;
   section: string;
 }

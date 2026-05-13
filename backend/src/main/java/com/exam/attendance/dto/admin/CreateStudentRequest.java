@@ -18,6 +18,10 @@ public class CreateStudentRequest {
     @NotBlank
     private String department;
 
+    @NotBlank
+    private String year;
+
+    @NotBlank
     private String semester;
 
     @NotBlank

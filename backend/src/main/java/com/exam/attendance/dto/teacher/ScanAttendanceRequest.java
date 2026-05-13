@@ -11,5 +11,17 @@ public class ScanAttendanceRequest {
 
     private String examSubject;
 
+    @NotBlank
+    private String examYear;
+
+    @NotBlank
+    private String examSemester;
+
+    @NotBlank
+    private String examBranch;
+
+    @NotBlank
+    private String examSection;
+
     private Boolean caseSensitive;
 }

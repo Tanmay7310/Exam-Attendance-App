@@ -5,6 +5,10 @@ import type { Role } from '../types';
 type OfflineScanPayload = {
   scholarNumber: string;
   examSubject: string;
+  examYear: string;
+  examSemester: string;
+  examBranch: string;
+  examSection: string;
   caseSensitive: boolean;
 };
 

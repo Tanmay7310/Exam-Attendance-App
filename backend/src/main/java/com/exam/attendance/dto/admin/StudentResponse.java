@@ -11,6 +11,7 @@ public class StudentResponse {
     private String scholarNumber;
     private String enrollmentNumber;
     private String department;
+    private String year;
     private String semester;
     private String section;
 }

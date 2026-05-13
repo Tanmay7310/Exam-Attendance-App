@@ -137,7 +137,8 @@ public class AdminService {
                 .scholarNumber(scholarNumber)
                 .enrollmentNumber(enrollmentNumber)
                 .department(request.getDepartment().trim())
-                .semester(StringUtils.hasText(request.getSemester()) ? request.getSemester().trim() : null)
+                .year(request.getYear().trim())
+                .semester(request.getSemester().trim())
                 .section(request.getSection().trim())
                 .build();
         student = studentRepository.save(student);
@@ -148,6 +149,7 @@ public class AdminService {
                 .scholarNumber(student.getScholarNumber())
                 .enrollmentNumber(student.getEnrollmentNumber())
                 .department(student.getDepartment())
+                .year(student.getYear())
                 .semester(student.getSemester())
                 .section(student.getSection())
                 .build();
@@ -248,6 +250,7 @@ public class AdminService {
                         .scholarNumber(student.getScholarNumber())
                         .enrollmentNumber(student.getEnrollmentNumber())
                         .department(student.getDepartment())
+                        .year(student.getYear())
                         .semester(student.getSemester())
                         .section(student.getSection())
                         .build())
@@ -565,8 +568,9 @@ public class AdminService {
 
             Predicate<String> hasColumn = key -> columnIndex.containsKey(normalizeHeader(key));
             if (!hasColumn.test("name") || !hasColumn.test("scholarNumber") || !hasColumn.test("enrollmentNumber")
+                    || !hasColumn.test("year") || !hasColumn.test("semester")
                     || !hasColumn.test("department") || !hasColumn.test("section")) {
-                throw new ApiException("Excel must include headers: name, scholarNumber, enrollmentNumber, department, section");
+                throw new ApiException("Excel must include headers: name, scholarNumber, enrollmentNumber, year, semester, department, section");
             }
 
             for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
@@ -577,8 +581,9 @@ public class AdminService {
                 request.setName(getCell(row, formatter, columnIndex.get(normalizeHeader("name"))));
                 request.setScholarNumber(getCell(row, formatter, columnIndex.get(normalizeHeader("scholarNumber"))));
                 request.setEnrollmentNumber(getCell(row, formatter, columnIndex.get(normalizeHeader("enrollmentNumber"))));
-                request.setDepartment(getCell(row, formatter, columnIndex.get(normalizeHeader("department"))));
+                request.setYear(getCell(row, formatter, columnIndex.get(normalizeHeader("year"))));
                 request.setSemester(getCell(row, formatter, columnIndex.get(normalizeHeader("semester"))));
+                request.setDepartment(getCell(row, formatter, columnIndex.get(normalizeHeader("department"))));
                 request.setSection(getCell(row, formatter, columnIndex.get(normalizeHeader("section"))));
 
                 if (isAllBlank(request)) continue;
@@ -605,15 +610,24 @@ public class AdminService {
                 }
 
                 String[] parts = line.split("\\s*[,|]\\s*");
-                if (parts.length < 5) continue;
+                if (parts.length < 6) continue;
 
                 CreateStudentRequest request = new CreateStudentRequest();
                 request.setName(parts[0].trim());
                 request.setScholarNumber(parts[1].trim());
                 request.setEnrollmentNumber(parts[2].trim());
-                request.setDepartment(parts[3].trim());
-                request.setSection(parts[4].trim());
-                request.setSemester(parts.length > 5 ? parts[5].trim() : null);
+                if (parts.length >= 7) {
+                    request.setYear(parts[3].trim());
+                    request.setSemester(parts[4].trim());
+                    request.setDepartment(parts[5].trim());
+                    request.setSection(parts[6].trim());
+                } else {
+                    // Legacy 6-column format: name, scholarNumber, enrollmentNumber, department, section, semester
+                    request.setYear("");
+                    request.setDepartment(parts[3].trim());
+                    request.setSection(parts[4].trim());
+                    request.setSemester(parts[5].trim());
+                }
 
                 if (isAllBlank(request)) continue;
                 rows.add(request);
@@ -987,6 +1001,7 @@ public class AdminService {
 
     private void validateImportRow(CreateStudentRequest request, int rowNumber) {
         if (!StringUtils.hasText(request.getName()) || !StringUtils.hasText(request.getScholarNumber())
+                || !StringUtils.hasText(request.getYear()) || !StringUtils.hasText(request.getSemester())
                 || !StringUtils.hasText(request.getEnrollmentNumber()) || !StringUtils.hasText(request.getDepartment())
                 || !StringUtils.hasText(request.getSection())) {
             throw new ApiException("Missing required fields");
@@ -1015,6 +1030,7 @@ public class AdminService {
         return !StringUtils.hasText(request.getName())
                 && !StringUtils.hasText(request.getScholarNumber())
                 && !StringUtils.hasText(request.getEnrollmentNumber())
+                && !StringUtils.hasText(request.getYear())
                 && !StringUtils.hasText(request.getDepartment())
                 && !StringUtils.hasText(request.getSemester())
                 && !StringUtils.hasText(request.getSection());

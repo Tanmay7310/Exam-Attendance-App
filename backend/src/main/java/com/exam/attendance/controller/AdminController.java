@@ -63,6 +63,10 @@ public class AdminController {
             authentication.getName(),
             request.getScholarNumber(),
             request.getExamSubject(),
+            request.getExamYear(),
+            request.getExamSemester(),
+            request.getExamBranch(),
+            request.getExamSection(),
             Boolean.TRUE.equals(request.getCaseSensitive())
         );
     }

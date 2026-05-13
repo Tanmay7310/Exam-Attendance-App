@@ -29,6 +29,9 @@ public class Student {
     private String department;
 
     @Column(length = 20)
+    private String year;
+
+    @Column(length = 20)
     private String semester;
 
     @Column(nullable = false, length = 20)

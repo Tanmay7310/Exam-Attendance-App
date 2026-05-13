@@ -16,11 +16,17 @@ import org.springframework.util.StringUtils;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class TeacherService {
+    private static final Map<String, String> BRANCH_ALIAS_MAP = buildBranchAliasMap();
+    private static final Map<String, String> YEAR_ALIAS_MAP = buildYearAliasMap();
+    private static final Map<String, String> SEMESTER_ALIAS_MAP = buildSemesterAliasMap();
+
 
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
@@ -40,17 +46,27 @@ public class TeacherService {
     }
 
     @Transactional
-    public ScanAttendanceResponse scan(String username, String scholarNumber, String examSubject, boolean caseSensitive) {
+    public ScanAttendanceResponse scan(String username,
+                                       String scholarNumber,
+                                       String examSubject,
+                                       String examYear,
+                                       String examSemester,
+                                       String examBranch,
+                                       String examSection,
+                                       boolean caseSensitive) {
         try {
             Teacher teacher = getTeacherByUsername(username);
             String normalizedScholarNumber = scholarNumber.trim();
             LocalDate today = LocalDate.now();
             AttendanceSession session = findOrCreateSession(teacher, today, examSubject);
+            validateExamDetailsInputs(examYear, examSemester, examBranch, examSection);
 
             Student student = (caseSensitive
                     ? studentRepository.findByScholarNumberCaseSensitive(normalizedScholarNumber)
                     : studentRepository.findByScholarNumber(normalizedScholarNumber))
                     .orElseThrow(() -> new ApiException("Student not found for scholar number: " + normalizedScholarNumber));
+
+            validateStudentExamEligibility(student, examYear, examSemester, examBranch, examSection);
 
             if (attendanceRecordRepository.existsBySessionAndStudent(session, student)) {
                 return ScanAttendanceResponse.builder()
@@ -282,5 +298,140 @@ public class TeacherService {
             return session.getExamSubject();
         }
         return session.getTeacher().getSubject();
+    }
+
+    private void validateStudentExamEligibility(Student student,
+                                                String examYear,
+                                                String examSemester,
+                                                String examBranch,
+                                                String examSection) {
+        if (!StringUtils.hasText(student.getYear())
+                || !StringUtils.hasText(student.getSemester())
+                || !StringUtils.hasText(student.getDepartment())
+                || !StringUtils.hasText(student.getSection())) {
+            throw new ApiException("Student academic details are incomplete. Update year, semester, branch and section in Student Management.");
+        }
+
+        String expectedYear = normalizeYear(student.getYear());
+        String expectedSemester = normalizeSemester(student.getSemester());
+        String expectedBranch = normalizeBranch(student.getDepartment());
+        String expectedSection = normalizeSection(student.getSection());
+
+        String actualYear = normalizeYear(examYear);
+        String actualSemester = normalizeSemester(examSemester);
+        String actualBranch = normalizeBranch(examBranch);
+        String actualSection = normalizeSection(examSection);
+
+        if (!expectedYear.equals(actualYear)
+                || !expectedSemester.equals(actualSemester)
+                || !expectedBranch.equals(actualBranch)
+                || !expectedSection.equals(actualSection)) {
+            throw new ApiException(
+                    "Scan blocked: student belongs to Year " + student.getYear().trim()
+                            + ", Semester " + student.getSemester().trim()
+                            + ", Branch " + student.getDepartment().trim()
+                            + ", Section " + student.getSection().trim()
+                            + "."
+            );
+        }
+    }
+
+    private void validateExamDetailsInputs(String examYear,
+                                           String examSemester,
+                                           String examBranch,
+                                           String examSection) {
+        String actualYear = normalizeYear(examYear);
+        String actualSemester = normalizeSemester(examSemester);
+        String actualBranch = normalizeBranch(examBranch);
+        String actualSection = normalizeSection(examSection);
+
+        if (!StringUtils.hasText(actualYear)
+                || !StringUtils.hasText(actualSemester)
+                || !StringUtils.hasText(actualBranch)
+                || !StringUtils.hasText(actualSection)) {
+            throw new ApiException("Exam details are incomplete. Please re-enter Year, Semester, Branch and Section.");
+        }
+    }
+
+    private String normalizeBranch(String value) {
+        String key = normalizeAliasKey(value);
+        if (!StringUtils.hasText(key)) {
+            return "";
+        }
+        return BRANCH_ALIAS_MAP.getOrDefault(key, key);
+    }
+
+    private String normalizeYear(String value) {
+        String key = normalizeAliasKey(value);
+        if (!StringUtils.hasText(key)) {
+            return "";
+        }
+        return YEAR_ALIAS_MAP.getOrDefault(key, key);
+    }
+
+    private String normalizeSemester(String value) {
+        String key = normalizeAliasKey(value);
+        if (!StringUtils.hasText(key)) {
+            return "";
+        }
+        return SEMESTER_ALIAS_MAP.getOrDefault(key, key);
+    }
+
+    private String normalizeSection(String value) {
+        if (!StringUtils.hasText(value)) {
+            return "";
+        }
+        return value.trim().toLowerCase();
+    }
+
+    private static Map<String, String> buildBranchAliasMap() {
+        Map<String, String> aliases = new LinkedHashMap<>();
+        addAlias(aliases, "computerscienceandengineering", "cse", "cs", "computerscienceengineering", "computerscience");
+        addAlias(aliases, "informationtechnology", "it");
+        addAlias(aliases, "electronicsandcommunicationengineering", "ece", "ec", "electronicscommunicationengineering", "electronicsandcommunication");
+        addAlias(aliases, "civilengineering", "ce", "civil");
+        addAlias(aliases, "mechanicalengineering", "me", "mech", "mechanical");
+        addAlias(aliases, "csit");
+        addAlias(aliases, "aiml");
+        addAlias(aliases, "ds");
+        addAlias(aliases, "cybersecurity", "cyber");
+        addAlias(aliases, "iot");
+        return aliases;
+    }
+
+    private static Map<String, String> buildYearAliasMap() {
+        Map<String, String> aliases = new LinkedHashMap<>();
+        addAlias(aliases, "1", "1st", "first", "year1", "y1");
+        addAlias(aliases, "2", "2nd", "second", "year2", "y2");
+        addAlias(aliases, "3", "3rd", "third", "year3", "y3");
+        addAlias(aliases, "4", "4th", "fourth", "year4", "y4");
+        return aliases;
+    }
+
+    private static Map<String, String> buildSemesterAliasMap() {
+        Map<String, String> aliases = new LinkedHashMap<>();
+        addAlias(aliases, "1", "1st", "sem1", "semester1", "s1", "i", "first");
+        addAlias(aliases, "2", "2nd", "sem2", "semester2", "s2", "ii", "second");
+        addAlias(aliases, "3", "3rd", "sem3", "semester3", "s3", "iii", "third");
+        addAlias(aliases, "4", "4th", "sem4", "semester4", "s4", "iv", "fourth");
+        addAlias(aliases, "5", "5th", "sem5", "semester5", "s5", "v", "fifth");
+        addAlias(aliases, "6", "6th", "sem6", "semester6", "s6", "vi", "sixth");
+        addAlias(aliases, "7", "7th", "sem7", "semester7", "s7", "vii", "seventh");
+        addAlias(aliases, "8", "8th", "sem8", "semester8", "s8", "viii", "eighth");
+        return aliases;
+    }
+
+    private static void addAlias(Map<String, String> aliases, String canonical, String... options) {
+        aliases.put(canonical, canonical);
+        for (String option : options) {
+            aliases.put(normalizeAliasKey(option), canonical);
+        }
+    }
+
+    private static String normalizeAliasKey(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
     }
 }

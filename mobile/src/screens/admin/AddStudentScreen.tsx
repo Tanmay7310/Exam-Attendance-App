@@ -1,36 +1,20 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { api } from '../../api/client';
+import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { colors } from '../../styles/theme';
+import { SubjectItem } from '../../types';
 
-const DEPARTMENT_OPTIONS = [
-  'CSE',
-  'Cybersecurity',
-  'CSIT',
-  'Civil',
-  'AIML',
-  'IT',
-  'Indian Language(IL)',
-  'Mechanical'
-];
 const SCHOLAR_PREFIX = 'AITR';
-
-const getSuggestionRank = (option: string, query: string) => {
-  const normalizedOption = option.toLowerCase();
-  const normalizedQuery = query.toLowerCase();
-
-  if (normalizedOption === normalizedQuery) return 0;
-  if (normalizedOption.startsWith(normalizedQuery)) return 1;
-
-  const containsIndex = normalizedOption.indexOf(normalizedQuery);
-  if (containsIndex >= 0) return 10 + containsIndex;
-
-  return Number.MAX_SAFE_INTEGER;
-};
+const YEAR_OPTIONS = ['1', '2', '3', '4'];
+const SEMESTER_OPTIONS = ['1', '2', '3', '4', '5', '6', '7', '8'];
+const SECTION_OPTIONS = ['1', '2', '3', '4', '5'];
 
 export const AddStudentScreen = () => {
+  const { logout } = useAuth();
   const { showToast } = useToast();
   const [form, setForm] = useState({
     name: '',
@@ -41,30 +25,47 @@ export const AddStudentScreen = () => {
     department: '',
     section: ''
   });
-  const [departmentQuery, setDepartmentQuery] = useState('');
+  const [subjects, setSubjects] = useState<SubjectItem[]>([]);
+  const [loadingDepartments, setLoadingDepartments] = useState(false);
+
   const scholarSuffix = form.scholarNumber.startsWith(SCHOLAR_PREFIX)
     ? form.scholarNumber.slice(SCHOLAR_PREFIX.length)
     : form.scholarNumber;
 
-  const departmentSuggestions = useMemo(() => {
-    const query = departmentQuery.trim();
-    if (!query) return [];
+  const departmentOptions = useMemo(() => {
+    const map = new Map<string, true>();
+    subjects.forEach((item) => {
+      const branch = item.branch?.trim() ?? '';
+      const semester = item.semester?.trim() ?? '';
+      if (!branch || !semester) return;
+      if (!/^[1-8]$/.test(semester)) return;
+      map.set(branch, true);
+    });
+    return Array.from(map.keys()).sort((a, b) => a.localeCompare(b));
+  }, [subjects]);
 
-    const hasExactMatch = DEPARTMENT_OPTIONS.some(
-      (option) => option.toLowerCase() === query.toLowerCase()
-    );
-    if (hasExactMatch) return [];
+  const loadDepartments = useCallback(async () => {
+    try {
+      setLoadingDepartments(true);
+      const { data } = await api.get<SubjectItem[]>('/api/admin/subjects');
+      setSubjects(Array.isArray(data) ? data : []);
+    } catch (e: any) {
+      const status = e?.response?.status;
+      if (status === 401 || status === 403) {
+        showToast('Session expired. Please login again.', { type: 'error' });
+        await logout();
+        return;
+      }
+      showToast(e?.response?.data?.message ?? 'Unable to load departments.', { type: 'error' });
+      setSubjects([]);
+    } finally {
+      setLoadingDepartments(false);
+    }
+  }, [logout, showToast]);
 
-    return DEPARTMENT_OPTIONS
-      .filter((option) => option.toLowerCase().includes(query.toLowerCase()))
-      .sort((left, right) => {
-        const leftRank = getSuggestionRank(left, query);
-        const rightRank = getSuggestionRank(right, query);
-
-        if (leftRank !== rightRank) return leftRank - rightRank;
-        return DEPARTMENT_OPTIONS.indexOf(left) - DEPARTMENT_OPTIONS.indexOf(right);
-      });
-  }, [departmentQuery]);
+  useEffect(() => {
+    loadDepartments();
+  }, [loadDepartments]);
 
   const addStudent = async () => {
     if (!form.scholarNumber || form.scholarNumber === SCHOLAR_PREFIX) {
@@ -74,6 +75,21 @@ export const AddStudentScreen = () => {
 
     if (!form.department) {
       showToast('Please select a department.', { type: 'info' });
+      return;
+    }
+
+    if (!form.year.trim()) {
+      showToast('Please select year.', { type: 'info' });
+      return;
+    }
+
+    if (!form.semester.trim()) {
+      showToast('Please select semester.', { type: 'info' });
+      return;
+    }
+
+    if (!form.section.trim()) {
+      showToast('Please select section.', { type: 'info' });
       return;
     }
 
@@ -88,21 +104,10 @@ export const AddStudentScreen = () => {
         department: '',
         section: ''
       });
-      setDepartmentQuery('');
       showToast('Student added.', { type: 'success' });
     } catch (e: any) {
       showToast(e?.response?.data?.message ?? 'Unable to add student', { type: 'error' });
     }
-  };
-
-  const handleDepartmentTyping = (text: string) => {
-    setDepartmentQuery(text);
-
-    const exactMatch = DEPARTMENT_OPTIONS.find(
-      (option) => option.toLowerCase() === text.trim().toLowerCase()
-    );
-
-    setForm((prev) => ({ ...prev, department: exactMatch ?? '' }));
   };
 
   const handleScholarNumberTyping = (text: string) => {
@@ -187,48 +192,61 @@ export const AddStudentScreen = () => {
         onChangeText={(text) => setForm((prev) => ({ ...prev, enrollmentNumber: text }))}
       />
 
-      <TextInput
-        placeholder="year"
-        style={styles.input}
-        value={form.year}
-        onChangeText={(text) => setForm((prev) => ({ ...prev, year: text }))}
-      />
-      <TextInput
-        placeholder="semester"
-        style={styles.input}
-        value={form.semester}
-        onChangeText={(text) => setForm((prev) => ({ ...prev, semester: text }))}
-      />
-      <TextInput
-        placeholder="department"
-        style={styles.input}
-        value={departmentQuery}
-        onChangeText={handleDepartmentTyping}
-      />
-
-      {departmentSuggestions.length > 0 ? (
-        <View style={styles.suggestionBox}>
-          {departmentSuggestions.map((option) => (
-            <Pressable
-              key={option}
-              style={styles.suggestionItem}
-              onPress={() => {
-                setDepartmentQuery(option);
-                setForm((prev) => ({ ...prev, department: option }));
-              }}
-            >
-              <Text style={styles.suggestionText}>{option}</Text>
-            </Pressable>
+      <View style={styles.pickerWrap}>
+        <Text style={styles.pickerLabel}>Year</Text>
+        <Picker
+          selectedValue={form.year}
+          onValueChange={(value) => setForm((prev) => ({ ...prev, year: String(value) }))}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Year" value="" />
+          {YEAR_OPTIONS.map((value) => (
+            <Picker.Item key={value} label={value} value={value} />
           ))}
-        </View>
-      ) : null}
+        </Picker>
+      </View>
 
-      <TextInput
-        placeholder="section"
-        style={styles.input}
-        value={form.section}
-        onChangeText={(text) => setForm((prev) => ({ ...prev, section: text }))}
-      />
+      <View style={styles.pickerWrap}>
+        <Text style={styles.pickerLabel}>Semester</Text>
+        <Picker
+          selectedValue={form.semester}
+          onValueChange={(value) => setForm((prev) => ({ ...prev, semester: String(value) }))}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Semester" value="" />
+          {SEMESTER_OPTIONS.map((value) => (
+            <Picker.Item key={value} label={value} value={value} />
+          ))}
+        </Picker>
+      </View>
+
+      <View style={styles.pickerWrap}>
+        <Text style={styles.pickerLabel}>Department</Text>
+        <Picker
+          selectedValue={form.department}
+          onValueChange={(value) => setForm((prev) => ({ ...prev, department: String(value) }))}
+          style={styles.picker}
+        >
+          <Picker.Item label={loadingDepartments ? 'Loading Departments...' : 'Select Department'} value="" />
+          {departmentOptions.map((value) => (
+            <Picker.Item key={value} label={value} value={value} />
+          ))}
+        </Picker>
+      </View>
+
+      <View style={styles.pickerWrap}>
+        <Text style={styles.pickerLabel}>Section</Text>
+        <Picker
+          selectedValue={form.section}
+          onValueChange={(value) => setForm((prev) => ({ ...prev, section: String(value) }))}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Section" value="" />
+          {SECTION_OPTIONS.map((value) => (
+            <Picker.Item key={value} label={value} value={value} />
+          ))}
+        </Picker>
+      </View>
 
       <Pressable style={styles.button} onPress={addStudent}>
         <Text style={styles.buttonText}>Add Student</Text>
@@ -270,24 +288,22 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingRight: 10
   },
-  suggestionBox: {
+  pickerWrap: {
     backgroundColor: colors.card,
     borderColor: colors.border,
     borderWidth: 1,
     borderRadius: 10,
-    marginTop: -4,
     marginBottom: 7,
     overflow: 'hidden'
   },
-  suggestionItem: {
-    paddingHorizontal: 10,
-    paddingVertical: 9,
-    borderBottomColor: colors.border,
-    borderBottomWidth: 1
+  pickerLabel: {
+    color: colors.textMuted,
+    fontSize: 12,
+    marginTop: 8,
+    marginHorizontal: 12
   },
-  suggestionText: {
-    color: colors.text,
-    fontWeight: '600'
+  picker: {
+    color: colors.text
   },
   button: {
     backgroundColor: colors.accent,

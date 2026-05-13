@@ -104,6 +104,10 @@ export const ScanScreen = ({ route, navigation }: any) => {
     const payload = {
       scholarNumber,
       examSubject: examDetails.subject,
+      examYear: examDetails.year,
+      examSemester: examDetails.semester,
+      examBranch: examDetails.branch,
+      examSection: examDetails.section,
       caseSensitive
     };
 
