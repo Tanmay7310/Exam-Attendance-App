@@ -1,0 +1,18 @@
+﻿Subject Ingestion Run: 20260510-122635
+Timestamp: 2026-05-10T12:26:40.8360289+05:30
+Operator: Tanmay Saha
+Source DOCX: D:\Exam Attendance app\database\Brance name (with code).docx
+Copied DOCX: D:\Exam Attendance app\database\ingestion\incoming\20260510-122635-Brance name (with code).docx
+Normalized XLSX: D:\Exam Attendance app\database\ingestion\normalized\subjects_import_20260510-122635.xlsx
+Latest XLSX: D:\Exam Attendance app\database\subjects_import.xlsx
+Parsed Rows: 228
+Unique Rows: 228
+Parser Issues: 47
+
+Distribution (branch, semester => count):
+- Civil Engineering, 4 => 68
+- Computer Science and Engineering, 4 => 32
+- Electronics and Communication Engineering, 4 => 64
+- Information Technology, 4 => 64
+
+Import Executed: no

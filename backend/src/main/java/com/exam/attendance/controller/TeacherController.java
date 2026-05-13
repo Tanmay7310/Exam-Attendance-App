@@ -4,6 +4,7 @@ import com.exam.attendance.dto.teacher.AttendanceRecordResponse;
 import com.exam.attendance.dto.teacher.ScanAttendanceRequest;
 import com.exam.attendance.dto.teacher.ScanAttendanceResponse;
 import com.exam.attendance.dto.teacher.TeacherProfileResponse;
+import com.exam.attendance.dto.admin.SubjectResponse;
 import com.exam.attendance.service.TeacherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -75,5 +76,10 @@ public class TeacherController {
     @GetMapping("/students/search")
     public AttendanceRecordResponse searchStudent(@RequestParam String scholarNumber) {
         return teacherService.searchStudent(scholarNumber);
+    }
+
+    @GetMapping("/subjects")
+    public List<SubjectResponse> subjects() {
+        return teacherService.getSubjects();
     }
 }

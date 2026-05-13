@@ -4,11 +4,14 @@ import com.exam.attendance.dto.admin.AdminAttendanceResponse;
 import com.exam.attendance.dto.admin.CreateStudentRequest;
 import com.exam.attendance.dto.admin.CreateSubjectRequest;
 import com.exam.attendance.dto.admin.CreateTeacherRequest;
+import com.exam.attendance.dto.admin.DeleteSubjectsByBatchResponse;
 import com.exam.attendance.dto.admin.ImportStudentsResponse;
+import com.exam.attendance.dto.admin.ImportSubjectsResponse;
 import com.exam.attendance.dto.admin.ImportTeachersResponse;
 import com.exam.attendance.dto.admin.StudentResponse;
 import com.exam.attendance.dto.admin.SubjectResponse;
 import com.exam.attendance.dto.admin.TeacherResponse;
+import com.exam.attendance.dto.admin.UpdateSubjectRequest;
 import com.exam.attendance.dto.teacher.ScanAttendanceRequest;
 import com.exam.attendance.dto.teacher.ScanAttendanceResponse;
 import com.exam.attendance.service.AdminService;
@@ -77,6 +80,31 @@ public class AdminController {
     @GetMapping("/subjects")
     public List<SubjectResponse> subjects() {
         return adminService.getSubjects();
+    }
+
+    @PostMapping(value = "/subjects/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ImportSubjectsResponse importSubjects(@RequestPart("file") MultipartFile file) {
+        return adminService.importSubjects(file);
+    }
+
+    @GetMapping("/subjects/import/{importBatchId}/count")
+    public long countSubjectsByImportBatch(@PathVariable String importBatchId) {
+        return adminService.countSubjectsByImportBatch(importBatchId);
+    }
+
+    @DeleteMapping("/subjects/import/{importBatchId}")
+    public DeleteSubjectsByBatchResponse removeSubjectsByImportBatch(@PathVariable String importBatchId) {
+        return adminService.removeSubjectsByImportBatch(importBatchId);
+    }
+
+    @PutMapping("/subjects/{subjectId}")
+    public SubjectResponse updateSubject(@PathVariable Long subjectId, @Valid @RequestBody UpdateSubjectRequest request) {
+        return adminService.updateSubject(subjectId, request);
+    }
+
+    @DeleteMapping("/subjects/{subjectId}")
+    public void removeSubject(@PathVariable Long subjectId) {
+        adminService.removeSubject(subjectId);
     }
 
     @GetMapping("/students")

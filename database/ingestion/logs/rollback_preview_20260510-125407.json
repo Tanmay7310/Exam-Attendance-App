@@ -1,0 +1,2091 @@
+﻿{
+    "matchedInDb":  0,
+    "parserIssuesCount":  0,
+    "timestamp":  "2026-05-10T12:54:07.0431121+05:30",
+    "operator":  "Tanmay Saha",
+    "matchedCandidates":  [
+
+                          ],
+    "sourceFiles":  [
+                        "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                        "D:\\Exam Attendance app\\database\\subjects_import_small.xlsx"
+                    ],
+    "parserIssuesPreview":  [
+
+                            ],
+    "ambiguousCandidates":  [
+
+                            ],
+    "deletePlan":  [
+
+                   ],
+    "runId":  "20260510-125407",
+    "mode":  "preview",
+    "notFound":  229,
+    "notFoundCandidates":  [
+                               {
+                                   "key":  "information security|IT-801|information technology|4",
+                                   "name":  "Information Security",
+                                   "subjectCode":  "IT-801",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  221
+                               },
+                               {
+                                   "key":  "marine construction|CE-503(D)|civil engineering|4",
+                                   "name":  "Marine Construction",
+                                   "subjectCode":  "CE-503(D)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  16
+                               },
+                               {
+                                   "key":  "knowledge management|CS-604|computer science and engineering|4",
+                                   "name":  "Knowledge Management",
+                                   "subjectCode":  "CS-604",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  89
+                               },
+                               {
+                                   "key":  "wireless communication|EC-802(B)|electronics and communication engineering|4",
+                                   "name":  "Wireless Communication",
+                                   "subjectCode":  "EC-802(B)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  159
+                               },
+                               {
+                                   "key":  "operating system|IT-501|information technology|4",
+                                   "name":  "Operating System",
+                                   "subjectCode":  "IT-501",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  193
+                               },
+                               {
+                                   "key":  "optical fibre communication|EC-801|electronics and communication engineering|4",
+                                   "name":  "Optical Fibre Communication",
+                                   "subjectCode":  "EC-801",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  157
+                               },
+                               {
+                                   "key":  "engineering physics|BT-201|information technology|4",
+                                   "name":  "Engineering Physics",
+                                   "subjectCode":  "BT-201",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  171
+                               },
+                               {
+                                   "key":  "simulation lab|EC-406|electronics and communication engineering|4",
+                                   "name":  "Simulation Lab",
+                                   "subjectCode":  "EC-406",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  127
+                               },
+                               {
+                                   "key":  "strength of materials|EC-305|civil engineering|4",
+                                   "name":  "Strength of Materials",
+                                   "subjectCode":  "EC-305",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  20
+                               },
+                               {
+                                   "key":  "computer architecture|IT-402|information technology|4",
+                                   "name":  "Computer Architecture",
+                                   "subjectCode":  "IT-402",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  187
+                               },
+                               {
+                                   "key":  "energy \u0026 environmental engineering|ES-401|civil engineering|4",
+                                   "name":  "Energy \u0026 Environmental Engineering",
+                                   "subjectCode":  "ES-401",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  69
+                               },
+                               {
+                                   "key":  "analysis and design of algorithm|IT-403|information technology|4",
+                                   "name":  "Analysis and Design of Algorithm",
+                                   "subjectCode":  "IT-403",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  188
+                               },
+                               {
+                                   "key":  "basic civil engineering \u0026 mechanics|BT-204|information technology|4",
+                                   "name":  "Basic Civil Engineering \u0026 Mechanics",
+                                   "subjectCode":  "BT-204",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  174
+                               },
+                               {
+                                   "key":  "cyber security|BT-409|information technology|4",
+                                   "name":  "Cyber Security",
+                                   "subjectCode":  "BT-409",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  180
+                               },
+                               {
+                                   "key":  "data analytics|CS-503|computer science and engineering|4",
+                                   "name":  "Data Analytics",
+                                   "subjectCode":  "CS-503",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  79
+                               },
+                               {
+                                   "key":  "rural technology \u0026 community development|CS-604|computer science and engineering|4",
+                                   "name":  "Rural Technology \u0026 Community Development",
+                                   "subjectCode":  "CS-604",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  91
+                               },
+                               {
+                                   "key":  "microwave engineering|EC-702(A)|electronics and communication engineering|4",
+                                   "name":  "MICROWAVE ENGINEERING",
+                                   "subjectCode":  "EC-702(A)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  149
+                               },
+                               {
+                                   "key":  "basic computer engineering|BT-203|civil engineering|4",
+                                   "name":  "Basic Computer Engineering",
+                                   "subjectCode":  "BT-203",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  10
+                               },
+                               {
+                                   "key":  "90 hrs internship based on using various software’s – internship-ii|BT-307|civil engineering|4",
+                                   "name":  "90 hrs Internship based on using various software’s – Internship-II",
+                                   "subjectCode":  "BT-307",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  15
+                               },
+                               {
+                                   "key":  "information security|CS-703|computer science and engineering|4",
+                                   "name":  "Information Security",
+                                   "subjectCode":  "CS-703",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  96
+                               },
+                               {
+                                   "key":  "advance surveying lab|EC-605|civil engineering|4",
+                                   "name":  "Advance surveying lab",
+                                   "subjectCode":  "EC-605",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  48
+                               },
+                               {
+                                   "key":  "object oriented programming|CS-504|computer science and engineering|4",
+                                   "name":  "Object Oriented Programming",
+                                   "subjectCode":  "CS-504",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  82
+                               },
+                               {
+                                   "key":  "engineering physics|BT-201|electronics and communication engineering|4",
+                                   "name":  "Engineering Physics",
+                                   "subjectCode":  "BT-201",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  108
+                               },
+                               {
+                                   "key":  "environmental engineering-i|EC-602|civil engineering|4",
+                                   "name":  "Environmental Engineering-I",
+                                   "subjectCode":  "EC-602",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  39
+                               },
+                               {
+                                   "key":  "comprehensive viva|CS-803|computer science and engineering|4",
+                                   "name":  "Comprehensive Viva",
+                                   "subjectCode":  "CS-803",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  100
+                               },
+                               {
+                                   "key":  "seminar|CS-802|computer science and engineering|4",
+                                   "name":  "Seminar",
+                                   "subjectCode":  "CS-802",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  99
+                               },
+                               {
+                                   "key":  "social networks|IT-703(C)|information technology|4",
+                                   "name":  "Social Networks",
+                                   "subjectCode":  "IT-703(C)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  217
+                               },
+                               {
+                                   "key":  "big data|CS-703|computer science and engineering|4",
+                                   "name":  "Big Data",
+                                   "subjectCode":  "CS-703",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  94
+                               },
+                               {
+                                   "key":  "advanced computer architecture|IT-603|information technology|4",
+                                   "name":  "Advanced Computer Architecture",
+                                   "subjectCode":  "IT-603",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  204
+                               },
+                               {
+                                   "key":  "cyber security|CS-408|computer science and engineering|4",
+                                   "name":  "Cyber Security",
+                                   "subjectCode":  "CS-408",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  75
+                               },
+                               {
+                                   "key":  "language lab \u0026 seminars|BT-206|electronics and communication engineering|4",
+                                   "name":  "Language Lab \u0026 Seminars",
+                                   "subjectCode":  "BT-206",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  113
+                               },
+                               {
+                                   "key":  "basic civil engineering \u0026 mechanics|BT-205|electronics and communication engineering|4",
+                                   "name":  "Basic Civil Engineering \u0026 Mechanics",
+                                   "subjectCode":  "BT-205",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  112
+                               },
+                               {
+                                   "key":  "simulation \u0026 modeling|IT-702(C)|information technology|4",
+                                   "name":  "SIMULATION \u0026 MODELING",
+                                   "subjectCode":  "IT-702(C)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  213
+                               },
+                               {
+                                   "key":  "computer org. \u0026 architecture|CS-404|computer science and engineering|4",
+                                   "name":  "Computer Org. \u0026 Architecture",
+                                   "subjectCode":  "CS-404",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  73
+                               },
+                               {
+                                   "key":  "prestressed concrete structures lab|EC-704|civil engineering|4",
+                                   "name":  "Prestressed Concrete Structures Lab",
+                                   "subjectCode":  "EC-704",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  58
+                               },
+                               {
+                                   "key":  "basic electrical \u0026 electronics engineering|BT-104|electronics and communication engineering|4",
+                                   "name":  "Basic Electrical \u0026 Electronics Engineering",
+                                   "subjectCode":  "BT-104",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  105
+                               },
+                               {
+                                   "key":  "engineering hydrology|EC-802(A)|civil engineering|4",
+                                   "name":  "Engineering Hydrology",
+                                   "subjectCode":  "EC-802(A)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  61
+                               },
+                               {
+                                   "key":  "data structure|IT-303|information technology|4",
+                                   "name":  "Data Structure",
+                                   "subjectCode":  "IT-303",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  183
+                               },
+                               {
+                                   "key":  "augmented and virtual reality|IT-702(D)|information technology|4",
+                                   "name":  "Augmented and Virtual Reality",
+                                   "subjectCode":  "IT-702(D)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  214
+                               },
+                               {
+                                   "key":  "design of steel structures|EC-801|civil engineering|4",
+                                   "name":  "Design of Steel Structures",
+                                   "subjectCode":  "EC-801",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  60
+                               },
+                               {
+                                   "key":  "machine learning|IT-601|information technology|4",
+                                   "name":  "Machine Learning",
+                                   "subjectCode":  "IT-601",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  202
+                               },
+                               {
+                                   "key":  "basic mechanical engineering|BT-203|information technology|4",
+                                   "name":  "Basic Mechanical Engineering",
+                                   "subjectCode":  "BT-203",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  173
+                               },
+                               {
+                                   "key":  "iot lab|IT-705|information technology|4",
+                                   "name":  "IoT Lab",
+                                   "subjectCode":  "IT-705",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  220
+                               },
+                               {
+                                   "key":  "soft computing|IT-701|information technology|4",
+                                   "name":  "Soft Computing",
+                                   "subjectCode":  "IT-701",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  210
+                               },
+                               {
+                                   "key":  "renewable energy sources|EC-504(C)|civil engineering|4",
+                                   "name":  "Renewable Energy Sources",
+                                   "subjectCode":  "EC-504(C)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  34
+                               },
+                               {
+                                   "key":  "analog \u0026 digital communication|IT-404|information technology|4",
+                                   "name":  "Analog \u0026 Digital Communication",
+                                   "subjectCode":  "IT-404",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  189
+                               },
+                               {
+                                   "key":  "water resource engineering|EC-603(A)|civil engineering|4",
+                                   "name":  "Water Resource Engineering",
+                                   "subjectCode":  "EC-603(A)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  40
+                               },
+                               {
+                                   "key":  "90 hrs internship based on using various software’s – internship-ii|BT-307|information technology|4",
+                                   "name":  "90 hrs Internship based on using various software’s – Internship-II",
+                                   "subjectCode":  "BT-307",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  177
+                               },
+                               {
+                                   "key":  "urban \u0026 town planning|EC-504(A)|civil engineering|4",
+                                   "name":  "Urban \u0026 Town Planning",
+                                   "subjectCode":  "EC-504(A)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  32
+                               },
+                               {
+                                   "key":  "signals \u0026 systems|EC-402|electronics and communication engineering|4",
+                                   "name":  "Signals \u0026 Systems",
+                                   "subjectCode":  "EC-402",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  123
+                               },
+                               {
+                                   "key":  "project management|CS-604|computer science and engineering|4",
+                                   "name":  "Project Management",
+                                   "subjectCode":  "CS-604",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  90
+                               },
+                               {
+                                   "key":  "vlsi design|EC-701|electronics and communication engineering|4",
+                                   "name":  "VLSI Design",
+                                   "subjectCode":  "EC-701",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  148
+                               },
+                               {
+                                   "key":  "major project phase-ii|CS-801|computer science and engineering|4",
+                                   "name":  "Major Project Phase-II",
+                                   "subjectCode":  "CS-801",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  98
+                               },
+                               {
+                                   "key":  "theory of computation|CS-501|computer science and engineering|4",
+                                   "name":  "Theory of Computation",
+                                   "subjectCode":  "CS-501",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  76
+                               },
+                               {
+                                   "key":  "parallel computing|IT-803(D)|information technology|4",
+                                   "name":  "Parallel Computing",
+                                   "subjectCode":  "IT-803(D)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  229
+                               },
+                               {
+                                   "key":  "e-commerce \u0026 governance|IT-504(B)|information technology|4",
+                                   "name":  "E-Commerce \u0026 Governance",
+                                   "subjectCode":  "IT-504(B)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  199
+                               },
+                               {
+                                   "key":  "nano electronics|EC-702(C)|electronics and communication engineering|4",
+                                   "name":  "Nano Electronics",
+                                   "subjectCode":  "EC-702(C)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  151
+                               },
+                               {
+                                   "key":  "cntl|EC-503(A)|electronics and communication engineering|4",
+                                   "name":  "CNTL",
+                                   "subjectCode":  "EC-503(A)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  130
+                               },
+                               {
+                                   "key":  "advanced java lab|IT-505|information technology|4",
+                                   "name":  "Advanced Java Lab",
+                                   "subjectCode":  "IT-505",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  201
+                               },
+                               {
+                                   "key":  "construction planning \u0026 management|EC-503(B)|civil engineering|4",
+                                   "name":  "Construction Planning \u0026 Management",
+                                   "subjectCode":  "EC-503(B)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  30
+                               },
+                               {
+                                   "key":  "cellular mobile communication|EC-703(A)|electronics and communication engineering|4",
+                                   "name":  "Cellular Mobile Communication",
+                                   "subjectCode":  "EC-703(A)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  152
+                               },
+                               {
+                                   "key":  "analog communication|EC-403|electronics and communication engineering|4",
+                                   "name":  "Analog Communication",
+                                   "subjectCode":  "EC-403",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  124
+                               },
+                               {
+                                   "key":  "antennas and wave propagation|EC-602|electronics and communication engineering|4",
+                                   "name":  "Antennas and wave Propagation",
+                                   "subjectCode":  "EC-602",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  139
+                               },
+                               {
+                                   "key":  "cyber security|BT-408|electronics and communication engineering|4",
+                                   "name":  "Cyber Security",
+                                   "subjectCode":  "BT-408",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  117
+                               },
+                               {
+                                   "key":  "cloud computing|CS-703|computer science and engineering|4",
+                                   "name":  "Cloud Computing",
+                                   "subjectCode":  "CS-703",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  95
+                               },
+                               {
+                                   "key":  "earthquake resistant design of structures|EC-802(D)|civil engineering|4",
+                                   "name":  "Earthquake Resistant Design of Structures",
+                                   "subjectCode":  "EC-802(D)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  64
+                               },
+                               {
+                                   "key":  "mathematics-ii|BT-202|electronics and communication engineering|4",
+                                   "name":  "Mathematics-II",
+                                   "subjectCode":  "BT-202",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  109
+                               },
+                               {
+                                   "key":  "probability theory and stochastic processing|EC-703(C)|electronics and communication engineering|4",
+                                   "name":  "Probability Theory and Stochastic processing",
+                                   "subjectCode":  "EC-703(C)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  154
+                               },
+                               {
+                                   "key":  "artificial intelligence|EC-803(A)|civil engineering|4",
+                                   "name":  "Artificial Intelligence",
+                                   "subjectCode":  "EC-803(A)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  65
+                               },
+                               {
+                                   "key":  "wireless network|EC-803(A)|electronics and communication engineering|4",
+                                   "name":  "Wireless Network",
+                                   "subjectCode":  "EC-803(A)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  161
+                               },
+                               {
+                                   "key":  "microprocessor \u0026 interfacing|IT-503(B)|information technology|4",
+                                   "name":  "Microprocessor \u0026 Interfacing",
+                                   "subjectCode":  "IT-503(B)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  196
+                               },
+                               {
+                                   "key":  "microcontroller \u0026 embedded system|EC-604(A)|electronics and communication engineering|4",
+                                   "name":  "Microcontroller \u0026 Embedded system",
+                                   "subjectCode":  "EC-604(A)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  143
+                               },
+                               {
+                                   "key":  "operation research|EC-604(D)|civil engineering|4",
+                                   "name":  "Operation Research",
+                                   "subjectCode":  "EC-604(D)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  47
+                               },
+                               {
+                                   "key":  "basic mechanical engineering|BT-204|electronics and communication engineering|4",
+                                   "name":  "Basic Mechanical Engineering",
+                                   "subjectCode":  "BT-204",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  111
+                               },
+                               {
+                                   "key":  "computer graphics \u0026 visualisation|CS-603|computer science and engineering|4",
+                                   "name":  "Computer Graphics \u0026 Visualisation",
+                                   "subjectCode":  "CS-603",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  88
+                               },
+                               {
+                                   "key":  "transportation engineering –i|EC-404|civil engineering|4",
+                                   "name":  "TRANSPORTATION ENGINEERING –I",
+                                   "subjectCode":  "EC-404",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  24
+                               },
+                               {
+                                   "key":  "industrial training / internship|CS-804|computer science and engineering|4",
+                                   "name":  "Industrial Training / Internship",
+                                   "subjectCode":  "CS-804",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  101
+                               },
+                               {
+                                   "key":  "operating systems|CS-405|computer science and engineering|4",
+                                   "name":  "Operating Systems",
+                                   "subjectCode":  "CS-405",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  74
+                               },
+                               {
+                                   "key":  "construction materials|EC-302|civil engineering|4",
+                                   "name":  "Construction Materials",
+                                   "subjectCode":  "EC-302",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  17
+                               },
+                               {
+                                   "key":  "compiler design|CS-603|computer science and engineering|4",
+                                   "name":  "Compiler Design",
+                                   "subjectCode":  "CS-603",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  87
+                               },
+                               {
+                                   "key":  "pattern recognition|CS-503|computer science and engineering|4",
+                                   "name":  "Pattern Recognition",
+                                   "subjectCode":  "CS-503",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  80
+                               },
+                               {
+                                   "key":  "digital system design|EC-303|electronics and communication engineering|4",
+                                   "name":  "Digital System Design",
+                                   "subjectCode":  "EC-303",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  119
+                               },
+                               {
+                                   "key":  "construction technology|EC-402|civil engineering|4",
+                                   "name":  "Construction Technology",
+                                   "subjectCode":  "EC-402",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  22
+                               },
+                               {
+                                   "key":  "manufacturing practices|BT-106|electronics and communication engineering|4",
+                                   "name":  "Manufacturing Practices",
+                                   "subjectCode":  "BT-106",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  107
+                               },
+                               {
+                                   "key":  "structural design and drawing (rcc-ii)|EC-702(C)|civil engineering|4",
+                                   "name":  "Structural Design and Drawing (RCC-II)",
+                                   "subjectCode":  "EC-702(C)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  53
+                               },
+                               {
+                                   "key":  "mathematics-iii|BT-401|information technology|4",
+                                   "name":  "Mathematics-III",
+                                   "subjectCode":  "BT-401",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  178
+                               },
+                               {
+                                   "key":  "object oriented analysis and design|IT-503(C)|information technology|4",
+                                   "name":  "Object Oriented Analysis and Design",
+                                   "subjectCode":  "IT-503(C)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  197
+                               },
+                               {
+                                   "key":  "mobile communication|EC-503(B)|electronics and communication engineering|4",
+                                   "name":  "Mobile Communication",
+                                   "subjectCode":  "EC-503(B)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  131
+                               },
+                               {
+                                   "key":  "cmos design|EC-603(B)|electronics and communication engineering|4",
+                                   "name":  "CMOS DESIGN",
+                                   "subjectCode":  "EC-603(B)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  141
+                               },
+                               {
+                                   "key":  "blockchain technology|IT-803(A)|information technology|4",
+                                   "name":  "Blockchain Technology",
+                                   "subjectCode":  "IT-803(A)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  226
+                               },
+                               {
+                                   "key":  "discrete structure|IT-302|information technology|4",
+                                   "name":  "Discrete Structure",
+                                   "subjectCode":  "IT-302",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  182
+                               },
+                               {
+                                   "key":  "surveying|EC-303|civil engineering|4",
+                                   "name":  "Surveying",
+                                   "subjectCode":  "EC-303",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  18
+                               },
+                               {
+                                   "key":  "engineering chemistry|BT-101|civil engineering|4",
+                                   "name":  "Engineering Chemistry",
+                                   "subjectCode":  "BT-101",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  2
+                               },
+                               {
+                                   "key":  "environmental engg-ii|EC-702(B)|civil engineering|4",
+                                   "name":  "Environmental Engg-II",
+                                   "subjectCode":  "EC-702(B)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  52
+                               },
+                               {
+                                   "key":  "structural design \u0026 drawing (rcc-i)|EC-601|civil engineering|4",
+                                   "name":  "Structural Design \u0026 Drawing (RCC-I)",
+                                   "subjectCode":  "EC-601",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  38
+                               },
+                               {
+                                   "key":  "electronic devices|EC-304|electronics and communication engineering|4",
+                                   "name":  "Electronic Devices",
+                                   "subjectCode":  "EC-304",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  120
+                               },
+                               {
+                                   "key":  "information theory and coding|EC-702(B)|electronics and communication engineering|4",
+                                   "name":  "INFORMATION THEORY AND CODING",
+                                   "subjectCode":  "EC-702(B)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  150
+                               },
+                               {
+                                   "key":  "foundation engineering|EC-802(B)|civil engineering|4",
+                                   "name":  "Foundation Engineering",
+                                   "subjectCode":  "EC-802(B)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  62
+                               },
+                               {
+                                   "key":  "data analytics|EC-803(B)|civil engineering|4",
+                                   "name":  "Data Analytics",
+                                   "subjectCode":  "EC-803(B)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  66
+                               },
+                               {
+                                   "key":  "open elective|CS-704|computer science and engineering|4",
+                                   "name":  "Open Elective",
+                                   "subjectCode":  "CS-704",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  97
+                               },
+                               {
+                                   "key":  "control system|EC-404|electronics and communication engineering|4",
+                                   "name":  "Control System",
+                                   "subjectCode":  "EC-404",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  125
+                               },
+                               {
+                                   "key":  "prestressed concrete structures|EC-702(A)|civil engineering|4",
+                                   "name":  "Prestressed Concrete Structures",
+                                   "subjectCode":  "EC-702(A)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  51
+                               },
+                               {
+                                   "key":  "internet of things (iot)|EC-703(B)|electronics and communication engineering|4",
+                                   "name":  "Internet of Things (IoT)",
+                                   "subjectCode":  "EC-703(B)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  153
+                               },
+                               {
+                                   "key":  "energy \u0026 environmental engineering|ES-301|information technology|4",
+                                   "name":  "Energy \u0026 Environmental Engineering",
+                                   "subjectCode":  "ES-301",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  181
+                               },
+                               {
+                                   "key":  "material testing lab|EC-506|civil engineering|4",
+                                   "name":  "Material Testing Lab",
+                                   "subjectCode":  "EC-506",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  37
+                               },
+                               {
+                                   "key":  "transportation engineering- ii|EC-502|civil engineering|4",
+                                   "name":  "Transportation Engineering- II",
+                                   "subjectCode":  "EC-502",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  28
+                               },
+                               {
+                                   "key":  "engineering geology \u0026 remote sensing|EC-405|civil engineering|4",
+                                   "name":  "ENGINEERING GEOLOGY \u0026 REMOTE SENSING",
+                                   "subjectCode":  "EC-405",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  25
+                               },
+                               {
+                                   "key":  "basic computer engineering|BT-205|information technology|4",
+                                   "name":  "Basic Computer Engineering",
+                                   "subjectCode":  "BT-205",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  175
+                               },
+                               {
+                                   "key":  "mobile computing|CS-702|computer science and engineering|4",
+                                   "name":  "Mobile Computing",
+                                   "subjectCode":  "CS-702",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  93
+                               },
+                               {
+                                   "key":  "data base management system|IT-405|information technology|4",
+                                   "name":  "Data Base Management System",
+                                   "subjectCode":  "IT-405",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  190
+                               },
+                               {
+                                   "key":  "mathematics- iii|BT-401|computer science and engineering|4",
+                                   "name":  "Mathematics- III",
+                                   "subjectCode":  "BT-401",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  70
+                               },
+                               {
+                                   "key":  "rural technology \u0026 community development|IT-604|information technology|4",
+                                   "name":  "Rural Technology \u0026 Community Development",
+                                   "subjectCode":  "IT-604",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  209
+                               },
+                               {
+                                   "key":  "microprocessor \u0026 its application|EC-501|electronics and communication engineering|4",
+                                   "name":  "Microprocessor \u0026 its Application",
+                                   "subjectCode":  "EC-501",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  128
+                               },
+                               {
+                                   "key":  "digital communication lab|EC-505|electronics and communication engineering|4",
+                                   "name":  "Digital Communication Lab",
+                                   "subjectCode":  "EC-505",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  136
+                               },
+                               {
+                                   "key":  "cloud computing|IT-702(B)|information technology|4",
+                                   "name":  "Cloud Computing",
+                                   "subjectCode":  "IT-702(B)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  212
+                               },
+                               {
+                                   "key":  "5g technology|EC-802(C)|electronics and communication engineering|4",
+                                   "name":  "5G Technology",
+                                   "subjectCode":  "EC-802(C)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  160
+                               },
+                               {
+                                   "key":  "non- destructive testing lab|EC-606|civil engineering|4",
+                                   "name":  "Non- Destructive Testing Lab",
+                                   "subjectCode":  "EC-606",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  49
+                               },
+                               {
+                                   "key":  "artificial intelligence \u0026 expert systems|CS-701|computer science and engineering|4",
+                                   "name":  "Artificial Intelligence \u0026 Expert Systems",
+                                   "subjectCode":  "CS-701",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  92
+                               },
+                               {
+                                   "key":  "database management systems|CS-502|computer science and engineering|4",
+                                   "name":  "Database Management Systems",
+                                   "subjectCode":  "CS-502",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  77
+                               },
+                               {
+                                   "key":  "basic electrical \u0026 electronics engineering|BT-104|civil engineering|4",
+                                   "name":  "Basic Electrical \u0026 Electronics Engineering",
+                                   "subjectCode":  "BT-104",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  5
+                               },
+                               {
+                                   "key":  "basic computer engineering|BT-203|electronics and communication engineering|4",
+                                   "name":  "Basic Computer Engineering",
+                                   "subjectCode":  "BT-203",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  110
+                               },
+                               {
+                                   "key":  "computer networks|IT-602|information technology|4",
+                                   "name":  "Computer Networks",
+                                   "subjectCode":  "IT-602",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  203
+                               },
+                               {
+                                   "key":  "software lab (autocad)|EC-406|civil engineering|4",
+                                   "name":  "SOFTWARE LAB (AutoCAD)",
+                                   "subjectCode":  "EC-406",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  26
+                               },
+                               {
+                                   "key":  "machine learning|CS-601|computer science and engineering|4",
+                                   "name":  "Machine Learning",
+                                   "subjectCode":  "CS-601",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  84
+                               },
+                               {
+                                   "key":  "language lab \u0026 seminars (lab only)|BT-206|information technology|4",
+                                   "name":  "Language Lab \u0026 Seminars (Lab Only)",
+                                   "subjectCode":  "BT-206",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  176
+                               },
+                               {
+                                   "key":  "english for communication|BT-103|electronics and communication engineering|4",
+                                   "name":  "English for Communication",
+                                   "subjectCode":  "BT-103",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  104
+                               },
+                               {
+                                   "key":  "knowledge management|IT-604|information technology|4",
+                                   "name":  "Knowledge Management",
+                                   "subjectCode":  "IT-604",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  207
+                               },
+                               {
+                                   "key":  "data science|IT-702(A)|information technology|4",
+                                   "name":  "Data Science",
+                                   "subjectCode":  "IT-702(A)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  211
+                               },
+                               {
+                                   "key":  "java programming|IT-504(C)|information technology|4",
+                                   "name":  "Java Programming",
+                                   "subjectCode":  "IT-504(C)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  200
+                               },
+                               {
+                                   "key":  "digital communication|EC-502|electronics and communication engineering|4",
+                                   "name":  "Digital Communication",
+                                   "subjectCode":  "EC-502",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  129
+                               },
+                               {
+                                   "key":  "cost effective \u0026 eco-friendly structures|EC-603(D)|civil engineering|4",
+                                   "name":  "Cost Effective \u0026 ECO-Friendly Structures",
+                                   "subjectCode":  "EC-603(D)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  43
+                               },
+                               {
+                                   "key":  "fluid mech. – ii|EC-604(A)|civil engineering|4",
+                                   "name":  "Fluid Mech. – II",
+                                   "subjectCode":  "EC-604(A)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  44
+                               },
+                               {
+                                   "key":  "structural analysis-ii|EC-503(A)|civil engineering|4",
+                                   "name":  "Structural analysis-II",
+                                   "subjectCode":  "EC-503(A)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  29
+                               },
+                               {
+                                   "key":  "90 hrs internship based on using various software’s – internship-ii|BT-407|electronics and communication engineering|4",
+                                   "name":  "90 hrs Internship based on using various software’s – Internship-II",
+                                   "subjectCode":  "BT-407",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  116
+                               },
+                               {
+                                   "key":  "advance pavement design|EC-603(C)|civil engineering|4",
+                                   "name":  "Advance Pavement Design",
+                                   "subjectCode":  "EC-603(C)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  42
+                               },
+                               {
+                                   "key":  "internet of things|IT-703(B)|information technology|4",
+                                   "name":  "Internet of Things",
+                                   "subjectCode":  "IT-703(B)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  216
+                               },
+                               {
+                                   "key":  "mathematics-iii|BT-301|electronics and communication engineering|4",
+                                   "name":  "Mathematics-III",
+                                   "subjectCode":  "BT-301",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  114
+                               },
+                               {
+                                   "key":  "theory of computation|IT-503(A)|information technology|4",
+                                   "name":  "Theory of Computation",
+                                   "subjectCode":  "IT-503(A)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  195
+                               },
+                               {
+                                   "key":  "mathematics-i|BT-102|civil engineering|4",
+                                   "name":  "Mathematics-I",
+                                   "subjectCode":  "BT-102",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  3
+                               },
+                               {
+                                   "key":  "mini project / seminar|EC-506|electronics and communication engineering|4",
+                                   "name":  "Mini Project / Seminar",
+                                   "subjectCode":  "EC-506",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  137
+                               },
+                               {
+                                   "key":  "environmental impact assessment|EC-604(C)|civil engineering|4",
+                                   "name":  "Environmental Impact Assessment",
+                                   "subjectCode":  "EC-604(C)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  46
+                               },
+                               {
+                                   "key":  "emi lab|EC-306|electronics and communication engineering|4",
+                                   "name":  "EMI Lab",
+                                   "subjectCode":  "EC-306",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  122
+                               },
+                               {
+                                   "key":  "study of historical \u0026 ancient civil engineering practices|EC-306|civil engineering|4",
+                                   "name":  "Study of Historical \u0026 Ancient Civil Engineering Practices",
+                                   "subjectCode":  "EC-306",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  21
+                               },
+                               {
+                                   "key":  "lab(linux)|CS-505|computer science and engineering|4",
+                                   "name":  "Lab(Linux)",
+                                   "subjectCode":  "CS-505",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  83
+                               },
+                               {
+                                   "key":  "cyber laws and forensics|IT-703(A)|information technology|4",
+                                   "name":  "Cyber Laws and Forensics",
+                                   "subjectCode":  "IT-703(A)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  215
+                               },
+                               {
+                                   "key":  "basic civil engineering \u0026 mechanics|BT-205|civil engineering|4",
+                                   "name":  "Basic Civil Engineering \u0026 Mechanics",
+                                   "subjectCode":  "BT-205",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  12
+                               },
+                               {
+                                   "key":  "iot lab|EC-705|electronics and communication engineering|4",
+                                   "name":  "IOT LAB",
+                                   "subjectCode":  "EC-705",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  156
+                               },
+                               {
+                                   "key":  "analog circuits|EC-405|electronics and communication engineering|4",
+                                   "name":  "Analog Circuits",
+                                   "subjectCode":  "EC-405",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  126
+                               },
+                               {
+                                   "key":  "fluid mechanics-i|EC-501|civil engineering|4",
+                                   "name":  "Fluid Mechanics-I",
+                                   "subjectCode":  "EC-501",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  27
+                               },
+                               {
+                                   "key":  "microcontroller \u0026 embedded system lab|EC-606|electronics and communication engineering|4",
+                                   "name":  "MICROCONTROLLER \u0026 EMBEDDED SYSTEM LAB",
+                                   "subjectCode":  "EC-606",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  147
+                               },
+                               {
+                                   "key":  "90 hrs internship based on using various software’s – internship-ii|BT-408|information technology|4",
+                                   "name":  "90 hrs Internship based on using various software’s – Internship-II",
+                                   "subjectCode":  "BT-408",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  179
+                               },
+                               {
+                                   "key":  "mathematics-i|BT-102|electronics and communication engineering|4",
+                                   "name":  "Mathematics-I",
+                                   "subjectCode":  "BT-102",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  103
+                               },
+                               {
+                                   "key":  "building services|EC-703(D)|civil engineering|4",
+                                   "name":  "Building Services",
+                                   "subjectCode":  "EC-703(D)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  57
+                               },
+                               {
+                                   "key":  "mathematics-iii|BT-301|civil engineering|4",
+                                   "name":  "Mathematics-III",
+                                   "subjectCode":  "BT-301",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  14
+                               },
+                               {
+                                   "key":  "computer network|IT-502|information technology|4",
+                                   "name":  "Computer Network",
+                                   "subjectCode":  "IT-502",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  194
+                               },
+                               {
+                                   "key":  "mathematics-ii|BT-202|information technology|4",
+                                   "name":  "Mathematics-II",
+                                   "subjectCode":  "BT-202",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  172
+                               },
+                               {
+                                   "key":  "engineering graphics|BT-105|electronics and communication engineering|4",
+                                   "name":  "Engineering Graphics",
+                                   "subjectCode":  "BT-105",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  106
+                               },
+                               {
+                                   "key":  "digital image processing|IT-703(D)|information technology|4",
+                                   "name":  "Digital Image Processing",
+                                   "subjectCode":  "IT-703(D)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  218
+                               },
+                               {
+                                   "key":  "bridge engineering|EC-802(C)|civil engineering|4",
+                                   "name":  "Bridge Engineering",
+                                   "subjectCode":  "EC-802(C)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  63
+                               },
+                               {
+                                   "key":  "geotechnical engg|EC-701|civil engineering|4",
+                                   "name":  "Geotechnical Engg",
+                                   "subjectCode":  "EC-701",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  50
+                               },
+                               {
+                                   "key":  "cloud computing lab|IT-704|information technology|4",
+                                   "name":  "Cloud Computing Lab",
+                                   "subjectCode":  "IT-704",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  219
+                               },
+                               {
+                                   "key":  "language lab \u0026 seminars|BT-206|civil engineering|4",
+                                   "name":  "Language Lab \u0026 Seminars",
+                                   "subjectCode":  "BT-206",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  13
+                               },
+                               {
+                                   "key":  "object oriented programming \u0026 methodology|IT-304|information technology|4",
+                                   "name":  "Object Oriented Programming \u0026 Methodology",
+                                   "subjectCode":  "IT-304",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  184
+                               },
+                               {
+                                   "key":  "power electronics|EC-604(C)|electronics and communication engineering|4",
+                                   "name":  "POWER ELECTRONICS",
+                                   "subjectCode":  "EC-604(C)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  145
+                               },
+                               {
+                                   "key":  "integrated waste management|EC-703(C)|civil engineering|4",
+                                   "name":  "Integrated Waste Management",
+                                   "subjectCode":  "EC-703(C)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  56
+                               },
+                               {
+                                   "key":  "project management|EC-703(B)|civil engineering|4",
+                                   "name":  "Project Management",
+                                   "subjectCode":  "EC-703(B)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  55
+                               },
+                               {
+                                   "key":  "engineering physics|BT-201|civil engineering|4",
+                                   "name":  "Engineering Physics",
+                                   "subjectCode":  "BT-201",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  8
+                               },
+                               {
+                                   "key":  "advanced control system|EC-503(C)|electronics and communication engineering|4",
+                                   "name":  "ADVANCED CONTROL SYSTEM",
+                                   "subjectCode":  "EC-503(C)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  132
+                               },
+                               {
+                                   "key":  "satellite communication|EC-603(C)|electronics and communication engineering|4",
+                                   "name":  "Satellite Communication",
+                                   "subjectCode":  "EC-603(C)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  142
+                               },
+                               {
+                                   "key":  "process control instrumentation|EC-504(C)|electronics and communication engineering|4",
+                                   "name":  "Process Control Instrumentation",
+                                   "subjectCode":  "EC-504(C)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  135
+                               },
+                               {
+                                   "key":  "internet and web technology|CS-504|computer science and engineering|4",
+                                   "name":  "Internet and Web Technology",
+                                   "subjectCode":  "CS-504",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  81
+                               },
+                               {
+                                   "key":  "human computer interaction|IT-803(B)|information technology|4",
+                                   "name":  "Human Computer Interaction",
+                                   "subjectCode":  "IT-803(B)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  227
+                               },
+                               {
+                                   "key":  "printing and design|IT-803(C)|information technology|4",
+                                   "name":  "Printing and Design",
+                                   "subjectCode":  "IT-803(C)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  228
+                               },
+                               {
+                                   "key":  "open source software lab (linux and r)|IT-407|information technology|4",
+                                   "name":  "Open Source Software Lab (Linux and R)",
+                                   "subjectCode":  "IT-407",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  192
+                               },
+                               {
+                                   "key":  "structural analysis-i|EC-403|civil engineering|4",
+                                   "name":  "Structural Analysis-I",
+                                   "subjectCode":  "EC-403",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  23
+                               },
+                               {
+                                   "key":  "network analysis|EC-305|electronics and communication engineering|4",
+                                   "name":  "Network Analysis",
+                                   "subjectCode":  "EC-305",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  121
+                               },
+                               {
+                                   "key":  "engineering chemistry|BT-101|information technology|4",
+                                   "name":  "Engineering Chemistry",
+                                   "subjectCode":  "BT-101",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  166
+                               },
+                               {
+                                   "key":  "data communication lab|EC-605|electronics and communication engineering|4",
+                                   "name":  "DATA COMMUNICATION LAB",
+                                   "subjectCode":  "EC-605",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  146
+                               },
+                               {
+                                   "key":  "mathematics-ii|BT-202|civil engineering|4",
+                                   "name":  "Mathematics-II",
+                                   "subjectCode":  "BT-202",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  9
+                               },
+                               {
+                                   "key":  "compiler design|IT-603|information technology|4",
+                                   "name":  "Compiler Design",
+                                   "subjectCode":  "IT-603",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  205
+                               },
+                               {
+                                   "key":  "energy \u0026 environmental engineering|ES-401|electronics and communication engineering|4",
+                                   "name":  "Energy \u0026 Environmental Engineering",
+                                   "subjectCode":  "ES-401",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  165
+                               },
+                               {
+                                   "key":  "english for communication|BT-103|civil engineering|4",
+                                   "name":  "English for Communication",
+                                   "subjectCode":  "BT-103",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  4
+                               },
+                               {
+                                   "key":  "precast \u0026 modular construction|EC-603(B)|civil engineering|4",
+                                   "name":  "Precast \u0026 Modular Construction",
+                                   "subjectCode":  "EC-603(B)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  41
+                               },
+                               {
+                                   "key":  "computer system organization|EC-504(B)|electronics and communication engineering|4",
+                                   "name":  "Computer System Organization",
+                                   "subjectCode":  "EC-504(B)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  134
+                               },
+                               {
+                                   "key":  "english for communication|BT-103|information technology|4",
+                                   "name":  "English for Communication",
+                                   "subjectCode":  "BT-103",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  168
+                               },
+                               {
+                                   "key":  "machine learning|IT-802(A)|information technology|4",
+                                   "name":  "Machine Learning",
+                                   "subjectCode":  "IT-802(A)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  222
+                               },
+                               {
+                                   "key":  "quantum computing|IT-802(D)|information technology|4",
+                                   "name":  "Quantum Computing",
+                                   "subjectCode":  "IT-802(D)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  225
+                               },
+                               {
+                                   "key":  "digital image processing [elective-iii]|EC-704|electronics and communication engineering|4",
+                                   "name":  "Digital Image Processing [Elective-III]",
+                                   "subjectCode":  "EC-704",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  155
+                               },
+                               {
+                                   "key":  "advanced communication engg. lab|EC-804|electronics and communication engineering|4",
+                                   "name":  "Advanced Communication Engg. Lab",
+                                   "subjectCode":  "EC-804",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  164
+                               },
+                               {
+                                   "key":  "analysis design of algorithm|CS-402|computer science and engineering|4",
+                                   "name":  "Analysis Design of Algorithm",
+                                   "subjectCode":  "CS-402",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  71
+                               },
+                               {
+                                   "key":  "cyber security|CS-503|computer science and engineering|4",
+                                   "name":  "Cyber Security",
+                                   "subjectCode":  "CS-503",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  78
+                               },
+                               {
+                                   "key":  "speech processing|EC-803(C)|electronics and communication engineering|4",
+                                   "name":  "Speech Processing",
+                                   "subjectCode":  "EC-803(C)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  163
+                               },
+                               {
+                                   "key":  "mathematics-i|BT-102|information technology|4",
+                                   "name":  "Mathematics-I",
+                                   "subjectCode":  "BT-102",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  167
+                               },
+                               {
+                                   "key":  "internet of things|EC-703(A)|civil engineering|4",
+                                   "name":  "Internet of Things",
+                                   "subjectCode":  "EC-703(A)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  54
+                               },
+                               {
+                                   "key":  "electromagnetic theory|EC-504(A)|electronics and communication engineering|4",
+                                   "name":  "ELECTROMAGNETIC THEORY",
+                                   "subjectCode":  "EC-504(A)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  133
+                               },
+                               {
+                                   "key":  "computer graphics \u0026 visualization|IT-603|information technology|4",
+                                   "name":  "Computer Graphics \u0026 Visualization",
+                                   "subjectCode":  "IT-603",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  206
+                               },
+                               {
+                                   "key":  "project management|IT-604|information technology|4",
+                                   "name":  "Project Management",
+                                   "subjectCode":  "IT-604",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  208
+                               },
+                               {
+                                   "key":  "introduction to matlab, scilab/web design|IT-406|information technology|4",
+                                   "name":  "Introduction to MATLAB, Scilab/Web Design",
+                                   "subjectCode":  "IT-406",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  191
+                               },
+                               {
+                                   "key":  "biomedical electronics|EC-604(B)|electronics and communication engineering|4",
+                                   "name":  "BIOMEDICAL ELECTRONICS",
+                                   "subjectCode":  "EC-604(B)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  144
+                               },
+                               {
+                                   "key":  "test subject alpha|TS-999|mechanical engineering|1",
+                                   "name":  "Test Subject Alpha",
+                                   "subjectCode":  "TS-999",
+                                   "branch":  "Mechanical Engineering",
+                                   "semester":  "1",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import_small.xlsx",
+                                   "sourceRow":  2
+                               },
+                               {
+                                   "key":  "manufacturing practices|BT-106|civil engineering|4",
+                                   "name":  "Manufacturing Practices",
+                                   "subjectCode":  "BT-106",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  7
+                               },
+                               {
+                                   "key":  "engineering graphics|BT-105|civil engineering|4",
+                                   "name":  "Engineering Graphics",
+                                   "subjectCode":  "BT-105",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  6
+                               },
+                               {
+                                   "key":  "engineering chemistry|BT-101|electronics and communication engineering|4",
+                                   "name":  "Engineering Chemistry",
+                                   "subjectCode":  "BT-101",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  102
+                               },
+                               {
+                                   "key":  "natural language processing|IT-802(B)|information technology|4",
+                                   "name":  "Natural Language Processing",
+                                   "subjectCode":  "IT-802(B)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  223
+                               },
+                               {
+                                   "key":  "data communication|EC-603(A)|electronics and communication engineering|4",
+                                   "name":  "DATA COMMUNICATION",
+                                   "subjectCode":  "EC-603(A)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  140
+                               },
+                               {
+                                   "key":  "remote sensing \u0026 gis|EC-504(B)|civil engineering|4",
+                                   "name":  "Remote Sensing \u0026 GIS",
+                                   "subjectCode":  "EC-504(B)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  33
+                               },
+                               {
+                                   "key":  "digital circuits \u0026 system|IT-305|information technology|4",
+                                   "name":  "Digital Circuits \u0026 System",
+                                   "subjectCode":  "IT-305",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  185
+                               },
+                               {
+                                   "key":  "quantity surveying \u0026 costing (lab)|EC-505|civil engineering|4",
+                                   "name":  "Quantity Surveying \u0026 Costing (Lab)",
+                                   "subjectCode":  "EC-505",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  36
+                               },
+                               {
+                                   "key":  "advanced computer architecture|CS-603|computer science and engineering|4",
+                                   "name":  "Advanced Computer Architecture",
+                                   "subjectCode":  "CS-603",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  86
+                               },
+                               {
+                                   "key":  "digital image processing|EC-803(B)|electronics and communication engineering|4",
+                                   "name":  "Digital Image Processing",
+                                   "subjectCode":  "EC-803(B)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  162
+                               },
+                               {
+                                   "key":  "ai \u0026 signal processing|EC-802(A)|electronics and communication engineering|4",
+                                   "name":  "AI \u0026 Signal Processing",
+                                   "subjectCode":  "EC-802(A)",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  158
+                               },
+                               {
+                                   "key":  "90 hrs internship based on using various software’s – internship-ii|BT-307|electronics and communication engineering|4",
+                                   "name":  "90 hrs Internship based on using various software’s – Internship-II",
+                                   "subjectCode":  "BT-307",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  115
+                               },
+                               {
+                                   "key":  "retrofitting and rehabilitation of structures|EC-803(C)|civil engineering|4",
+                                   "name":  "Retrofitting and Rehabilitation of Structures",
+                                   "subjectCode":  "EC-803(C)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  67
+                               },
+                               {
+                                   "key":  "engineering graphics|BT-105|information technology|4",
+                                   "name":  "Engineering Graphics",
+                                   "subjectCode":  "BT-105",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  170
+                               },
+                               {
+                                   "key":  "building planning \u0026 architecture|EC-304|civil engineering|4",
+                                   "name":  "Building Planning \u0026 Architecture",
+                                   "subjectCode":  "EC-304",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  19
+                               },
+                               {
+                                   "key":  "intellectual property rights|EC-604(B)|civil engineering|4",
+                                   "name":  "Intellectual Property Rights",
+                                   "subjectCode":  "EC-604(B)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  45
+                               },
+                               {
+                                   "key":  "basic mechanical engineering|BT-204|civil engineering|4",
+                                   "name":  "Basic Mechanical Engineering",
+                                   "subjectCode":  "BT-204",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  11
+                               },
+                               {
+                                   "key":  "software engineering|CS-403|computer science and engineering|4",
+                                   "name":  "Software Engineering",
+                                   "subjectCode":  "CS-403",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  72
+                               },
+                               {
+                                   "key":  "java programming lab|IT-306|information technology|4",
+                                   "name":  "JAVA Programming Lab",
+                                   "subjectCode":  "IT-306",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  186
+                               },
+                               {
+                                   "key":  "artificial intelligence|IT-504(A)|information technology|4",
+                                   "name":  "Artificial Intelligence",
+                                   "subjectCode":  "IT-504(A)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  198
+                               },
+                               {
+                                   "key":  "electronic measurement \u0026 instrumentation|EC-302|electronics and communication engineering|4",
+                                   "name":  "Electronic Measurement \u0026 Instrumentation",
+                                   "subjectCode":  "EC-302",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  118
+                               },
+                               {
+                                   "key":  "robotics|IT-802(C)|information technology|4",
+                                   "name":  "Robotics",
+                                   "subjectCode":  "IT-802(C)",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  224
+                               },
+                               {
+                                   "key":  "iot lab|EC-705|civil engineering|4",
+                                   "name":  "IOT Lab",
+                                   "subjectCode":  "EC-705",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  59
+                               },
+                               {
+                                   "key":  "digital signal processing|EC-601|electronics and communication engineering|4",
+                                   "name":  "Digital Signal Processing",
+                                   "subjectCode":  "EC-601",
+                                   "branch":  "Electronics and Communication Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  138
+                               },
+                               {
+                                   "key":  "basic electrical \u0026 electronics engineering|BT-104|information technology|4",
+                                   "name":  "Basic Electrical \u0026 Electronics Engineering",
+                                   "subjectCode":  "BT-104",
+                                   "branch":  "Information Technology",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  169
+                               },
+                               {
+                                   "key":  "integrated water management|EC-803(D)|civil engineering|4",
+                                   "name":  "Integrated Water Management",
+                                   "subjectCode":  "EC-803(D)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  68
+                               },
+                               {
+                                   "key":  "entrepreneurship development \u0026 management|EC-504(D)|civil engineering|4",
+                                   "name":  "Entrepreneurship Development \u0026 Management",
+                                   "subjectCode":  "EC-504(D)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  35
+                               },
+                               {
+                                   "key":  "computer networks|CS-602|computer science and engineering|4",
+                                   "name":  "Computer Networks",
+                                   "subjectCode":  "CS-602",
+                                   "branch":  "Computer Science and Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  85
+                               },
+                               {
+                                   "key":  "quantity surveying \u0026 costing|EC-503(C)|civil engineering|4",
+                                   "name":  "Quantity surveying \u0026 Costing",
+                                   "subjectCode":  "EC-503(C)",
+                                   "branch":  "Civil Engineering",
+                                   "semester":  "4",
+                                   "sourceFile":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+                                   "sourceRow":  31
+                               }
+                           ],
+    "candidatesTotal":  229,
+    "ambiguous":  0,
+    "apiBaseUrl":  "http://localhost:8080"
+}

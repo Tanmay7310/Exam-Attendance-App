@@ -1,5 +1,6 @@
 package com.exam.attendance.service;
 
+import com.exam.attendance.dto.admin.SubjectResponse;
 import com.exam.attendance.dto.teacher.AttendanceRecordResponse;
 import com.exam.attendance.dto.teacher.ScanAttendanceResponse;
 import com.exam.attendance.dto.teacher.TeacherProfileResponse;
@@ -24,6 +25,7 @@ public class TeacherService {
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
+    private final SubjectMasterRepository subjectMasterRepository;
     private final AttendanceSessionRepository attendanceSessionRepository;
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final PdfService pdfService;
@@ -160,6 +162,33 @@ public class TeacherService {
                 .studentName(student.getName())
                 .scannedAt(null)
                 .build();
+    }
+
+    public List<SubjectResponse> getSubjects() {
+        return subjectMasterRepository.findAll().stream()
+                .sorted((a, b) -> {
+                    String branchA = StringUtils.hasText(a.getBranch()) ? a.getBranch().trim() : "";
+                    String branchB = StringUtils.hasText(b.getBranch()) ? b.getBranch().trim() : "";
+                    int byBranch = branchA.compareToIgnoreCase(branchB);
+                    if (byBranch != 0) return byBranch;
+
+                    String semA = StringUtils.hasText(a.getSemester()) ? a.getSemester().trim() : "";
+                    String semB = StringUtils.hasText(b.getSemester()) ? b.getSemester().trim() : "";
+                    int bySemester = semA.compareToIgnoreCase(semB);
+                    if (bySemester != 0) return bySemester;
+
+                    String nameA = StringUtils.hasText(a.getName()) ? a.getName().trim() : "";
+                    String nameB = StringUtils.hasText(b.getName()) ? b.getName().trim() : "";
+                    return nameA.compareToIgnoreCase(nameB);
+                })
+                .map(subject -> SubjectResponse.builder()
+                        .id(subject.getId())
+                        .name(StringUtils.hasText(subject.getName()) ? subject.getName().trim() : "")
+                        .subjectCode(StringUtils.hasText(subject.getSubjectCode()) ? subject.getSubjectCode().trim() : "")
+                        .branch(StringUtils.hasText(subject.getBranch()) ? subject.getBranch().trim() : "")
+                        .semester(StringUtils.hasText(subject.getSemester()) ? subject.getSemester().trim() : "")
+                        .build())
+                .toList();
     }
 
     private Teacher getTeacherByUsername(String username) {

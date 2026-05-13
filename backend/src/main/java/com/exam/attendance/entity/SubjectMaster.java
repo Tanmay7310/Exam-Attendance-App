@@ -3,6 +3,8 @@ package com.exam.attendance.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(
         name = "subjects",
@@ -32,4 +34,10 @@ public class SubjectMaster {
 
     @Column(nullable = false, length = 20)
     private String semester;
+
+    @Column(name = "import_batch_id", length = 80)
+    private String importBatchId;
+
+    @Column(name = "imported_at")
+    private LocalDateTime importedAt;
 }

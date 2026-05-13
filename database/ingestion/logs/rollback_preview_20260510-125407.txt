@@ -1,0 +1,14 @@
+﻿Rollback Preview Run: 20260510-125407
+Timestamp: 2026-05-10T12:54:07.0431121+05:30
+Operator: Tanmay Saha
+API: http://localhost:8080
+Source Files:
+- D:\Exam Attendance app\database\subjects_import.xlsx
+- D:\Exam Attendance app\database\subjects_import_small.xlsx
+
+Candidates Total: 229
+Matched In DB: 0
+Not Found: 229
+Ambiguous: 0
+Parser Issues: 0
+Delete Plan IDs: 

@@ -1,0 +1,31 @@
+﻿Rollback Execution Run: 20260510-125352
+Timestamp: 2026-05-10T12:53:52.9115760+05:30
+Operator: Tanmay Saha
+API: http://localhost:8080
+Source Manifest: D:\Exam Attendance app\database\ingestion\logs\rollback_preview_20260510-125317.json
+Attempted: 20
+Deleted: 0
+Failed: 20
+Remaining Matches: 0
+
+Failures:
+- Subject ID 165: Subject not found
+- Subject ID 112: Subject not found
+- Subject ID 113: Subject not found
+- Subject ID 119: Subject not found
+- Subject ID 88: Subject not found
+- Subject ID 86: Subject not found
+- Subject ID 114: Subject not found
+- Subject ID 161: Subject not found
+- Subject ID 162: Subject not found
+- Subject ID 87: Subject not found
+- Subject ID 163: Subject not found
+- Subject ID 115: Subject not found
+- Subject ID 83: Subject not found
+- Subject ID 164: Subject not found
+- Subject ID 117: Subject not found
+- Subject ID 160: Subject not found
+- Subject ID 84: Subject not found
+- Subject ID 116: Subject not found
+- Subject ID 211: Subject not found
+- Subject ID 85: Subject not found

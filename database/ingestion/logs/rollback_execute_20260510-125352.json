@@ -1,0 +1,94 @@
+﻿{
+    "mode":  "execute",
+    "runId":  "20260510-125352",
+    "sourceManifest":  "D:\\Exam Attendance app\\database\\ingestion\\logs\\rollback_preview_20260510-125317.json",
+    "deleted":  0,
+    "remainingMatches":  0,
+    "failures":  [
+                     {
+                         "subjectId":  165,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  112,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  113,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  119,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  88,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  86,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  114,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  161,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  162,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  87,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  163,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  115,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  83,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  164,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  117,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  160,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  84,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  116,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  211,
+                         "error":  "Subject not found"
+                     },
+                     {
+                         "subjectId":  85,
+                         "error":  "Subject not found"
+                     }
+                 ],
+    "apiBaseUrl":  "http://localhost:8080",
+    "timestamp":  "2026-05-10T12:53:52.9115760+05:30",
+    "operator":  "Tanmay Saha",
+    "failed":  20,
+    "attempted":  20
+}

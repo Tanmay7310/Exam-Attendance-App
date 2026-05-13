@@ -60,3 +60,10 @@ export interface SubjectItem {
   branch: string;
   semester: string;
 }
+
+export interface ImportSubjectsResponse {
+  importedCount: number;
+  skippedCount: number;
+  errors: string[];
+  importBatchId?: string;
+}

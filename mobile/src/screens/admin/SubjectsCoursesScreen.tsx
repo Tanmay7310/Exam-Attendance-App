@@ -63,7 +63,7 @@ export const SubjectsCoursesScreen = ({ navigation }: any) => {
           <Surface style={styles.card} elevation={1}>
             <TouchableRipple
               style={styles.press}
-              onPress={() => navigation.navigate('SubjectsSemesters', { branch: item.branch, subjects: item.rows })}
+              onPress={() => navigation.navigate('SubjectsSemesters', { branch: item.branch })}
             >
               <View>
                 <Text style={styles.title}>{item.branch}</Text>

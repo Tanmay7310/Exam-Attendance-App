@@ -36,8 +36,9 @@ export const AddStudentScreen = () => {
     name: '',
     scholarNumber: '',
     enrollmentNumber: '',
-    department: '',
+    year: '',
     semester: '',
+    department: '',
     section: ''
   });
   const [departmentQuery, setDepartmentQuery] = useState('');
@@ -78,7 +79,15 @@ export const AddStudentScreen = () => {
 
     try {
       await api.post('/api/admin/students', form);
-      setForm({ name: '', scholarNumber: '', enrollmentNumber: '', department: '', semester: '', section: '' });
+      setForm({
+        name: '',
+        scholarNumber: '',
+        enrollmentNumber: '',
+        year: '',
+        semester: '',
+        department: '',
+        section: ''
+      });
       setDepartmentQuery('');
       showToast('Student added.', { type: 'success' });
     } catch (e: any) {
@@ -179,6 +188,18 @@ export const AddStudentScreen = () => {
       />
 
       <TextInput
+        placeholder="year"
+        style={styles.input}
+        value={form.year}
+        onChangeText={(text) => setForm((prev) => ({ ...prev, year: text }))}
+      />
+      <TextInput
+        placeholder="semester"
+        style={styles.input}
+        value={form.semester}
+        onChangeText={(text) => setForm((prev) => ({ ...prev, semester: text }))}
+      />
+      <TextInput
         placeholder="department"
         style={styles.input}
         value={departmentQuery}
@@ -207,12 +228,6 @@ export const AddStudentScreen = () => {
         style={styles.input}
         value={form.section}
         onChangeText={(text) => setForm((prev) => ({ ...prev, section: text }))}
-      />
-      <TextInput
-        placeholder="semester"
-        style={styles.input}
-        value={form.semester}
-        onChangeText={(text) => setForm((prev) => ({ ...prev, semester: text }))}
       />
 
       <Pressable style={styles.button} onPress={addStudent}>

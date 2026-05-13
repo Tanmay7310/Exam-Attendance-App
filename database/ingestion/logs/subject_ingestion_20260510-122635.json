@@ -1,0 +1,92 @@
+﻿{
+    "runId":  "20260510-122635",
+    "timestamp":  "2026-05-10T12:26:40.8360289+05:30",
+    "operator":  "Tanmay Saha",
+    "sourceDocx":  "D:\\Exam Attendance app\\database\\Brance name (with code).docx",
+    "copiedDocx":  "D:\\Exam Attendance app\\database\\ingestion\\incoming\\20260510-122635-Brance name (with code).docx",
+    "normalizedXlsx":  "D:\\Exam Attendance app\\database\\ingestion\\normalized\\subjects_import_20260510-122635.xlsx",
+    "latestXlsx":  "D:\\Exam Attendance app\\database\\subjects_import.xlsx",
+    "parsedRows":  228,
+    "uniqueRows":  228,
+    "parserIssues":  [
+                         "Row 4: Unknown semester alias in heading: Sem",
+                         "Row 7: Skipped subject \u0027Engineering Chemistry\u0027 because branch/semester context is missing.",
+                         "Row 8: Skipped subject \u0027Mathematics-I\u0027 because branch/semester context is missing.",
+                         "Row 9: Skipped subject \u0027English for Communication\u0027 because branch/semester context is missing.",
+                         "Row 10: Skipped subject \u0027Basic Electrical \u0026 Electronics Engineering\u0027 because branch/semester context is missing.",
+                         "Row 11: Skipped subject \u0027Engineering Graphics\u0027 because branch/semester context is missing.",
+                         "Row 12: Unknown semester alias in heading: Sem",
+                         "Row 15: Skipped subject \u0027Engineering Physics\u0027 because branch/semester context is missing.",
+                         "Row 16: Skipped subject \u0027Mathematics-II\u0027 because branch/semester context is missing.",
+                         "Row 17: Skipped subject \u0027Basic Mechanical Engineering\u0027 because branch/semester context is missing.",
+                         "Row 18: Skipped subject \u0027Basic Civil Engineering \u0026 Mechanics\u0027 because branch/semester context is missing.",
+                         "Row 19: Skipped subject \u0027Basic Computer Engineering\u0027 because branch/semester context is missing.",
+                         "Row 20: Skipped subject \u0027Language Lab \u0026 Seminars (Lab Only)\u0027 because branch/semester context is missing.",
+                         "Row 22: Unknown semester alias in heading: sem",
+                         "Row 24: Skipped subject \u0027Energy \u0026 Environmental Engineering\u0027 because branch/semester context is missing.",
+                         "Row 25: Skipped subject \u0027Discrete Structure\u0027 because branch/semester context is missing.",
+                         "Row 26: Skipped subject \u0027Data Structure\u0027 because branch/semester context is missing.",
+                         "Row 27: Skipped subject \u0027Digital Systems\u0027 because branch/semester context is missing.",
+                         "Row 28: Skipped subject \u0027Object Oriented Programming \u0026 Methodology\u0027 because branch/semester context is missing.",
+                         "Row 39: Unknown semester alias in heading: Sem",
+                         "Row 49: Unknown semester alias in heading: Sem",
+                         "Row 60: Unknown semester alias in heading: Sem",
+                         "Row 68: Unknown semester alias in heading: Sem",
+                         "Row 76: Unknown semester alias in heading: Sem",
+                         "Row 84: Unknown semester alias in heading: Sem",
+                         "Row 94: Unknown semester alias in heading: Sem",
+                         "Row 104: Unknown semester alias in heading: Sem",
+                         "Row 117: Unknown semester alias in heading: Sem",
+                         "Row 129: Unknown semester alias in heading: Sem",
+                         "Row 141: Unknown semester alias in heading: Sem",
+                         "Row 154: Unknown semester alias in heading: Sem",
+                         "Row 168: Unknown semester alias in heading: Sem",
+                         "Row 177: Unknown semester alias in heading: Sem",
+                         "Row 187: Unknown semester alias in heading: Sem",
+                         "Row 197: Unknown semester alias in heading: Sem",
+                         "Row 209: Unknown semester alias in heading: Sem",
+                         "Row 222: Unknown semester alias in heading: Sem",
+                         "Row 236: Unknown semester alias in heading: Sem",
+                         "Row 248: Unknown semester alias in heading: Sem",
+                         "Row 260: Unknown semester alias in heading: Sem",
+                         "Row 269: Unknown semester alias in heading: Sem",
+                         "Row 279: Unknown semester alias in heading: Sem",
+                         "Row 289: Unknown semester alias in heading: Sem",
+                         "Row 299: Unknown semester alias in heading: Sem",
+                         "Row 314: Unknown semester alias in heading: Sem",
+                         "Row 330: Unknown semester alias in heading: Sem",
+                         "Row 342: Unknown semester alias in heading: Sem"
+                     ],
+    "parserIssuesPreview":  [
+                                "Row 4: Unknown semester alias in heading: Sem",
+                                "Row 7: Skipped subject \u0027Engineering Chemistry\u0027 because branch/semester context is missing.",
+                                "Row 8: Skipped subject \u0027Mathematics-I\u0027 because branch/semester context is missing.",
+                                "Row 9: Skipped subject \u0027English for Communication\u0027 because branch/semester context is missing.",
+                                "Row 10: Skipped subject \u0027Basic Electrical \u0026 Electronics Engineering\u0027 because branch/semester context is missing.",
+                                "Row 11: Skipped subject \u0027Engineering Graphics\u0027 because branch/semester context is missing.",
+                                "Row 12: Unknown semester alias in heading: Sem",
+                                "Row 15: Skipped subject \u0027Engineering Physics\u0027 because branch/semester context is missing.",
+                                "Row 16: Skipped subject \u0027Mathematics-II\u0027 because branch/semester context is missing.",
+                                "Row 17: Skipped subject \u0027Basic Mechanical Engineering\u0027 because branch/semester context is missing."
+                            ],
+    "distribution":  [
+                         {
+                             "bucket":  "Civil Engineering, 4",
+                             "count":  68
+                         },
+                         {
+                             "bucket":  "Computer Science and Engineering, 4",
+                             "count":  32
+                         },
+                         {
+                             "bucket":  "Electronics and Communication Engineering, 4",
+                             "count":  64
+                         },
+                         {
+                             "bucket":  "Information Technology, 4",
+                             "count":  64
+                         }
+                     ],
+    "importExecuted":  false,
+    "importResult":  null
+}
