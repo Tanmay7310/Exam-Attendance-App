@@ -15,6 +15,12 @@ export const StudentManagementScreen = ({ navigation }: any) => {
       <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('Students')} contentStyle={buttonStyles.content}>
         Students
       </Button>
+      <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('PromoteStudents')} contentStyle={buttonStyles.content}>
+        Promote Students
+      </Button>
+      <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('PromotionHistory')} contentStyle={buttonStyles.content}>
+        Promotion History
+      </Button>
     </View>
   );
 };

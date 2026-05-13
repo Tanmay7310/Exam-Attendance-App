@@ -35,8 +35,13 @@ export const AttendanceListScreen = ({ navigation }: any) => {
     records.forEach((record) => {
       const date = record.date ?? new Date(record.scannedAt).toISOString().slice(0, 10);
       const subject = record.subject?.trim() || 'N/A';
-      const key = `${date}::${subject}`;
-      const title = `Date: ${date} | Subject: ${subject}`;
+      const examYear = record.examYear?.trim() || 'N/A';
+      const examSemester = record.examSemester?.trim() || 'N/A';
+      const examBranch = record.examBranch?.trim() || 'N/A';
+      const examSection = record.examSection?.trim() || 'N/A';
+      const context = `Y${examYear} S${examSemester} | ${examBranch} | Sec ${examSection}`;
+      const key = `${date}::${subject}::${examYear}::${examSemester}::${examBranch}::${examSection}`;
+      const title = `Date: ${date} | Subject: ${subject} | ${context}`;
 
       if (!grouped.has(key)) {
         grouped.set(key, { title, date, subject, data: [] });
@@ -104,6 +109,10 @@ export const AttendanceListScreen = ({ navigation }: any) => {
                   title: item.title,
                   date: item.date,
                   subject: item.subject,
+                  examYear: item.records[0]?.examYear ?? '',
+                  examSemester: item.records[0]?.examSemester ?? '',
+                  examBranch: item.records[0]?.examBranch ?? '',
+                  examSection: item.records[0]?.examSection ?? '',
                   records: item.records
                 })
               }

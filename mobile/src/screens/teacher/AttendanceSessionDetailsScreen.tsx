@@ -16,6 +16,10 @@ export const AttendanceSessionDetailsScreen = ({ route }: any) => {
   const title: string = route?.params?.title ?? 'Session Attendance';
   const date: string = route?.params?.date ?? '';
   const subject: string = route?.params?.subject ?? 'N/A';
+  const examYear: string = route?.params?.examYear ?? '';
+  const examSemester: string = route?.params?.examSemester ?? '';
+  const examBranch: string = route?.params?.examBranch ?? '';
+  const examSection: string = route?.params?.examSection ?? '';
   const records: AttendanceRecord[] = Array.isArray(route?.params?.records) ? route.params.records : [];
 
   const sortedRecords = useMemo(
@@ -36,6 +40,18 @@ export const AttendanceSessionDetailsScreen = ({ route }: any) => {
       const queryParams = [`date=${encodeURIComponent(date)}`];
       if (subject && subject !== 'N/A') {
         queryParams.push(`subject=${encodeURIComponent(subject)}`);
+      }
+      if (examYear) {
+        queryParams.push(`examYear=${encodeURIComponent(examYear)}`);
+      }
+      if (examSemester) {
+        queryParams.push(`examSemester=${encodeURIComponent(examSemester)}`);
+      }
+      if (examBranch) {
+        queryParams.push(`examBranch=${encodeURIComponent(examBranch)}`);
+      }
+      if (examSection) {
+        queryParams.push(`examSection=${encodeURIComponent(examSection)}`);
       }
       const url = `${api.defaults.baseURL}/api/teacher/attendance/report/pdf?${queryParams.join('&')}`;
       await FileSystem.downloadAsync(url, fileUri, {
@@ -60,6 +76,11 @@ export const AttendanceSessionDetailsScreen = ({ route }: any) => {
         <Text style={styles.headerTitle}>{title}</Text>
         <Text style={styles.headerMeta}>Date: {date || 'N/A'}</Text>
         <Text style={styles.headerMeta}>Subject: {subject || 'N/A'}</Text>
+        {examYear || examSemester || examBranch || examSection ? (
+          <Text style={styles.headerMeta}>
+            Class: Y{examYear || 'N/A'} S{examSemester || 'N/A'} | {examBranch || 'N/A'} | Sec {examSection || 'N/A'}
+          </Text>
+        ) : null}
         <Text style={styles.headerMeta}>Total: {sortedRecords.length}</Text>
         <Button mode="contained" style={styles.exportButton} contentStyle={buttonStyles.content} onPress={exportPdf}>
           Export PDF

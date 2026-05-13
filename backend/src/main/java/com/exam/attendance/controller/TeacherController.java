@@ -66,9 +66,21 @@ public class TeacherController {
     public ResponseEntity<byte[]> attendancePdf(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(required = false) String subject,
+            @RequestParam(required = false) String examYear,
+            @RequestParam(required = false) String examSemester,
+            @RequestParam(required = false) String examBranch,
+            @RequestParam(required = false) String examSection,
             Authentication authentication) {
 
-        byte[] data = teacherService.generatePdfReport(authentication.getName(), date, subject);
+        byte[] data = teacherService.generatePdfReport(
+                authentication.getName(),
+                date,
+                subject,
+                examYear,
+                examSemester,
+                examBranch,
+                examSection
+        );
         String filename = "attendance-" + date + "-" + LocalDateTime.now().format(PDF_FILE_TS_FORMAT) + ".pdf";
 
         return ResponseEntity.ok()

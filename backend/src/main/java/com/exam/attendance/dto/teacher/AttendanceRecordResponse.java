@@ -15,4 +15,8 @@ public class AttendanceRecordResponse {
     private Instant scannedAt;
     private LocalDate date;
     private String subject;
+    private String examYear;
+    private String examSemester;
+    private String examBranch;
+    private String examSection;
 }

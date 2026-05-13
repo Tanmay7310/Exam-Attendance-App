@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
+import java.util.List;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
     Optional<Student> findByScholarNumber(String scholarNumber);
@@ -31,4 +32,17 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             where lower(trim(s.enrollmentNumber)) = lower(trim(:enrollmentNumber))
             """)
     boolean existsByEnrollmentNumberNormalized(@Param("enrollmentNumber") String enrollmentNumber);
+
+    @Query("""
+            select s
+            from Student s
+            where lower(trim(s.year)) = lower(trim(:year))
+              and lower(trim(s.semester)) = lower(trim(:semester))
+              and lower(trim(s.department)) = lower(trim(:department))
+              and lower(trim(s.section)) = lower(trim(:section))
+            """)
+    List<Student> findByClassContext(@Param("year") String year,
+                                     @Param("semester") String semester,
+                                     @Param("department") String department,
+                                     @Param("section") String section);
 }

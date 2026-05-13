@@ -19,6 +19,9 @@ import { AdminAttendanceDetailsScreen } from '../screens/admin/AdminAttendanceDe
 import { StudentManagementScreen } from '../screens/admin/StudentManagementScreen';
 import { AddStudentScreen } from '../screens/admin/AddStudentScreen';
 import { StudentsScreen } from '../screens/admin/StudentsScreen';
+import { PromoteStudentsScreen } from '../screens/admin/PromoteStudentsScreen';
+import { PromotionHistoryScreen } from '../screens/admin/PromotionHistoryScreen';
+import { PromotionBatchDetailsScreen } from '../screens/admin/PromotionBatchDetailsScreen';
 import { AddSubjectsScreen } from '../screens/admin/AddSubjectsScreen';
 import { AddNewSubjectsScreen } from '../screens/admin/AddNewSubjectsScreen';
 import { SubjectsCoursesScreen } from '../screens/admin/SubjectsCoursesScreen';
@@ -72,6 +75,9 @@ export const AppNavigator = () => {
           <Stack.Screen name="StudentManagement" component={StudentManagementScreen} options={{ title: 'Student Management' }} />
           <Stack.Screen name="AddStudent" component={AddStudentScreen} options={{ title: 'Add Student' }} />
           <Stack.Screen name="Students" component={StudentsScreen} options={{ title: 'Students' }} />
+          <Stack.Screen name="PromoteStudents" component={PromoteStudentsScreen} options={{ title: 'Promote Students' }} />
+          <Stack.Screen name="PromotionHistory" component={PromotionHistoryScreen} options={{ title: 'Promotion History' }} />
+          <Stack.Screen name="PromotionBatchDetails" component={PromotionBatchDetailsScreen} options={{ title: 'Promotion Batch Details' }} />
           <Stack.Screen name="AddSubjects" component={AddSubjectsScreen} options={{ title: 'Add Subjects' }} />
           <Stack.Screen name="AddNewSubjects" component={AddNewSubjectsScreen} options={{ title: 'Add New Subjects' }} />
           <Stack.Screen name="SubjectsCourses" component={SubjectsCoursesScreen} options={{ title: 'Courses' }} />

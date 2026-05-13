@@ -9,19 +9,34 @@ import com.exam.attendance.dto.admin.ImportStudentsResponse;
 import com.exam.attendance.dto.admin.ImportTeachersResponse;
 import com.exam.attendance.dto.admin.StudentResponse;
 import com.exam.attendance.dto.admin.CreateSubjectRequest;
+import com.exam.attendance.dto.admin.PromotionClassContext;
 import com.exam.attendance.dto.admin.SubjectResponse;
+import com.exam.attendance.dto.admin.StudentPromotionBatchDetailResponse;
+import com.exam.attendance.dto.admin.StudentPromotionBatchSummaryResponse;
+import com.exam.attendance.dto.admin.StudentPromotionCandidateResponse;
+import com.exam.attendance.dto.admin.StudentPromotionExecuteRequest;
+import com.exam.attendance.dto.admin.StudentPromotionItemResponse;
+import com.exam.attendance.dto.admin.StudentPromotionPreviewRequest;
+import com.exam.attendance.dto.admin.StudentPromotionPreviewResponse;
+import com.exam.attendance.dto.admin.StudentPromotionRollbackResponse;
 import com.exam.attendance.dto.admin.TeacherResponse;
 import com.exam.attendance.dto.admin.UpdateSubjectRequest;
 import com.exam.attendance.entity.AttendanceRecord;
 import com.exam.attendance.entity.AttendanceSession;
+import com.exam.attendance.entity.PromotionBatchStatus;
+import com.exam.attendance.entity.PromotionItemStatus;
 import com.exam.attendance.entity.Role;
 import com.exam.attendance.entity.Student;
+import com.exam.attendance.entity.StudentPromotionBatch;
+import com.exam.attendance.entity.StudentPromotionItem;
 import com.exam.attendance.entity.SubjectMaster;
 import com.exam.attendance.entity.Teacher;
 import com.exam.attendance.entity.User;
 import com.exam.attendance.exception.ApiException;
 import com.exam.attendance.repository.AttendanceRecordRepository;
 import com.exam.attendance.repository.StudentRepository;
+import com.exam.attendance.repository.StudentPromotionBatchRepository;
+import com.exam.attendance.repository.StudentPromotionItemRepository;
 import com.exam.attendance.repository.SubjectMasterRepository;
 import com.exam.attendance.repository.TeacherRepository;
 import com.exam.attendance.repository.UserRepository;
@@ -46,14 +61,18 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -66,9 +85,12 @@ public class AdminService {
     private final PasswordEncoder passwordEncoder;
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final StudentRepository studentRepository;
+    private final StudentPromotionBatchRepository studentPromotionBatchRepository;
+    private final StudentPromotionItemRepository studentPromotionItemRepository;
     private final SubjectMasterRepository subjectMasterRepository;
     private final PdfService pdfService;
     private static final Map<String, String> BRANCH_ALIAS_MAP = buildBranchAliasMap();
+    private static final Map<String, String> YEAR_ALIAS_MAP = buildYearAliasMap();
     private static final Map<String, String> SEMESTER_ALIAS_MAP = buildSemesterAliasMap();
 
     private record ParsedSubjectRow(int rowNumber, String name, String subjectCode, String branch, String semester) {
@@ -459,6 +481,178 @@ public class AdminService {
         studentRepository.delete(student);
     }
 
+    public StudentPromotionPreviewResponse previewStudentPromotion(StudentPromotionPreviewRequest request) {
+        if (request == null || request.getFrom() == null) {
+            throw new ApiException("Source class details are required");
+        }
+        PromotionClassContext from = request.getFrom();
+        PromotionClassContext normalizedFrom = normalizeContext(from);
+        List<Student> candidates = findStudentsByClassContext(normalizedFrom).stream()
+                .sorted(Comparator.comparing(Student::getEnrollmentNumber))
+                .toList();
+
+        return StudentPromotionPreviewResponse.builder()
+                .from(toContextDto(normalizedFrom))
+                .candidateCount(candidates.size())
+                .candidates(candidates.stream().map(this::toPromotionCandidate).toList())
+                .build();
+    }
+
+    @Transactional
+    public StudentPromotionBatchDetailResponse executeStudentPromotion(StudentPromotionExecuteRequest request, String operator) {
+        if (request == null || request.getFrom() == null || request.getTo() == null) {
+            throw new ApiException("Source and target class details are required");
+        }
+        PromotionClassContext from = normalizeContext(request.getFrom());
+        PromotionClassContext to = normalizeContext(request.getTo());
+        validatePromotionTransition(from, to);
+
+        Set<Long> selectedIds = new HashSet<>(request.getStudentIds() == null ? List.of() : request.getStudentIds());
+        if (selectedIds.isEmpty()) {
+            throw new ApiException("Select at least one student for promotion");
+        }
+
+        List<Student> cohort = findStudentsByClassContext(from);
+        Map<Long, Student> cohortMap = new HashMap<>();
+        for (Student student : cohort) {
+            cohortMap.put(student.getId(), student);
+        }
+
+        for (Long studentId : selectedIds) {
+            if (!cohortMap.containsKey(studentId)) {
+                throw new ApiException("Student " + studentId + " is not part of selected source class");
+            }
+        }
+
+        StudentPromotionBatch batch = StudentPromotionBatch.builder()
+                .fromYear(from.getYear())
+                .fromSemester(from.getSemester())
+                .fromBranch(from.getBranch())
+                .fromSection(from.getSection())
+                .toYear(to.getYear())
+                .toSemester(to.getSemester())
+                .toBranch(to.getBranch())
+                .toSection(to.getSection())
+                .promotedBy(StringUtils.hasText(operator) ? operator.trim() : "system")
+                .promotedAt(Instant.now())
+                .status(PromotionBatchStatus.COMPLETED)
+                .build();
+        batch = studentPromotionBatchRepository.save(batch);
+
+        List<StudentPromotionItem> items = new ArrayList<>();
+        int promoted = 0;
+        int skipped = 0;
+        int failed = 0;
+        for (Long studentId : selectedIds) {
+            Student student = cohortMap.get(studentId);
+            StudentPromotionItem.StudentPromotionItemBuilder itemBuilder = StudentPromotionItem.builder()
+                    .batch(batch)
+                    .student(student)
+                    .fromYear(safeValue(student.getYear()))
+                    .fromSemester(safeValue(student.getSemester()))
+                    .fromBranch(safeValue(student.getDepartment()))
+                    .fromSection(safeValue(student.getSection()))
+                    .toYear(to.getYear())
+                    .toSemester(to.getSemester())
+                    .toBranch(to.getBranch())
+                    .toSection(to.getSection());
+
+            try {
+                if (isStudentInContext(student, to)) {
+                    skipped++;
+                    items.add(itemBuilder.status(PromotionItemStatus.SKIPPED).reason("Student already in target class").build());
+                    continue;
+                }
+                student.setYear(to.getYear());
+                student.setSemester(to.getSemester());
+                student.setDepartment(to.getBranch());
+                student.setSection(to.getSection());
+                studentRepository.save(student);
+                promoted++;
+                items.add(itemBuilder.status(PromotionItemStatus.PROMOTED).reason(null).build());
+            } catch (Exception ex) {
+                failed++;
+                items.add(itemBuilder.status(PromotionItemStatus.FAILED).reason("Failed to update student").build());
+            }
+        }
+
+        studentPromotionItemRepository.saveAll(items);
+        batch.setStatus(failed > 0 || skipped > 0 ? PromotionBatchStatus.PARTIAL : PromotionBatchStatus.COMPLETED);
+        batch = studentPromotionBatchRepository.save(batch);
+        return buildBatchDetailResponse(batch, items);
+    }
+
+    public List<StudentPromotionBatchSummaryResponse> listStudentPromotionBatches() {
+        return studentPromotionBatchRepository.findAll().stream()
+                .sorted(Comparator.comparing(StudentPromotionBatch::getPromotedAt).reversed())
+                .map(this::buildBatchSummaryResponse)
+                .toList();
+    }
+
+    public StudentPromotionBatchDetailResponse getStudentPromotionBatch(Long batchId) {
+        StudentPromotionBatch batch = studentPromotionBatchRepository.findById(batchId)
+                .orElseThrow(() -> new ApiException("Promotion batch not found"));
+        List<StudentPromotionItem> items = studentPromotionItemRepository.findByBatch_IdOrderByIdAsc(batchId);
+        return buildBatchDetailResponse(batch, items);
+    }
+
+    @Transactional
+    public StudentPromotionRollbackResponse rollbackStudentPromotion(Long batchId) {
+        StudentPromotionBatch batch = studentPromotionBatchRepository.findById(batchId)
+                .orElseThrow(() -> new ApiException("Promotion batch not found"));
+        List<StudentPromotionItem> items = studentPromotionItemRepository.findByBatch_IdOrderByIdAsc(batchId);
+
+        int attempted = 0;
+        int rolledBack = 0;
+        List<String> errors = new ArrayList<>();
+
+        for (StudentPromotionItem item : items) {
+            if (item.getStatus() != PromotionItemStatus.PROMOTED) {
+                continue;
+            }
+            attempted++;
+
+            Student student = studentRepository.findById(item.getStudent().getId())
+                    .orElse(null);
+            if (student == null) {
+                item.setStatus(PromotionItemStatus.ROLLBACK_FAILED);
+                item.setReason("Student not found");
+                errors.add("Student " + item.getStudent().getId() + ": Student not found");
+                continue;
+            }
+
+            PromotionClassContext expectedTarget = PromotionClassContextBuilder(item.getToYear(), item.getToSemester(), item.getToBranch(), item.getToSection());
+            if (!isStudentInContext(student, expectedTarget)) {
+                item.setStatus(PromotionItemStatus.ROLLBACK_FAILED);
+                item.setReason("Student moved after promotion");
+                errors.add("Student " + student.getId() + ": Student moved after promotion");
+                continue;
+            }
+
+            student.setYear(item.getFromYear());
+            student.setSemester(item.getFromSemester());
+            student.setDepartment(item.getFromBranch());
+            student.setSection(item.getFromSection());
+            studentRepository.save(student);
+            item.setStatus(PromotionItemStatus.ROLLED_BACK);
+            item.setReason(null);
+            rolledBack++;
+        }
+
+        studentPromotionItemRepository.saveAll(items);
+        batch.setStatus(errors.isEmpty() ? PromotionBatchStatus.ROLLED_BACK : PromotionBatchStatus.ROLLBACK_PARTIAL);
+        studentPromotionBatchRepository.save(batch);
+
+        return StudentPromotionRollbackResponse.builder()
+                .batchId(batchId)
+                .attempted(attempted)
+                .rolledBack(rolledBack)
+                .failed(errors.size())
+                .errors(errors)
+                .status(batch.getStatus().name())
+                .build();
+    }
+
     @Transactional
     public void removeTeacher(Long teacherId) {
         Teacher teacher = teacherRepository.findById(teacherId)
@@ -516,14 +710,20 @@ public class AdminService {
     }
 
     private AdminAttendanceResponse mapAdminAttendance(AttendanceRecord r) {
+        AttendanceSession session = r.getSession();
+        Student student = r.getStudent();
         return AdminAttendanceResponse.builder()
-                .teacherName(r.getSession().getTeacher().getName())
-                .teacherCode(r.getSession().getTeacher().getTeacherCode())
-                .subject(resolveSessionSubject(r.getSession()))
-                .scholarNumber(r.getStudent().getScholarNumber())
-                .enrollmentNumber(r.getStudent().getEnrollmentNumber())
-                .studentName(r.getStudent().getName())
-                .date(r.getSession().getSessionDate())
+                .teacherName(session.getTeacher().getName())
+                .teacherCode(session.getTeacher().getTeacherCode())
+                .subject(resolveSessionSubject(session))
+                .scholarNumber(student.getScholarNumber())
+                .enrollmentNumber(student.getEnrollmentNumber())
+                .studentName(student.getName())
+                .examYear(StringUtils.hasText(session.getExamYear()) ? session.getExamYear() : student.getYear())
+                .examSemester(StringUtils.hasText(session.getExamSemester()) ? session.getExamSemester() : student.getSemester())
+                .examBranch(StringUtils.hasText(session.getExamBranch()) ? session.getExamBranch() : student.getDepartment())
+                .examSection(StringUtils.hasText(session.getExamSection()) ? session.getExamSection() : student.getSection())
+                .date(session.getSessionDate())
                 .scannedAt(r.getScannedAt())
                 .build();
     }
@@ -981,6 +1181,15 @@ public class AdminService {
         return aliases;
     }
 
+    private static Map<String, String> buildYearAliasMap() {
+        Map<String, String> aliases = new LinkedHashMap<>();
+        addSemesterAlias(aliases, "1", "1", "1st", "first", "y1", "year1");
+        addSemesterAlias(aliases, "2", "2", "2nd", "second", "y2", "year2");
+        addSemesterAlias(aliases, "3", "3", "3rd", "third", "y3", "year3");
+        addSemesterAlias(aliases, "4", "4", "4th", "fourth", "y4", "year4");
+        return aliases;
+    }
+
     private static void addBranchAlias(Map<String, String> aliases, String canonical, String... options) {
         for (String option : options) {
             aliases.put(normalizeAliasKey(option), canonical);
@@ -1042,5 +1251,174 @@ public class AdminService {
                 && !StringUtils.hasText(request.getTeacherCode())
                 && !StringUtils.hasText(request.getName())
                 && !StringUtils.hasText(request.getSubject());
+    }
+
+    private PromotionClassContext normalizeContext(PromotionClassContext context) {
+        PromotionClassContext normalized = new PromotionClassContext();
+        normalized.setYear(normalizeYearAlias(context.getYear()));
+        normalized.setSemester(normalizeSemesterAlias(context.getSemester()));
+        normalized.setBranch(normalizeBranchAlias(context.getBranch()));
+        normalized.setSection(normalizeSection(context.getSection()));
+        return normalized;
+    }
+
+    private String normalizeYearAlias(String value) {
+        String key = normalizeAliasKey(value);
+        String normalized = YEAR_ALIAS_MAP.get(key);
+        if (!StringUtils.hasText(normalized)) {
+            throw new ApiException("Unknown year alias: " + value);
+        }
+        return normalized;
+    }
+
+    private String normalizeSection(String value) {
+        if (!StringUtils.hasText(value)) {
+            throw new ApiException("Section is required");
+        }
+        return value.trim();
+    }
+
+    private List<Student> findStudentsByClassContext(PromotionClassContext context) {
+        return studentRepository.findByClassContext(
+                context.getYear(),
+                context.getSemester(),
+                context.getBranch(),
+                context.getSection()
+        );
+    }
+
+    private boolean isStudentInContext(Student student, PromotionClassContext context) {
+        try {
+            if (!StringUtils.hasText(student.getYear())
+                    || !StringUtils.hasText(student.getSemester())
+                    || !StringUtils.hasText(student.getDepartment())
+                    || !StringUtils.hasText(student.getSection())) {
+                return false;
+            }
+
+            String studentYear = normalizeYearAlias(student.getYear());
+            String studentSemester = normalizeSemesterAlias(student.getSemester());
+            String studentBranch = normalizeBranchAlias(student.getDepartment());
+            String studentSection = normalizeSection(student.getSection());
+
+            return studentYear.equals(context.getYear())
+                    && studentSemester.equals(context.getSemester())
+                    && studentBranch.equals(context.getBranch())
+                    && studentSection.equals(context.getSection());
+        } catch (ApiException ex) {
+            return false;
+        }
+    }
+
+    private void validatePromotionTransition(PromotionClassContext from, PromotionClassContext to) {
+        int fromSemester = Integer.parseInt(from.getSemester());
+        int toSemester = Integer.parseInt(to.getSemester());
+        int fromYear = Integer.parseInt(from.getYear());
+        int toYear = Integer.parseInt(to.getYear());
+
+        if (toSemester != fromSemester + 1) {
+            throw new ApiException("Invalid transition. Target semester must be immediate next semester.");
+        }
+        int expectedTargetYear = (toSemester + 1) / 2;
+        if (toYear != expectedTargetYear) {
+            throw new ApiException("Invalid target year for selected target semester.");
+        }
+        int expectedFromYear = (fromSemester + 1) / 2;
+        if (fromYear != expectedFromYear) {
+            throw new ApiException("Invalid source year for selected source semester.");
+        }
+    }
+
+    private StudentPromotionCandidateResponse toPromotionCandidate(Student student) {
+        return StudentPromotionCandidateResponse.builder()
+                .id(student.getId())
+                .name(student.getName())
+                .scholarNumber(student.getScholarNumber())
+                .enrollmentNumber(student.getEnrollmentNumber())
+                .year(student.getYear())
+                .semester(student.getSemester())
+                .branch(student.getDepartment())
+                .section(student.getSection())
+                .build();
+    }
+
+    private PromotionClassContext toContextDto(PromotionClassContext source) {
+        PromotionClassContext ctx = new PromotionClassContext();
+        ctx.setYear(source.getYear());
+        ctx.setSemester(source.getSemester());
+        ctx.setBranch(source.getBranch());
+        ctx.setSection(source.getSection());
+        return ctx;
+    }
+
+    private StudentPromotionBatchSummaryResponse buildBatchSummaryResponse(StudentPromotionBatch batch) {
+        Long batchId = batch.getId();
+        int promotedCount = (int) studentPromotionItemRepository.countByBatch_IdAndStatus(batchId, PromotionItemStatus.PROMOTED);
+        int skippedCount = (int) studentPromotionItemRepository.countByBatch_IdAndStatus(batchId, PromotionItemStatus.SKIPPED);
+        int failedCount = (int) studentPromotionItemRepository.countByBatch_IdAndStatus(batchId, PromotionItemStatus.FAILED);
+        int rolledBackCount = (int) studentPromotionItemRepository.countByBatch_IdAndStatus(batchId, PromotionItemStatus.ROLLED_BACK);
+        int rollbackFailedCount = (int) studentPromotionItemRepository.countByBatch_IdAndStatus(batchId, PromotionItemStatus.ROLLBACK_FAILED);
+
+        return StudentPromotionBatchSummaryResponse.builder()
+                .id(batchId)
+                .fromYear(batch.getFromYear())
+                .fromSemester(batch.getFromSemester())
+                .fromBranch(batch.getFromBranch())
+                .fromSection(batch.getFromSection())
+                .toYear(batch.getToYear())
+                .toSemester(batch.getToSemester())
+                .toBranch(batch.getToBranch())
+                .toSection(batch.getToSection())
+                .promotedBy(batch.getPromotedBy())
+                .promotedAt(batch.getPromotedAt())
+                .status(batch.getStatus().name())
+                .totalItems(promotedCount + skippedCount + failedCount + rolledBackCount + rollbackFailedCount)
+                .promotedCount(promotedCount)
+                .skippedCount(skippedCount)
+                .failedCount(failedCount)
+                .rolledBackCount(rolledBackCount)
+                .rollbackFailedCount(rollbackFailedCount)
+                .build();
+    }
+
+    private StudentPromotionBatchDetailResponse buildBatchDetailResponse(StudentPromotionBatch batch, List<StudentPromotionItem> items) {
+        return StudentPromotionBatchDetailResponse.builder()
+                .batch(buildBatchSummaryResponse(batch))
+                .items(items.stream().map(this::toPromotionItemResponse).toList())
+                .build();
+    }
+
+    private StudentPromotionItemResponse toPromotionItemResponse(StudentPromotionItem item) {
+        Student student = item.getStudent();
+        return StudentPromotionItemResponse.builder()
+                .id(item.getId())
+                .studentId(student != null ? student.getId() : null)
+                .studentName(student != null ? student.getName() : "")
+                .scholarNumber(student != null ? student.getScholarNumber() : "")
+                .enrollmentNumber(student != null ? student.getEnrollmentNumber() : "")
+                .fromYear(item.getFromYear())
+                .fromSemester(item.getFromSemester())
+                .fromBranch(item.getFromBranch())
+                .fromSection(item.getFromSection())
+                .toYear(item.getToYear())
+                .toSemester(item.getToSemester())
+                .toBranch(item.getToBranch())
+                .toSection(item.getToSection())
+                .status(item.getStatus().name())
+                .reason(item.getReason())
+                .build();
+    }
+
+    private PromotionClassContext PromotionClassContextBuilder(String year, String semester, String branch, String section) {
+        PromotionClassContext context = new PromotionClassContext();
+        context.setYear(normalizeYearAlias(year));
+        context.setSemester(normalizeSemesterAlias(semester));
+        context.setBranch(normalizeBranchAlias(branch));
+        context.setSection(normalizeSection(section));
+        return context;
+    }
+
+    private String safeValue(String value) {
+        return value == null ? "" : value.trim();
     }
 }

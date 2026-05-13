@@ -8,7 +8,10 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "attendance_sessions",
-       uniqueConstraints = @UniqueConstraint(name = "uk_session_teacher_date_subject", columnNames = {"teacher_id", "session_date", "exam_subject"}))
+       uniqueConstraints = @UniqueConstraint(
+               name = "uk_session_teacher_date_subject_class",
+               columnNames = {"teacher_id", "session_date", "exam_subject", "exam_year", "exam_semester", "exam_branch", "exam_section"}
+       ))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -29,6 +32,18 @@ public class AttendanceSession {
 
     @Column(name = "exam_subject")
     private String examSubject;
+
+    @Column(name = "exam_year")
+    private String examYear;
+
+    @Column(name = "exam_semester")
+    private String examSemester;
+
+    @Column(name = "exam_branch")
+    private String examBranch;
+
+    @Column(name = "exam_section")
+    private String examSection;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;

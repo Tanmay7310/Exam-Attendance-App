@@ -36,6 +36,8 @@ public class TeacherService {
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final PdfService pdfService;
 
+    private record NormalizedExamContext(String year, String semester, String branch, String section) {}
+
     public TeacherProfileResponse getProfile(String username) {
         Teacher teacher = getTeacherByUsername(username);
         return TeacherProfileResponse.builder()
@@ -57,16 +59,16 @@ public class TeacherService {
         try {
             Teacher teacher = getTeacherByUsername(username);
             String normalizedScholarNumber = scholarNumber.trim();
+            NormalizedExamContext examContext = validateExamDetailsInputs(examYear, examSemester, examBranch, examSection);
             LocalDate today = LocalDate.now();
-            AttendanceSession session = findOrCreateSession(teacher, today, examSubject);
-            validateExamDetailsInputs(examYear, examSemester, examBranch, examSection);
+            AttendanceSession session = findOrCreateSession(teacher, today, examSubject, examContext);
 
             Student student = (caseSensitive
                     ? studentRepository.findByScholarNumberCaseSensitive(normalizedScholarNumber)
                     : studentRepository.findByScholarNumber(normalizedScholarNumber))
                     .orElseThrow(() -> new ApiException("Student not found for scholar number: " + normalizedScholarNumber));
 
-            validateStudentExamEligibility(student, examYear, examSemester, examBranch, examSection);
+            validateStudentExamEligibility(student, examContext);
 
             if (attendanceRecordRepository.existsBySessionAndStudent(session, student)) {
                 return ScanAttendanceResponse.builder()
@@ -142,9 +144,15 @@ public class TeacherService {
                 .toList();
     }
 
-    public byte[] generatePdfReport(String username, LocalDate date, String subject) {
+    public byte[] generatePdfReport(String username,
+                                    LocalDate date,
+                                    String subject,
+                                    String examYear,
+                                    String examSemester,
+                                    String examBranch,
+                                    String examSection) {
         Teacher teacher = getTeacherByUsername(username);
-        AttendanceSession session = resolveSessionForReport(teacher, date, subject);
+        AttendanceSession session = resolveSessionForReport(teacher, date, subject, examYear, examSemester, examBranch, examSection);
         if (session == null) {
             String fallbackSubject = StringUtils.hasText(subject) ? subject.trim() : teacher.getSubject();
             return pdfService.generateAttendancePdf(teacher, date, fallbackSubject, List.of());
@@ -158,15 +166,51 @@ public class TeacherService {
         return pdfService.generateAttendancePdf(teacher, date, reportSubject, responses);
     }
 
-    private AttendanceSession resolveSessionForReport(Teacher teacher, LocalDate date, String subject) {
+    private AttendanceSession resolveSessionForReport(Teacher teacher,
+                                                      LocalDate date,
+                                                      String subject,
+                                                      String examYear,
+                                                      String examSemester,
+                                                      String examBranch,
+                                                      String examSection) {
         String normalizedSubject = normalizeSubject(subject);
-        if (!StringUtils.hasText(normalizedSubject)) {
-            return attendanceSessionRepository.findFirstByTeacherAndSessionDateOrderByCreatedAtAsc(teacher, date)
-                    .orElse(null);
+        String normalizedYear = normalizeYear(examYear);
+        String normalizedSemester = normalizeSemester(examSemester);
+        String normalizedBranch = normalizeBranch(examBranch);
+        String normalizedSection = normalizeSection(examSection);
+        boolean hasClassFilter = StringUtils.hasText(normalizedYear)
+                || StringUtils.hasText(normalizedSemester)
+                || StringUtils.hasText(normalizedBranch)
+                || StringUtils.hasText(normalizedSection);
+
+        List<AttendanceSession> sessions = attendanceSessionRepository.findByTeacherAndSessionDate(teacher, date).stream()
+                .filter(session -> !StringUtils.hasText(normalizedSubject)
+                        || normalizedSubject.equalsIgnoreCase(resolveSessionSubject(session)))
+                .filter(session -> {
+                    if (!hasClassFilter) {
+                        return true;
+                    }
+                    String sessionYear = normalizeYear(resolveSessionYear(session, null));
+                    String sessionSemester = normalizeSemester(resolveSessionSemester(session, null));
+                    String sessionBranch = normalizeBranch(resolveSessionBranch(session, null));
+                    String sessionSection = normalizeSection(resolveSessionSection(session, null));
+                    return (!StringUtils.hasText(normalizedYear) || normalizedYear.equals(sessionYear))
+                            && (!StringUtils.hasText(normalizedSemester) || normalizedSemester.equals(sessionSemester))
+                            && (!StringUtils.hasText(normalizedBranch) || normalizedBranch.equals(sessionBranch))
+                            && (!StringUtils.hasText(normalizedSection) || normalizedSection.equals(sessionSection));
+                })
+                .sorted(Comparator.comparing(AttendanceSession::getCreatedAt))
+                .toList();
+
+        if (sessions.isEmpty()) {
+            return null;
         }
 
-        return attendanceSessionRepository.findByTeacherAndSessionDateAndExamSubject(teacher, date, normalizedSubject)
-                .orElse(null);
+        if (!StringUtils.hasText(normalizedSubject)) {
+            return sessions.get(0);
+        }
+
+        return sessions.get(0);
     }
 
     public AttendanceRecordResponse searchStudent(String scholarNumber) {
@@ -234,11 +278,15 @@ public class TeacherService {
         }
     }
 
-    private AttendanceSession findOrCreateSession(Teacher teacher, LocalDate date, String examSubject) {
+    private AttendanceSession findOrCreateSession(Teacher teacher, LocalDate date, String examSubject, NormalizedExamContext context) {
         String normalizedSubject = normalizeSubject(examSubject);
         AttendanceSession existing = normalizedSubject == null
-                ? attendanceSessionRepository.findByTeacherAndSessionDateAndExamSubjectIsNull(teacher, date).orElse(null)
-                : attendanceSessionRepository.findByTeacherAndSessionDateAndExamSubject(teacher, date, normalizedSubject).orElse(null);
+                ? attendanceSessionRepository.findByTeacherAndSessionDateAndExamSubjectIsNullAndExamYearAndExamSemesterAndExamBranchAndExamSection(
+                        teacher, date, context.year(), context.semester(), context.branch(), context.section()
+                  ).orElse(null)
+                : attendanceSessionRepository.findByTeacherAndSessionDateAndExamSubjectAndExamYearAndExamSemesterAndExamBranchAndExamSection(
+                        teacher, date, normalizedSubject, context.year(), context.semester(), context.branch(), context.section()
+                  ).orElse(null);
         if (existing != null) {
             return existing;
         }
@@ -247,6 +295,10 @@ public class TeacherService {
             .teacher(teacher)
             .sessionDate(date)
             .examSubject(normalizedSubject)
+            .examYear(context.year())
+            .examSemester(context.semester())
+            .examBranch(context.branch())
+            .examSection(context.section())
             .createdAt(Instant.now())
             .build();
 
@@ -258,9 +310,13 @@ public class TeacherService {
             }
 
             return normalizedSubject == null
-                    ? attendanceSessionRepository.findByTeacherAndSessionDateAndExamSubjectIsNull(teacher, date)
+                    ? attendanceSessionRepository.findByTeacherAndSessionDateAndExamSubjectIsNullAndExamYearAndExamSemesterAndExamBranchAndExamSection(
+                            teacher, date, context.year(), context.semester(), context.branch(), context.section()
+                      )
                             .orElseThrow(() -> new ApiException("Unable to create attendance session"))
-                    : attendanceSessionRepository.findByTeacherAndSessionDateAndExamSubject(teacher, date, normalizedSubject)
+                    : attendanceSessionRepository.findByTeacherAndSessionDateAndExamSubjectAndExamYearAndExamSemesterAndExamBranchAndExamSection(
+                            teacher, date, normalizedSubject, context.year(), context.semester(), context.branch(), context.section()
+                      )
                             .orElseThrow(() -> new ApiException("Unable to create attendance session"));
         }
     }
@@ -272,6 +328,7 @@ public class TeacherService {
         }
         String normalized = message.toLowerCase();
         return normalized.contains("uk_session_teacher_date")
+                || normalized.contains("uk_session_teacher_date_subject_class")
                 || normalized.contains("teacher_id")
                 && normalized.contains("session_date")
                 && normalized.contains("duplicate");
@@ -290,6 +347,10 @@ public class TeacherService {
                 .scannedAt(record.getScannedAt())
                 .date(session.getSessionDate())
                 .subject(resolveSessionSubject(session))
+                .examYear(resolveSessionYear(session, record.getStudent()))
+                .examSemester(resolveSessionSemester(session, record.getStudent()))
+                .examBranch(resolveSessionBranch(session, record.getStudent()))
+                .examSection(resolveSessionSection(session, record.getStudent()))
                 .build();
     }
 
@@ -300,11 +361,7 @@ public class TeacherService {
         return session.getTeacher().getSubject();
     }
 
-    private void validateStudentExamEligibility(Student student,
-                                                String examYear,
-                                                String examSemester,
-                                                String examBranch,
-                                                String examSection) {
+    private void validateStudentExamEligibility(Student student, NormalizedExamContext examContext) {
         if (!StringUtils.hasText(student.getYear())
                 || !StringUtils.hasText(student.getSemester())
                 || !StringUtils.hasText(student.getDepartment())
@@ -317,15 +374,10 @@ public class TeacherService {
         String expectedBranch = normalizeBranch(student.getDepartment());
         String expectedSection = normalizeSection(student.getSection());
 
-        String actualYear = normalizeYear(examYear);
-        String actualSemester = normalizeSemester(examSemester);
-        String actualBranch = normalizeBranch(examBranch);
-        String actualSection = normalizeSection(examSection);
-
-        if (!expectedYear.equals(actualYear)
-                || !expectedSemester.equals(actualSemester)
-                || !expectedBranch.equals(actualBranch)
-                || !expectedSection.equals(actualSection)) {
+        if (!expectedYear.equals(examContext.year())
+                || !expectedSemester.equals(examContext.semester())
+                || !expectedBranch.equals(examContext.branch())
+                || !expectedSection.equals(examContext.section())) {
             throw new ApiException(
                     "Scan blocked: student belongs to Year " + student.getYear().trim()
                             + ", Semester " + student.getSemester().trim()
@@ -336,10 +388,10 @@ public class TeacherService {
         }
     }
 
-    private void validateExamDetailsInputs(String examYear,
-                                           String examSemester,
-                                           String examBranch,
-                                           String examSection) {
+    private NormalizedExamContext validateExamDetailsInputs(String examYear,
+                                                            String examSemester,
+                                                            String examBranch,
+                                                            String examSection) {
         String actualYear = normalizeYear(examYear);
         String actualSemester = normalizeSemester(examSemester);
         String actualBranch = normalizeBranch(examBranch);
@@ -351,6 +403,36 @@ public class TeacherService {
                 || !StringUtils.hasText(actualSection)) {
             throw new ApiException("Exam details are incomplete. Please re-enter Year, Semester, Branch and Section.");
         }
+
+        return new NormalizedExamContext(actualYear, actualSemester, actualBranch, actualSection);
+    }
+
+    private String resolveSessionYear(AttendanceSession session, Student fallbackStudent) {
+        if (StringUtils.hasText(session.getExamYear())) {
+            return session.getExamYear();
+        }
+        return fallbackStudent != null ? fallbackStudent.getYear() : null;
+    }
+
+    private String resolveSessionSemester(AttendanceSession session, Student fallbackStudent) {
+        if (StringUtils.hasText(session.getExamSemester())) {
+            return session.getExamSemester();
+        }
+        return fallbackStudent != null ? fallbackStudent.getSemester() : null;
+    }
+
+    private String resolveSessionBranch(AttendanceSession session, Student fallbackStudent) {
+        if (StringUtils.hasText(session.getExamBranch())) {
+            return session.getExamBranch();
+        }
+        return fallbackStudent != null ? fallbackStudent.getDepartment() : null;
+    }
+
+    private String resolveSessionSection(AttendanceSession session, Student fallbackStudent) {
+        if (StringUtils.hasText(session.getExamSection())) {
+            return session.getExamSection();
+        }
+        return fallbackStudent != null ? fallbackStudent.getSection() : null;
     }
 
     private String normalizeBranch(String value) {

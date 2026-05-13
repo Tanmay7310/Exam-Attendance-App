@@ -8,6 +8,12 @@ import com.exam.attendance.dto.admin.DeleteSubjectsByBatchResponse;
 import com.exam.attendance.dto.admin.ImportStudentsResponse;
 import com.exam.attendance.dto.admin.ImportSubjectsResponse;
 import com.exam.attendance.dto.admin.ImportTeachersResponse;
+import com.exam.attendance.dto.admin.StudentPromotionBatchDetailResponse;
+import com.exam.attendance.dto.admin.StudentPromotionBatchSummaryResponse;
+import com.exam.attendance.dto.admin.StudentPromotionExecuteRequest;
+import com.exam.attendance.dto.admin.StudentPromotionPreviewRequest;
+import com.exam.attendance.dto.admin.StudentPromotionPreviewResponse;
+import com.exam.attendance.dto.admin.StudentPromotionRollbackResponse;
 import com.exam.attendance.dto.admin.StudentResponse;
 import com.exam.attendance.dto.admin.SubjectResponse;
 import com.exam.attendance.dto.admin.TeacherResponse;
@@ -114,6 +120,32 @@ public class AdminController {
     @GetMapping("/students")
     public List<StudentResponse> students() {
         return adminService.getStudents();
+    }
+
+    @PostMapping("/students/promotions/preview")
+    public StudentPromotionPreviewResponse previewPromotion(@Valid @RequestBody StudentPromotionPreviewRequest request) {
+        return adminService.previewStudentPromotion(request);
+    }
+
+    @PostMapping("/students/promotions/execute")
+    public StudentPromotionBatchDetailResponse executePromotion(@Valid @RequestBody StudentPromotionExecuteRequest request,
+                                                                Authentication authentication) {
+        return adminService.executeStudentPromotion(request, authentication != null ? authentication.getName() : "system");
+    }
+
+    @GetMapping("/students/promotions")
+    public List<StudentPromotionBatchSummaryResponse> listPromotions() {
+        return adminService.listStudentPromotionBatches();
+    }
+
+    @GetMapping("/students/promotions/{batchId}")
+    public StudentPromotionBatchDetailResponse promotionBatch(@PathVariable Long batchId) {
+        return adminService.getStudentPromotionBatch(batchId);
+    }
+
+    @PostMapping("/students/promotions/{batchId}/rollback")
+    public StudentPromotionRollbackResponse rollbackPromotion(@PathVariable Long batchId) {
+        return adminService.rollbackStudentPromotion(batchId);
     }
 
     @PostMapping(value = "/students/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
