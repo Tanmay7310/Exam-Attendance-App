@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Button, Checkbox, Surface, Text } from 'react-native-paper';
 import { api } from '../../api/client';
@@ -164,10 +164,10 @@ export const PromoteStudentsScreen = ({ navigation }: any) => {
     }
   };
 
-  const renderCandidate = ({ item }: { item: StudentPromotionCandidate }) => {
+  const renderCandidate = (item: StudentPromotionCandidate) => {
     const checked = selectedIds.includes(item.id);
     return (
-      <Surface style={styles.card} elevation={1}>
+      <Surface key={item.id} style={styles.card} elevation={1}>
         <View style={styles.rowBetween}>
           <View style={styles.rowContent}>
             <Text style={styles.name}>{item.name}</Text>
@@ -184,7 +184,7 @@ export const PromoteStudentsScreen = ({ navigation }: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.contentContainer} style={styles.container} showsVerticalScrollIndicator={false}>
       <Text style={styles.heading}>Promote Students</Text>
 
       <Text style={styles.label}>Current Class</Text>
@@ -280,21 +280,22 @@ export const PromoteStudentsScreen = ({ navigation }: any) => {
             Execute Promotion
           </Button>
 
-          <FlatList
-            data={preview.candidates}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={renderCandidate}
-            style={styles.list}
-            ListEmptyComponent={<Text style={styles.empty}>No students found for selected class.</Text>}
-          />
+          <View style={styles.list}>
+            {preview.candidates.length === 0 ? (
+              <Text style={styles.empty}>No students found for selected class.</Text>
+            ) : (
+              preview.candidates.map(renderCandidate)
+            )}
+          </View>
         </>
       ) : null}
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 12, backgroundColor: colors.bg },
+  contentContainer: { paddingBottom: 24 },
   heading: { fontSize: 22, fontWeight: '800', color: colors.text, marginBottom: 8 },
   label: { color: colors.text, fontWeight: '700', marginTop: 8, marginBottom: 6 },
   pickerWrap: {
