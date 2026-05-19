@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class AttendanceRecordResponse {
+    private Long sessionId;
     private String scholarNumber;
     private String enrollmentNumber;
     private String studentName;

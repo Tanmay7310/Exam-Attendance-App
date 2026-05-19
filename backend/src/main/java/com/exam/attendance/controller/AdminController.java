@@ -18,6 +18,7 @@ import com.exam.attendance.dto.admin.StudentResponse;
 import com.exam.attendance.dto.admin.SubjectResponse;
 import com.exam.attendance.dto.admin.TeacherResponse;
 import com.exam.attendance.dto.admin.UpdateSubjectRequest;
+import com.exam.attendance.dto.attendance.SessionAttendanceDetailsResponse;
 import com.exam.attendance.dto.teacher.ScanAttendanceRequest;
 import com.exam.attendance.dto.teacher.ScanAttendanceResponse;
 import com.exam.attendance.service.AdminService;
@@ -169,6 +170,11 @@ public class AdminController {
             @RequestParam(required = false) String teacherId,
             @RequestParam(required = false) String subject) {
         return adminService.getAttendance(date, teacherId, subject);
+    }
+
+    @GetMapping("/attendance/sessions/{sessionId}")
+    public SessionAttendanceDetailsResponse attendanceSessionDetails(@PathVariable Long sessionId) {
+        return adminService.getAttendanceSessionDetails(sessionId);
     }
 
     @GetMapping("/attendance/report/pdf")

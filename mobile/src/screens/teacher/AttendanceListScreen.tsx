@@ -30,7 +30,7 @@ export const AttendanceListScreen = ({ navigation }: any) => {
   }, [fetchRecords, showToast]);
 
   const sessions = useMemo(() => {
-    const grouped = new Map<string, { title: string; date: string; subject: string; data: AttendanceRecord[] }>();
+    const grouped = new Map<string, { sessionId?: number; title: string; date: string; subject: string; data: AttendanceRecord[] }>();
 
     records.forEach((record) => {
       const date = record.date ?? new Date(record.scannedAt).toISOString().slice(0, 10);
@@ -40,11 +40,13 @@ export const AttendanceListScreen = ({ navigation }: any) => {
       const examBranch = record.examBranch?.trim() || 'N/A';
       const examSection = record.examSection?.trim() || 'N/A';
       const context = `Y${examYear} S${examSemester} | ${examBranch} | Sec ${examSection}`;
-      const key = `${date}::${subject}::${examYear}::${examSemester}::${examBranch}::${examSection}`;
+      const key = record.sessionId != null
+        ? `session:${record.sessionId}`
+        : `${date}::${subject}::${examYear}::${examSemester}::${examBranch}::${examSection}`;
       const title = `Date: ${date} | Subject: ${subject} | ${context}`;
 
       if (!grouped.has(key)) {
-        grouped.set(key, { title, date, subject, data: [] });
+        grouped.set(key, { sessionId: record.sessionId, title, date, subject, data: [] });
       }
       grouped.get(key)?.data.push(record);
     });
@@ -57,6 +59,7 @@ export const AttendanceListScreen = ({ navigation }: any) => {
         return a.subject.localeCompare(b.subject);
       })
       .map((group) => ({
+        sessionId: group.sessionId,
         title: `Date: ${formatDateToDdMmYyyy(group.date)} | Subject: ${group.subject}`,
         date: group.date,
         displayDate: formatDateToDdMmYyyy(group.date),
@@ -98,7 +101,7 @@ export const AttendanceListScreen = ({ navigation }: any) => {
 
       <FlatList
         data={filteredSessions}
-        keyExtractor={(item) => `${item.date}::${item.subject}`}
+        keyExtractor={(item, index) => item.sessionId != null ? `session:${item.sessionId}` : `${item.date}::${item.subject}::${index}`}
         ListEmptyComponent={<Text style={styles.empty}>No attendance entries found.</Text>}
         renderItem={({ item }) => (
           <Surface style={styles.sectionHeader} elevation={1}>
@@ -107,6 +110,7 @@ export const AttendanceListScreen = ({ navigation }: any) => {
               onPress={() =>
                 navigation.navigate('AttendanceSessionDetails', {
                   title: item.title,
+                  sessionId: item.sessionId,
                   date: item.date,
                   subject: item.subject,
                   examYear: item.records[0]?.examYear ?? '',

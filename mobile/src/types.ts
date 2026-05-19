@@ -10,6 +10,7 @@ export interface LoginResponse {
 }
 
 export interface AttendanceRecord {
+  sessionId?: number;
   scholarNumber: string;
   enrollmentNumber?: string;
   studentName: string;
@@ -48,6 +49,7 @@ export interface StudentItem {
 }
 
 export interface AdminAttendance {
+  sessionId?: number;
   teacherName: string;
   teacherCode: string;
   subject: string;
@@ -60,6 +62,31 @@ export interface AdminAttendance {
   examSection?: string;
   date: string;
   scannedAt: string;
+}
+
+export interface SessionAttendanceStudentRecord {
+  scholarNumber: string;
+  enrollmentNumber?: string;
+  studentName: string;
+  status: 'PRESENT' | 'ABSENT';
+  scannedAt?: string | null;
+  teacherName: string;
+  teacherCode: string;
+}
+
+export interface SessionAttendanceDetails {
+  sessionId: number;
+  date: string;
+  subject: string;
+  examYear?: string | null;
+  examSemester?: string | null;
+  examBranch?: string | null;
+  examSection?: string | null;
+  rosterResolved: boolean;
+  presentCount: number;
+  absentCount: number;
+  totalCount: number;
+  records: SessionAttendanceStudentRecord[];
 }
 
 export interface SubjectItem {

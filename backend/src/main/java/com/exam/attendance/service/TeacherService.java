@@ -1,6 +1,8 @@
 package com.exam.attendance.service;
 
 import com.exam.attendance.dto.admin.SubjectResponse;
+import com.exam.attendance.dto.attendance.SessionAttendanceDetailsResponse;
+import com.exam.attendance.dto.attendance.SessionAttendanceStudentRecordResponse;
 import com.exam.attendance.dto.teacher.AttendanceRecordResponse;
 import com.exam.attendance.dto.teacher.ScanAttendanceResponse;
 import com.exam.attendance.dto.teacher.TeacherProfileResponse;
@@ -15,10 +17,14 @@ import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -142,6 +148,18 @@ public class TeacherService {
                 )
                 .map(this::toAttendanceRecordResponse)
                 .toList();
+    }
+
+    public SessionAttendanceDetailsResponse getSessionAttendanceDetails(String username, Long sessionId) {
+        Teacher teacher = getTeacherByUsername(username);
+        AttendanceSession session = attendanceSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ApiException("Attendance session not found"));
+
+        if (!session.getTeacher().getId().equals(teacher.getId())) {
+            throw new ApiException("Attendance session not found");
+        }
+
+        return buildSessionAttendanceDetails(session);
     }
 
     public byte[] generatePdfReport(String username,
@@ -341,6 +359,7 @@ public class TeacherService {
     private AttendanceRecordResponse toAttendanceRecordResponse(AttendanceRecord record) {
         AttendanceSession session = record.getSession();
         return AttendanceRecordResponse.builder()
+                .sessionId(session.getId())
                 .scholarNumber(record.getStudent().getScholarNumber())
                 .enrollmentNumber(record.getStudent().getEnrollmentNumber())
                 .studentName(record.getStudent().getName())
@@ -351,6 +370,105 @@ public class TeacherService {
                 .examSemester(resolveSessionSemester(session, record.getStudent()))
                 .examBranch(resolveSessionBranch(session, record.getStudent()))
                 .examSection(resolveSessionSection(session, record.getStudent()))
+                .build();
+    }
+
+    private SessionAttendanceDetailsResponse buildSessionAttendanceDetails(AttendanceSession session) {
+        List<AttendanceRecord> presentRecords = attendanceRecordRepository.findBySessionOrderByStudent_ScholarNumberAsc(session);
+        Map<Long, AttendanceRecord> presentByStudentId = new HashMap<>();
+        for (AttendanceRecord record : presentRecords) {
+            presentByStudentId.put(record.getStudent().getId(), record);
+        }
+
+        boolean hasClassSnapshot = StringUtils.hasText(session.getExamYear())
+                && StringUtils.hasText(session.getExamSemester())
+                && StringUtils.hasText(session.getExamBranch())
+                && StringUtils.hasText(session.getExamSection());
+
+        List<SessionAttendanceStudentRecordResponse> rows = new ArrayList<>();
+
+        if (hasClassSnapshot) {
+            String sessionYear = normalizeYear(session.getExamYear());
+            String sessionSemester = normalizeSemester(session.getExamSemester());
+            String sessionBranch = normalizeBranch(session.getExamBranch());
+            String sessionSection = normalizeSection(session.getExamSection());
+
+            List<Student> eligibleStudents = studentRepository.findAll().stream()
+                    .filter(student -> StringUtils.hasText(student.getYear())
+                            && StringUtils.hasText(student.getSemester())
+                            && StringUtils.hasText(student.getDepartment())
+                            && StringUtils.hasText(student.getSection()))
+                    .filter(student -> normalizeYear(student.getYear()).equals(sessionYear)
+                            && normalizeSemester(student.getSemester()).equals(sessionSemester)
+                            && normalizeBranch(student.getDepartment()).equals(sessionBranch)
+                            && normalizeSection(student.getSection()).equals(sessionSection))
+                    .sorted(Comparator.comparing(student -> student.getScholarNumber().toLowerCase()))
+                    .toList();
+
+            for (Student student : eligibleStudents) {
+                AttendanceRecord presentRecord = presentByStudentId.get(student.getId());
+                rows.add(SessionAttendanceStudentRecordResponse.builder()
+                        .scholarNumber(student.getScholarNumber())
+                        .enrollmentNumber(student.getEnrollmentNumber())
+                        .studentName(student.getName())
+                        .status(presentRecord != null ? "PRESENT" : "ABSENT")
+                        .scannedAt(presentRecord != null ? presentRecord.getScannedAt() : null)
+                        .teacherName(session.getTeacher().getName())
+                        .teacherCode(session.getTeacher().getTeacherCode())
+                        .build());
+            }
+
+            Set<Long> eligibleStudentIds = new HashSet<>();
+            eligibleStudents.forEach(student -> eligibleStudentIds.add(student.getId()));
+            for (AttendanceRecord record : presentRecords) {
+                if (!eligibleStudentIds.contains(record.getStudent().getId())) {
+                    Student student = record.getStudent();
+                    rows.add(SessionAttendanceStudentRecordResponse.builder()
+                            .scholarNumber(student.getScholarNumber())
+                            .enrollmentNumber(student.getEnrollmentNumber())
+                            .studentName(student.getName())
+                            .status("PRESENT")
+                            .scannedAt(record.getScannedAt())
+                            .teacherName(session.getTeacher().getName())
+                            .teacherCode(session.getTeacher().getTeacherCode())
+                            .build());
+                }
+            }
+
+            rows = rows.stream()
+                    .sorted(Comparator.comparing(row -> row.getScholarNumber().toLowerCase()))
+                    .toList();
+        } else {
+            rows = presentRecords.stream()
+                    .map(record -> SessionAttendanceStudentRecordResponse.builder()
+                            .scholarNumber(record.getStudent().getScholarNumber())
+                            .enrollmentNumber(record.getStudent().getEnrollmentNumber())
+                            .studentName(record.getStudent().getName())
+                            .status("PRESENT")
+                            .scannedAt(record.getScannedAt())
+                            .teacherName(session.getTeacher().getName())
+                            .teacherCode(session.getTeacher().getTeacherCode())
+                            .build())
+                    .toList();
+        }
+
+        int presentCount = (int) rows.stream().filter(row -> "PRESENT".equals(row.getStatus())).count();
+        int totalCount = rows.size();
+        int absentCount = Math.max(0, totalCount - presentCount);
+
+        return SessionAttendanceDetailsResponse.builder()
+                .sessionId(session.getId())
+                .date(session.getSessionDate())
+                .subject(resolveSessionSubject(session))
+                .examYear(resolveSessionYear(session, null))
+                .examSemester(resolveSessionSemester(session, null))
+                .examBranch(resolveSessionBranch(session, null))
+                .examSection(resolveSessionSection(session, null))
+                .rosterResolved(hasClassSnapshot)
+                .presentCount(presentCount)
+                .absentCount(absentCount)
+                .totalCount(totalCount)
+                .records(rows)
                 .build();
     }
 

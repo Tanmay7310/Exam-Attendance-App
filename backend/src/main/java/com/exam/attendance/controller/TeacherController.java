@@ -5,6 +5,7 @@ import com.exam.attendance.dto.teacher.ScanAttendanceRequest;
 import com.exam.attendance.dto.teacher.ScanAttendanceResponse;
 import com.exam.attendance.dto.teacher.TeacherProfileResponse;
 import com.exam.attendance.dto.admin.SubjectResponse;
+import com.exam.attendance.dto.attendance.SessionAttendanceDetailsResponse;
 import com.exam.attendance.service.TeacherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,12 @@ public class TeacherController {
     @GetMapping("/attendance/history")
     public List<AttendanceRecordResponse> attendanceHistory(Authentication authentication) {
         return teacherService.getAttendanceHistory(authentication.getName());
+    }
+
+    @GetMapping("/attendance/sessions/{sessionId}")
+    public SessionAttendanceDetailsResponse attendanceSessionDetails(@PathVariable Long sessionId,
+                                                                     Authentication authentication) {
+        return teacherService.getSessionAttendanceDetails(authentication.getName(), sessionId);
     }
 
     @GetMapping("/attendance/report/pdf")

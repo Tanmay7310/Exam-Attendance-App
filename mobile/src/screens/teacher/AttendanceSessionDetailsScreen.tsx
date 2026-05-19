@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
@@ -7,13 +7,14 @@ import { api } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { buttonStyles } from '../../styles/buttonStyles';
-import { AttendanceRecord } from '../../types';
+import { AttendanceRecord, SessionAttendanceDetails, SessionAttendanceStudentRecord } from '../../types';
 import { colors } from '../../styles/theme';
 
 export const AttendanceSessionDetailsScreen = ({ route }: any) => {
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
   const { showToast } = useToast();
   const title: string = route?.params?.title ?? 'Session Attendance';
+  const sessionId: number | undefined = route?.params?.sessionId;
   const date: string = route?.params?.date ?? '';
   const subject: string = route?.params?.subject ?? 'N/A';
   const examYear: string = route?.params?.examYear ?? '';
@@ -21,10 +22,56 @@ export const AttendanceSessionDetailsScreen = ({ route }: any) => {
   const examBranch: string = route?.params?.examBranch ?? '';
   const examSection: string = route?.params?.examSection ?? '';
   const records: AttendanceRecord[] = Array.isArray(route?.params?.records) ? route.params.records : [];
+  const [sessionDetails, setSessionDetails] = useState<SessionAttendanceDetails | null>(null);
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'PRESENT' | 'ABSENT'>('ALL');
 
-  const sortedRecords = useMemo(
-    () => [...records].sort((a, b) => a.scannedAt.localeCompare(b.scannedAt)),
-    [records]
+  const loadSessionDetails = useCallback(async () => {
+    if (!sessionId) return;
+    const endpoint = auth?.role === 'ADMIN'
+      ? `/api/admin/attendance/sessions/${sessionId}`
+      : `/api/teacher/attendance/sessions/${sessionId}`;
+    const { data } = await api.get<SessionAttendanceDetails>(endpoint);
+    setSessionDetails(data);
+  }, [auth?.role, sessionId]);
+
+  React.useEffect(() => {
+    loadSessionDetails().catch((e: any) => {
+      const status = e?.response?.status;
+      if (status === 401 || status === 403) {
+        showToast('Session expired. Please login again.', { type: 'error' });
+        logout().catch(() => undefined);
+        return;
+      }
+      showToast(e?.response?.data?.message ?? 'Unable to load session roster.', { type: 'error' });
+    });
+  }, [loadSessionDetails, logout, showToast]);
+
+  const resolvedRecords = useMemo<SessionAttendanceStudentRecord[]>(() => {
+    if (sessionDetails?.records?.length) {
+      return [...sessionDetails.records];
+    }
+    return [...records]
+      .sort((a, b) => a.scannedAt.localeCompare(b.scannedAt))
+      .map((record) => ({
+        scholarNumber: record.scholarNumber,
+        enrollmentNumber: record.enrollmentNumber,
+        studentName: record.studentName,
+        status: 'PRESENT',
+        scannedAt: record.scannedAt,
+        teacherName: '',
+        teacherCode: ''
+      }));
+  }, [sessionDetails, records]);
+
+  const presentCount = useMemo(
+    () => resolvedRecords.filter((row) => row.status === 'PRESENT').length,
+    [resolvedRecords]
+  );
+  const totalCount = resolvedRecords.length;
+  const absentCount = Math.max(0, totalCount - presentCount);
+  const filteredRecords = useMemo(
+    () => (statusFilter === 'ALL' ? resolvedRecords : resolvedRecords.filter((row) => row.status === statusFilter)),
+    [resolvedRecords, statusFilter]
   );
 
   const exportPdf = async () => {
@@ -81,22 +128,54 @@ export const AttendanceSessionDetailsScreen = ({ route }: any) => {
             Class: Y{examYear || 'N/A'} S{examSemester || 'N/A'} | {examBranch || 'N/A'} | Sec {examSection || 'N/A'}
           </Text>
         ) : null}
-        <Text style={styles.headerMeta}>Total: {sortedRecords.length}</Text>
+        <Text style={styles.headerMeta}>Present: {presentCount}</Text>
+        <Text style={styles.headerMeta}>Absent: {absentCount}</Text>
+        <Text style={styles.headerMeta}>Total: {totalCount}</Text>
+        {sessionDetails && !sessionDetails.rosterResolved ? (
+          <Text style={styles.headerInfo}>Absent list unavailable for this legacy session.</Text>
+        ) : null}
+        <View style={styles.filterRow}>
+          <Button
+            mode={statusFilter === 'ALL' ? 'contained' : 'outlined'}
+            compact
+            onPress={() => setStatusFilter('ALL')}
+            style={styles.filterBtn}
+          >
+            All
+          </Button>
+          <Button
+            mode={statusFilter === 'PRESENT' ? 'contained' : 'outlined'}
+            compact
+            onPress={() => setStatusFilter('PRESENT')}
+            style={styles.filterBtn}
+          >
+            Present
+          </Button>
+          <Button
+            mode={statusFilter === 'ABSENT' ? 'contained' : 'outlined'}
+            compact
+            onPress={() => setStatusFilter('ABSENT')}
+            style={styles.filterBtn}
+          >
+            Absent
+          </Button>
+        </View>
         <Button mode="contained" style={styles.exportButton} contentStyle={buttonStyles.content} onPress={exportPdf}>
           Export PDF
         </Button>
       </Surface>
 
       <FlatList
-        data={sortedRecords}
-        keyExtractor={(item, index) => `${item.scholarNumber}-${item.scannedAt}-${index}`}
+        data={filteredRecords}
+        keyExtractor={(item, index) => `${item.scholarNumber}-${item.scannedAt ?? 'absent'}-${index}`}
         ListEmptyComponent={<Text style={styles.empty}>No attendance entries found.</Text>}
         renderItem={({ item }) => (
           <Surface style={styles.card} elevation={1}>
             <Text style={styles.name}>{item.studentName}</Text>
             <Text style={styles.meta}>Scholar: {item.scholarNumber}</Text>
             {item.enrollmentNumber ? <Text style={styles.meta}>Enrollment: {item.enrollmentNumber}</Text> : null}
-            <Text style={styles.meta}>Time: {new Date(item.scannedAt).toLocaleTimeString()}</Text>
+            <Text style={styles.meta}>Status: {item.status}</Text>
+            {item.scannedAt ? <Text style={styles.meta}>Time: {new Date(item.scannedAt).toLocaleTimeString()}</Text> : null}
           </Surface>
         )}
       />
@@ -114,6 +193,15 @@ const styles = StyleSheet.create({
   },
   headerTitle: { color: colors.text, fontWeight: '700', marginBottom: 6 },
   headerMeta: { color: colors.textMuted, marginTop: 2 },
+  headerInfo: { color: colors.textMuted, marginTop: 8, fontStyle: 'italic' },
+  filterRow: {
+    marginTop: 10,
+    flexDirection: 'row',
+    gap: 8
+  },
+  filterBtn: {
+    flex: 1
+  },
   exportButton: {
     marginTop: 10
   },
