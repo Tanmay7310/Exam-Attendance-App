@@ -21,8 +21,8 @@ app:
   seed:
     enabled: false
   jwt:
-    secret: change-this-to-a-strong-secret-key-with-at-least-32-characters
-    expiration-ms: 86400000
+    secret: ${JWT_SECRET:change-this-to-a-strong-secret-key-with-at-least-32-characters}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
 
 springdoc:
   swagger-ui:

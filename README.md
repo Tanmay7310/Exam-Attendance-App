@@ -29,6 +29,9 @@ A complete mobile + backend solution for college exam attendance using barcode/Q
 - PDF report export for teacher session
 - Admin teacher management (add/remove/view)
 - Admin attendance monitoring with filters (date, teacher, subject)
+- Admin student management, subject catalogue, bulk imports, and student promotions
+- Attendance session details with present/absent roster resolution when class snapshot data exists
+- Manual attendance corrections stored as audit entries, with corrected counts shown in detail and list views
 - Attendance records immutable (no update/delete attendance APIs)
 
 ## Database Design
@@ -37,12 +40,18 @@ Tables:
 - `users` (credentials + role)
 - `teachers` (teacher profile linked to user)
 - `students`
-- `attendance_sessions` (teacher + date)
+- `subjects`
+- `attendance_sessions` (teacher + date + subject + class snapshot)
 - `attendance_records` (session + student + scanned timestamp)
+- `attendance_session_roster_snapshots` (immutable per-session class roster used for absent students and historical accuracy)
+- `attendance_adjustments` (manual present/absent corrections with audit data)
+- `student_promotion_batches`
+- `student_promotion_items`
 
 Key constraints:
-- `uk_session_teacher_date` prevents multiple sessions for same teacher/date
+- `uk_session_teacher_date_subject_class` prevents duplicate sessions for the same teacher/date/subject/class context
 - `uk_session_student` prevents duplicate student attendance in same session
+- `uk_subject_name_branch_semester` prevents duplicate subject names for the same branch and semester
 
 ## API Endpoints
 
@@ -53,14 +62,38 @@ Teacher module:
 - `GET /api/teacher/profile`
 - `POST /api/teacher/attendance/scan`
 - `GET /api/teacher/attendance/session?date=YYYY-MM-DD&sortBy=time|scholarNumber`
-- `GET /api/teacher/attendance/report/pdf?date=YYYY-MM-DD`
+- `GET /api/teacher/attendance/history`
+- `GET /api/teacher/attendance/sessions`
+- `GET /api/teacher/attendance/sessions/{sessionId}`
+- `POST /api/teacher/attendance/sessions/{sessionId}/adjust`
+- `GET /api/teacher/attendance/report/pdf?date=YYYY-MM-DD&subject=...&examYear=...&examSemester=...&examBranch=...&examSection=...`
 - `GET /api/teacher/students/search?scholarNumber=SCH001`
+- `GET /api/teacher/subjects`
 
 Admin module:
 - `POST /api/admin/teachers`
 - `GET /api/admin/teachers`
+- `POST /api/admin/teachers/import`
 - `DELETE /api/admin/teachers/{teacherId}`
+- `POST /api/admin/students`
+- `GET /api/admin/students`
+- `POST /api/admin/students/import`
+- `DELETE /api/admin/students/{studentId}`
+- `POST /api/admin/students/promotions/preview`
+- `POST /api/admin/students/promotions/execute`
+- `GET /api/admin/students/promotions`
+- `GET /api/admin/students/promotions/{batchId}`
+- `POST /api/admin/students/promotions/{batchId}/rollback`
+- `POST /api/admin/subjects`
+- `GET /api/admin/subjects`
+- `POST /api/admin/subjects/import`
+- `PUT /api/admin/subjects/{subjectId}`
+- `DELETE /api/admin/subjects/{subjectId}`
 - `GET /api/admin/attendance?date=YYYY-MM-DD&teacherId=1&subject=Data Structures`
+- `GET /api/admin/attendance/sessions?date=YYYY-MM-DD&teacherId=1&subject=Data Structures`
+- `GET /api/admin/attendance/sessions/{sessionId}`
+- `POST /api/admin/attendance/sessions/{sessionId}/adjust`
+- `GET /api/admin/attendance/report/pdf?date=YYYY-MM-DD&teacherId=...&subject=...`
 
 Swagger:
 - `http://localhost:8080/swagger-ui/index.html`
@@ -107,10 +140,10 @@ This command:
 - sets `EXPO_PUBLIC_API_BASE_URL` to `http://<lan-ip>:8080`
 - starts Expo on port `8081`
 
-Optional custom Expo port:
+Optional custom Expo and backend ports:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\start-mobile-lan.ps1 -Port 8082
+powershell -ExecutionPolicy Bypass -File .\start-mobile-lan.ps1 -Port 8082 -BackendPort 8083
 ```
 
 ### 1.2) Start Backend + Mobile Together
@@ -125,12 +158,28 @@ This opens two terminals and starts:
 - backend (MySQL + Spring Boot)
 - mobile (Expo LAN with pinned host)
 
+Optional custom ports:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\start-app.ps1 -BackendPort 8082 -ExpoPort 8081
+```
+
 ### 2) Configure Mobile Base URL
 
 `mobile/src/api/client.ts` now auto-resolves API host from Expo runtime host.
 
 If you need to force a specific URL, set:
 - `EXPO_PUBLIC_API_BASE_URL=http://<your-machine-lan-ip>:8080`
+
+When the backend runs on a custom port, use the same port in `EXPO_PUBLIC_API_BASE_URL` or start through `start-app.ps1` so it is passed automatically.
+
+### Database Migration Note
+
+Fresh databases can use `database/schema.sql`. Existing databases should apply the idempotent SQL in `database/migrations/20260601_attendance_roster_snapshots.sql`, or restart the backend with the current JPA `ddl-auto=update` configuration so Hibernate can create the roster snapshot table.
+
+### Native Android / Development Build Note
+
+The project includes a native Android folder (`mobile/android`), so treat it as a development-build project when building APKs. If you change native-facing values in `mobile/app.json` such as permissions, package name, splash, plugins, or orientation, sync those changes into the native project with the appropriate Expo prebuild/development-build workflow before shipping a native build.
 
 ### 3) Start Mobile (Manual)
 
@@ -154,12 +203,19 @@ npm run start
 
 ## Testing
 
-- Spring Boot context test included in `backend/src/test`
+- Spring Boot context and attendance-correction tests are included in `backend/src/test`
 - You can run backend tests with:
 
 ```bash
 cd backend
 mvn test
+```
+
+- Mobile TypeScript check:
+
+```bash
+cd mobile
+npx tsc --noEmit
 ```
 
 ## Recommended Extensions

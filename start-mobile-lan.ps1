@@ -1,5 +1,6 @@
 param(
-    [int]$Port = 8081
+    [int]$Port = 8081,
+    [int]$BackendPort = 8080
 )
 
 $ErrorActionPreference = 'Stop'
@@ -27,7 +28,7 @@ if (-not $ip) {
 }
 
 Write-Host "Using LAN host: $ip"
-Write-Host "Backend URL pinned for Expo: http://$ip`:8080"
+Write-Host "Backend URL pinned for Expo: http://$ip`:$BackendPort"
 
 Get-Process -Name node -ErrorAction SilentlyContinue | ForEach-Object {
     try {
@@ -38,7 +39,7 @@ Get-Process -Name node -ErrorAction SilentlyContinue | ForEach-Object {
 }
 
 $env:REACT_NATIVE_PACKAGER_HOSTNAME = $ip
-$env:EXPO_PUBLIC_API_BASE_URL = "http://$ip`:8080"
+$env:EXPO_PUBLIC_API_BASE_URL = "http://$ip`:$BackendPort"
 
 Push-Location $mobilePath
 try {

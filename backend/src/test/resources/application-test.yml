@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:exam_attendance_test;MODE=MySQL;DATABASE_TO_UPPER=false;NON_KEYWORDS=YEAR;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+app:
+  seed:
+    enabled: false
+  jwt:
+    secret: test-secret-key-with-at-least-32-characters
+    expiration-ms: 86400000

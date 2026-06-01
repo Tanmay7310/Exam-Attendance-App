@@ -15,7 +15,7 @@ if (-not (Test-Path $mobileScript)) {
 }
 
 $backendCmd = "Set-Location '$repoRoot'; powershell -ExecutionPolicy Bypass -File '.\\start-backend-mysql.ps1' -Port $BackendPort"
-$mobileCmd = "Set-Location '$repoRoot'; powershell -ExecutionPolicy Bypass -File '.\\start-mobile-lan.ps1' -Port $ExpoPort"
+$mobileCmd = "Set-Location '$repoRoot'; powershell -ExecutionPolicy Bypass -File '.\\start-mobile-lan.ps1' -Port $ExpoPort -BackendPort $BackendPort"
 
 Start-Process powershell -ArgumentList '-NoExit', '-Command', $backendCmd | Out-Null
 Start-Process powershell -ArgumentList '-NoExit', '-Command', $mobileCmd | Out-Null

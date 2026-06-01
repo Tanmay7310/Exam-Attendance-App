@@ -1,14 +1,15 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
-import { Button, Surface, Text, TextInput, TouchableRipple } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native';
 import { api } from '../../api/client';
+import { ACR, AcropolisBackBar, EmptyState, IconMark, ScreenShell, SectionLabel } from '../../components/AcropolisUI';
+import { AdminOutlineButton, AdminPrimaryButton, AdminTextField } from '../../components/AdminModuleUI';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
-import { buttonStyles } from '../../styles/buttonStyles';
-import { AdminAttendance } from '../../types';
-import { colors } from '../../styles/theme';
+import { SessionAttendanceSummary } from '../../types';
+import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
 
 const isValidDateParam = (value: string) => {
   if (!value.trim()) return true;
@@ -26,14 +27,14 @@ const isValidDateParam = (value: string) => {
 };
 
 export const AttendanceMonitoringScreen = ({ navigation }: any) => {
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
   const { showToast } = useToast();
   const [date, setDate] = useState('');
   const [teacherId, setTeacherId] = useState('');
   const [subject, setSubject] = useState('');
-  const [rows, setRows] = useState<AdminAttendance[]>([]);
+  const [sessionSummaries, setSessionSummaries] = useState<SessionAttendanceSummary[]>([]);
 
-  const fetchRows = useCallback(async () => {
+  const fetchSessions = useCallback(async () => {
     const dateValue = date.trim();
     if (!isValidDateParam(dateValue)) {
       return;
@@ -44,13 +45,18 @@ export const AttendanceMonitoringScreen = ({ navigation }: any) => {
     if (teacherId) params.teacherId = teacherId.trim();
     if (subject) params.subject = subject;
 
-    const { data } = await api.get<AdminAttendance[]>('/api/admin/attendance', { params });
-    setRows(data);
+    const { data } = await api.get<SessionAttendanceSummary[]>('/api/admin/attendance/sessions', { params });
+    setSessionSummaries(data);
   }, [date, teacherId, subject]);
 
-  React.useEffect(() => {
-    fetchRows().catch(() => showToast('Failed to load attendance records.', { type: 'error' }));
-  }, [fetchRows, showToast]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchSessions().catch(async (e: any) => {
+        if (await handleSessionExpired(e, logout, showToast)) return;
+        showToast(getApiErrorMessage(e, 'Failed to load attendance records.'), { type: 'error' });
+      });
+    }, [fetchSessions, logout, showToast])
+  );
 
   const exportPdf = async () => {
     try {
@@ -81,7 +87,8 @@ export const AttendanceMonitoringScreen = ({ navigation }: any) => {
         showToast(`PDF saved at ${fileUri}`, { type: 'success', duration: 3200 });
       }
     } catch (e: any) {
-      showToast(e?.response?.data?.message ?? 'Unable to generate PDF', { type: 'error' });
+      if (await handleSessionExpired(e, logout, showToast)) return;
+      showToast(getApiErrorMessage(e, 'Unable to generate PDF'), { type: 'error' });
     }
   };
 
@@ -92,16 +99,16 @@ export const AttendanceMonitoringScreen = ({ navigation }: any) => {
   };
 
   const sessions = useMemo(() => {
-    const grouped = new Map<string, { date: string; rows: AdminAttendance[] }>();
+    const grouped = new Map<string, { date: string; sessions: SessionAttendanceSummary[] }>();
 
-    rows.forEach((row) => {
-      const rowDate = row.date;
+    sessionSummaries.forEach((summary) => {
+      const rowDate = summary.date;
       const key = rowDate;
 
       if (!grouped.has(key)) {
-        grouped.set(key, { date: rowDate, rows: [] });
+        grouped.set(key, { date: rowDate, sessions: [] });
       }
-      grouped.get(key)?.rows.push(row);
+      grouped.get(key)?.sessions.push(summary);
     });
 
     return Array.from(grouped.values())
@@ -109,69 +116,86 @@ export const AttendanceMonitoringScreen = ({ navigation }: any) => {
       .map((group) => ({
         title: `Date: ${group.date}`,
         date: group.date,
-        count: group.rows.length,
-        records: group.rows.sort((a, b) => a.scannedAt.localeCompare(b.scannedAt))
+        sessionCount: group.sessions.length,
+        presentCount: group.sessions.reduce((sum, item) => sum + item.presentCount, 0),
+        totalCount: group.sessions.reduce((sum, item) => sum + item.totalCount, 0),
+        sessions: group.sessions.sort((a, b) => (a.subject ?? '').localeCompare(b.subject ?? ''))
       }));
-  }, [rows]);
+  }, [sessionSummaries]);
+
+  const hasFilters = date.trim().length > 0 || teacherId.trim().length > 0 || subject.trim().length > 0;
 
   return (
-    <View style={styles.container}>
-      <TextInput label="Date (YYYY-MM-DD)" value={date} onChangeText={setDate} style={styles.input} mode="outlined" />
-      <TextInput label="Teacher (ID/Code/Name optional)" value={teacherId} onChangeText={setTeacherId} style={styles.input} mode="outlined" />
-      <TextInput label="Subject (optional)" value={subject} onChangeText={setSubject} style={styles.input} mode="outlined" />
-      <View style={styles.actionRow}>
-        <Button mode="contained-tonal" style={styles.button} contentStyle={buttonStyles.content} onPress={clearFilters}>
-          Clear Filters
-        </Button>
-        <Button mode="contained" style={styles.button} contentStyle={buttonStyles.content} onPress={exportPdf}>
-          Export PDF
-        </Button>
-      </View>
-
+    <ScreenShell>
+      <AcropolisBackBar title="Attendance Monitoring" subtitle="Date-wise summary" onBack={() => navigation.goBack()} />
       <FlatList
-        style={{ marginTop: 10 }}
         data={sessions}
         keyExtractor={(item) => item.date}
-        ListEmptyComponent={<Text style={styles.empty}>No attendance records found.</Text>}
-        renderItem={({ item }) => (
-          <Surface style={styles.sectionHeader} elevation={1}>
-            <TouchableRipple
-              style={styles.sectionPress}
-              onPress={() =>
-                navigation.navigate('AdminAttendanceSubjects', {
-                  date: item.date,
-                  records: item.records
-                })
-              }
-            >
-              <View>
-                <Text style={styles.sectionHeaderText}>{item.title}</Text>
-                <Text style={styles.sectionMeta}>{item.count} record{item.count === 1 ? '' : 's'}</Text>
+        contentContainerStyle={styles.content}
+        ListHeaderComponent={
+          <>
+            <View style={[styles.filterCard, hasFilters && styles.filterCardActive]}>
+              <View style={styles.filterHeader}>
+                <Text style={styles.filterTitle}>Filters</Text>
+                {hasFilters ? <Text style={styles.activeBadge}>Active</Text> : null}
               </View>
-            </TouchableRipple>
-          </Surface>
+              <AdminTextField label="Date (YYYY-MM-DD)" value={date} onChangeText={setDate} style={styles.input} autoCorrect={false} />
+              <AdminTextField label="Teacher (ID / Code / Name)" value={teacherId} onChangeText={setTeacherId} style={styles.input} autoCorrect={false} />
+              <AdminTextField label="Subject" value={subject} onChangeText={setSubject} style={styles.input} autoCorrect={false} />
+              <View style={styles.actionRow}>
+                <View style={styles.actionButton}>
+                  <AdminOutlineButton label="Clear Filters" onPress={clearFilters} disabled={!hasFilters} tone="rose" />
+                </View>
+                <View style={styles.actionButton}>
+                  <AdminPrimaryButton label="Export PDF" onPress={exportPdf} />
+                </View>
+              </View>
+            </View>
+            <SectionLabel title="Date-wise Summary" />
+          </>
+        }
+        ListEmptyComponent={<EmptyState title="No matching records" subtitle="No attendance records match the current filters." />}
+        renderItem={({ item }) => (
+          <Pressable
+            style={({ pressed }) => [styles.dateCard, pressed && styles.pressed]}
+            onPress={() =>
+              navigation.navigate('AdminAttendanceSubjects', {
+                date: item.date,
+                sessions: item.sessions,
+                teacherId,
+                subjectFilter: subject
+              })
+            }
+          >
+            <IconMark kind="activity" tone="blue" size={48} />
+            <View style={styles.dateCopy}>
+              <Text style={styles.dateTitle}>{item.title}</Text>
+              <Text style={styles.dateMeta}>
+                {item.sessionCount} session{item.sessionCount === 1 ? '' : 's'} | {item.presentCount}/{item.totalCount} present
+              </Text>
+            </View>
+            <Text style={styles.chevron}>{'>'}</Text>
+          </Pressable>
         )}
       />
-    </View>
+    </ScreenShell>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 12, backgroundColor: colors.bg },
-  input: {
-    marginBottom: 7
-  },
-  actionRow: { flexDirection: 'row', gap: 8 },
-  button: { flex: 1 },
-  sectionHeader: {
-    backgroundColor: colors.card,
-    borderRadius: 10,
-    marginTop: 8,
-    marginBottom: 6,
-    overflow: 'hidden'
-  },
-  sectionPress: { padding: 10 },
-  sectionHeaderText: { color: colors.text, fontWeight: '700' },
-  sectionMeta: { color: colors.textMuted, marginTop: 4 },
-  empty: { marginTop: 18, textAlign: 'center', color: colors.textMuted }
+  content: { padding: 18, paddingBottom: 28 },
+  filterCard: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: ACR.border, borderRadius: 24, padding: 14, shadowColor: '#1C1917', shadowOpacity: 0.06, shadowRadius: 10, shadowOffset: { width: 0, height: 5 }, elevation: 2 },
+  filterCardActive: { borderColor: 'rgba(37,99,235,0.45)' },
+  filterHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 },
+  filterTitle: { color: ACR.ink, fontSize: 16, fontWeight: '900' },
+  activeBadge: { color: ACR.blue, backgroundColor: '#EFF6FF', borderWidth: 1, borderColor: '#DBEAFE', borderRadius: 999, paddingHorizontal: 9, paddingVertical: 4, fontSize: 10, fontWeight: '900', textTransform: 'uppercase' },
+  input: { marginBottom: 10 },
+  actionRow: { flexDirection: 'row', gap: 10, marginTop: 4 },
+  actionButton: { flex: 1 },
+  dateCard: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: ACR.border, borderRadius: 20, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 13, marginBottom: 11, shadowColor: '#1C1917', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 1 },
+  dateCopy: { flex: 1 },
+  dateTitle: { color: ACR.ink, fontSize: 15, fontWeight: '900' },
+  dateMeta: { color: ACR.muted, fontSize: 12, marginTop: 4 },
+  chevron: { color: '#D1D5DB', fontSize: 24, fontWeight: '900' },
+  pressed: { transform: [{ scale: 0.98 }], opacity: 0.9 }
 });

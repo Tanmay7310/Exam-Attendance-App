@@ -15,10 +15,16 @@ type OfflineScanPayload = {
 type OfflineScanItem = {
   id: string;
   createdAt: string;
+  username?: string;
   role: Role;
   endpoint: string;
   payload: OfflineScanPayload;
 };
+
+type FlushAuth = {
+  username?: string;
+  role?: Role;
+} | null | undefined;
 
 const QUEUE_KEY = 'attendance_offline_queue';
 
@@ -49,23 +55,35 @@ export const enqueueOfflineScan = async (item: OfflineScanItem) => {
   return queue.length;
 };
 
-export const flushOfflineScans = async () => {
+const belongsToCurrentUser = (item: OfflineScanItem, currentAuth: FlushAuth) =>
+  Boolean(currentAuth?.username && currentAuth?.role)
+  && item.username === currentAuth?.username
+  && item.role === currentAuth?.role;
+
+export const flushOfflineScans = async (currentAuth?: FlushAuth) => {
   const queue = await loadQueue();
   if (queue.length === 0) {
-    return { sent: 0, remaining: 0, dropped: 0 };
+    return { sent: 0, remaining: 0, dropped: 0, skipped: 0 };
   }
 
   const authHeader = api.defaults.headers.common.Authorization;
-  if (!authHeader) {
-    return { sent: 0, remaining: queue.length, dropped: 0 };
+  if (!authHeader || !currentAuth?.username || !currentAuth?.role) {
+    return { sent: 0, remaining: queue.length, dropped: 0, skipped: queue.length };
   }
 
   const remaining: OfflineScanItem[] = [];
   let sent = 0;
   let dropped = 0;
+  let skipped = 0;
 
   for (let index = 0; index < queue.length; index += 1) {
     const item = queue[index];
+    if (!belongsToCurrentUser(item, currentAuth)) {
+      remaining.push(item);
+      skipped += 1;
+      continue;
+    }
+
     try {
       await api.post(item.endpoint, item.payload);
       sent += 1;
@@ -92,17 +110,19 @@ export const flushOfflineScans = async () => {
   }
 
   await saveQueue(remaining);
-  return { sent, remaining: remaining.length, dropped };
+  return { sent, remaining: remaining.length, dropped, skipped };
 };
 
 export const createOfflineScanItem = (
   role: Role,
-  payload: OfflineScanPayload
+  payload: OfflineScanPayload,
+  username?: string
 ): OfflineScanItem => {
   const endpoint = role === 'ADMIN' ? '/api/admin/attendance/scan' : '/api/teacher/attendance/scan';
   return {
     id: `${Date.now()}-${Math.floor(Math.random() * 10000)}`,
     createdAt: new Date().toISOString(),
+    username,
     role,
     endpoint,
     payload

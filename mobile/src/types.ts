@@ -72,6 +72,10 @@ export interface SessionAttendanceStudentRecord {
   scannedAt?: string | null;
   teacherName: string;
   teacherCode: string;
+  adjusted?: boolean;
+  adjustedBy?: string | null;
+  adjustedAt?: string | null;
+  adjustmentReason?: string | null;
 }
 
 export interface SessionAttendanceDetails {
@@ -87,6 +91,28 @@ export interface SessionAttendanceDetails {
   absentCount: number;
   totalCount: number;
   records: SessionAttendanceStudentRecord[];
+}
+
+export interface SessionAttendanceSummary {
+  sessionId: number;
+  date: string;
+  subject: string;
+  teacherName?: string | null;
+  teacherCode?: string | null;
+  examYear?: string | null;
+  examSemester?: string | null;
+  examBranch?: string | null;
+  examSection?: string | null;
+  presentCount: number;
+  absentCount: number;
+  totalCount: number;
+  rosterResolved: boolean;
+}
+
+export interface AttendanceAdjustmentRequest {
+  scholarNumber: string;
+  status: 'PRESENT' | 'ABSENT';
+  reason: string;
 }
 
 export interface SubjectItem {

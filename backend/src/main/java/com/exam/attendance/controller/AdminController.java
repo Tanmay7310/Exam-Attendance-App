@@ -18,7 +18,9 @@ import com.exam.attendance.dto.admin.StudentResponse;
 import com.exam.attendance.dto.admin.SubjectResponse;
 import com.exam.attendance.dto.admin.TeacherResponse;
 import com.exam.attendance.dto.admin.UpdateSubjectRequest;
+import com.exam.attendance.dto.attendance.AttendanceAdjustmentRequest;
 import com.exam.attendance.dto.attendance.SessionAttendanceDetailsResponse;
+import com.exam.attendance.dto.attendance.SessionAttendanceSummaryResponse;
 import com.exam.attendance.dto.teacher.ScanAttendanceRequest;
 import com.exam.attendance.dto.teacher.ScanAttendanceResponse;
 import com.exam.attendance.service.AdminService;
@@ -172,9 +174,25 @@ public class AdminController {
         return adminService.getAttendance(date, teacherId, subject);
     }
 
+    @GetMapping("/attendance/sessions")
+    public List<SessionAttendanceSummaryResponse> attendanceSessions(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) String teacherId,
+            @RequestParam(required = false) String subject) {
+        return adminService.getAttendanceSessionSummaries(date, teacherId, subject);
+    }
+
     @GetMapping("/attendance/sessions/{sessionId}")
     public SessionAttendanceDetailsResponse attendanceSessionDetails(@PathVariable Long sessionId) {
         return adminService.getAttendanceSessionDetails(sessionId);
+    }
+
+    @PostMapping("/attendance/sessions/{sessionId}/adjust")
+    public SessionAttendanceDetailsResponse adjustAttendanceSession(@PathVariable Long sessionId,
+                                                                    @Valid @RequestBody AttendanceAdjustmentRequest request,
+                                                                    Authentication authentication) {
+        String adjustedBy = authentication != null ? authentication.getName() : "admin";
+        return adminService.adjustAttendanceSession(sessionId, adjustedBy, request);
     }
 
     @GetMapping("/attendance/report/pdf")

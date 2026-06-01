@@ -15,4 +15,8 @@ public class SessionAttendanceStudentRecordResponse {
     private Instant scannedAt;
     private String teacherName;
     private String teacherCode;
+    private boolean adjusted;
+    private String adjustedBy;
+    private Instant adjustedAt;
+    private String adjustmentReason;
 }

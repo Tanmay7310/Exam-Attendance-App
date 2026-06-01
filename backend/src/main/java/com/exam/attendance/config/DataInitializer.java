@@ -52,10 +52,10 @@ public class DataInitializer implements CommandLineRunner {
 
         if (studentRepository.count() == 0) {
             studentRepository.saveAll(List.of(
-                    Student.builder().scholarNumber("SCH001").name("Riya Verma").enrollmentNumber("ENR001").department("CSE").section("A").build(),
-                    Student.builder().scholarNumber("SCH002").name("Arjun Das").enrollmentNumber("ENR002").department("CSE").section("A").build(),
-                    Student.builder().scholarNumber("SCH003").name("Nisha Sen").enrollmentNumber("ENR003").department("ECE").section("B").build(),
-                    Student.builder().scholarNumber("SCH004").name("Karan Iyer").enrollmentNumber("ENR004").department("ME").section("C").build()
+                    Student.builder().scholarNumber("SCH001").name("Riya Verma").enrollmentNumber("ENR001").department("Computer Science and Engineering").year("1").semester("1").section("1").build(),
+                    Student.builder().scholarNumber("SCH002").name("Arjun Das").enrollmentNumber("ENR002").department("Computer Science and Engineering").year("1").semester("1").section("1").build(),
+                    Student.builder().scholarNumber("SCH003").name("Nisha Sen").enrollmentNumber("ENR003").department("Electronics and Communication Engineering").year("1").semester("1").section("2").build(),
+                    Student.builder().scholarNumber("SCH004").name("Karan Iyer").enrollmentNumber("ENR004").department("Mechanical Engineering").year("1").semester("1").section("3").build()
             ));
         }
     }

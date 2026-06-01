@@ -1,10 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { Surface, Text, TextInput, TouchableRipple } from 'react-native-paper';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { TextInput } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native';
 import { api } from '../../api/client';
+import { ACR, AcropolisBackBar, EmptyState, ScreenShell, SectionLabel, TextIcon } from '../../components/AcropolisUI';
+import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
-import { AttendanceRecord } from '../../types';
-import { colors } from '../../styles/theme';
+import { SessionAttendanceSummary } from '../../types';
+import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
 
 const formatDateToDdMmYyyy = (date: string) => {
   const match = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -15,59 +18,59 @@ const formatDateToDdMmYyyy = (date: string) => {
 };
 
 export const AttendanceListScreen = ({ navigation }: any) => {
+  const { logout } = useAuth();
   const { showToast } = useToast();
-  const [records, setRecords] = useState<AttendanceRecord[]>([]);
+  const [sessionSummaries, setSessionSummaries] = useState<SessionAttendanceSummary[]>([]);
   const [dateSearch, setDateSearch] = useState('');
   const [subjectSearch, setSubjectSearch] = useState('');
 
-  const fetchRecords = useCallback(async () => {
-    const { data } = await api.get<AttendanceRecord[]>('/api/teacher/attendance/history');
-    setRecords(data);
+  const fetchSessions = useCallback(async () => {
+    const { data } = await api.get<SessionAttendanceSummary[]>('/api/teacher/attendance/sessions');
+    setSessionSummaries(data);
   }, []);
 
-  React.useEffect(() => {
-    fetchRecords().catch(() => showToast('Failed to load attendance list.', { type: 'error' }));
-  }, [fetchRecords, showToast]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchSessions().catch(async (e: any) => {
+        if (await handleSessionExpired(e, logout, showToast)) return;
+        showToast(getApiErrorMessage(e, 'Failed to load attendance list.'), { type: 'error' });
+      });
+    }, [fetchSessions, logout, showToast])
+  );
 
   const sessions = useMemo(() => {
-    const grouped = new Map<string, { sessionId?: number; title: string; date: string; subject: string; data: AttendanceRecord[] }>();
-
-    records.forEach((record) => {
-      const date = record.date ?? new Date(record.scannedAt).toISOString().slice(0, 10);
-      const subject = record.subject?.trim() || 'N/A';
-      const examYear = record.examYear?.trim() || 'N/A';
-      const examSemester = record.examSemester?.trim() || 'N/A';
-      const examBranch = record.examBranch?.trim() || 'N/A';
-      const examSection = record.examSection?.trim() || 'N/A';
-      const context = `Y${examYear} S${examSemester} | ${examBranch} | Sec ${examSection}`;
-      const key = record.sessionId != null
-        ? `session:${record.sessionId}`
-        : `${date}::${subject}::${examYear}::${examSemester}::${examBranch}::${examSection}`;
-      const title = `Date: ${date} | Subject: ${subject} | ${context}`;
-
-      if (!grouped.has(key)) {
-        grouped.set(key, { sessionId: record.sessionId, title, date, subject, data: [] });
-      }
-      grouped.get(key)?.data.push(record);
-    });
-
-    return Array.from(grouped.values())
+    return [...sessionSummaries]
       .sort((a, b) => {
         if (a.date !== b.date) {
           return b.date.localeCompare(a.date);
         }
-        return a.subject.localeCompare(b.subject);
+        return (a.subject ?? '').localeCompare(b.subject ?? '');
       })
-      .map((group) => ({
-        sessionId: group.sessionId,
-        title: `Date: ${formatDateToDdMmYyyy(group.date)} | Subject: ${group.subject}`,
-        date: group.date,
-        displayDate: formatDateToDdMmYyyy(group.date),
-        subject: group.subject,
-        count: group.data.length,
-        records: group.data.sort((a, b) => a.scannedAt.localeCompare(b.scannedAt))
-      }));
-  }, [records]);
+      .map((session) => {
+        const date = session.date;
+        const subject = session.subject?.trim() || 'N/A';
+        const examYear = session.examYear?.trim() || 'N/A';
+        const examSemester = session.examSemester?.trim() || 'N/A';
+        const examBranch = session.examBranch?.trim() || 'N/A';
+        const examSection = session.examSection?.trim() || 'N/A';
+        const context = `Y${examYear} S${examSemester} | ${examBranch} | Sec ${examSection}`;
+        return {
+          sessionId: session.sessionId,
+          title: `Date: ${formatDateToDdMmYyyy(date)} | Subject: ${subject} | ${context}`,
+          date,
+          displayDate: formatDateToDdMmYyyy(date),
+          subject,
+          examYear: session.examYear ?? '',
+          examSemester: session.examSemester ?? '',
+          examBranch: session.examBranch ?? '',
+          examSection: session.examSection ?? '',
+          presentCount: session.presentCount,
+          absentCount: session.absentCount,
+          totalCount: session.totalCount,
+          rosterResolved: session.rosterResolved
+        };
+      });
+  }, [sessionSummaries]);
 
   const filteredSessions = useMemo(() => {
     const normalizedDate = dateSearch.trim().toLowerCase();
@@ -82,71 +85,94 @@ export const AttendanceListScreen = ({ navigation }: any) => {
     });
   }, [dateSearch, sessions, subjectSearch]);
 
-  return (
-    <View style={styles.container}>
-      <TextInput
-        label="Search by Date (DD-MM-YYYY)"
-        mode="outlined"
-        value={dateSearch}
-        onChangeText={setDateSearch}
-        style={styles.input}
-      />
-      <TextInput
-        label="Search by Subject"
-        mode="outlined"
-        value={subjectSearch}
-        onChangeText={setSubjectSearch}
-        style={styles.input}
-      />
+  const clearFilters = () => {
+    setDateSearch('');
+    setSubjectSearch('');
+  };
 
+  const hasFilters = dateSearch.trim().length > 0 || subjectSearch.trim().length > 0;
+
+  return (
+    <ScreenShell>
+      <AcropolisBackBar title="Attendance History" subtitle="Session Attendance" onBack={() => navigation.goBack()} />
       <FlatList
         data={filteredSessions}
         keyExtractor={(item, index) => item.sessionId != null ? `session:${item.sessionId}` : `${item.date}::${item.subject}::${index}`}
-        ListEmptyComponent={<Text style={styles.empty}>No attendance entries found.</Text>}
+        contentContainerStyle={styles.listContent}
+        ListHeaderComponent={
+          <>
+            <View style={styles.filterCard}>
+              <Text style={styles.filterTitle}>Find attendance sessions</Text>
+              <TextInput
+                label="Search by Date (DD-MM-YYYY)"
+                mode="outlined"
+                value={dateSearch}
+                onChangeText={setDateSearch}
+                style={styles.input}
+              />
+              <TextInput
+                label="Search by Subject"
+                mode="outlined"
+                value={subjectSearch}
+                onChangeText={setSubjectSearch}
+                style={styles.input}
+              />
+              <Pressable onPress={clearFilters} disabled={!hasFilters} style={[styles.clearButton, !hasFilters && styles.clearButtonDisabled]}>
+                <Text style={[styles.clearText, !hasFilters && styles.clearTextDisabled]}>Clear Filters</Text>
+              </Pressable>
+            </View>
+            <SectionLabel title={hasFilters ? `${filteredSessions.length} sessions found` : `${sessions.length} sessions`} />
+          </>
+        }
+        ListEmptyComponent={<EmptyState title="No attendance entries found" subtitle="Try changing the date or subject filter." />}
         renderItem={({ item }) => (
-          <Surface style={styles.sectionHeader} elevation={1}>
-            <TouchableRipple
-              style={styles.sectionPress}
-              onPress={() =>
-                navigation.navigate('AttendanceSessionDetails', {
-                  title: item.title,
-                  sessionId: item.sessionId,
-                  date: item.date,
-                  subject: item.subject,
-                  examYear: item.records[0]?.examYear ?? '',
-                  examSemester: item.records[0]?.examSemester ?? '',
-                  examBranch: item.records[0]?.examBranch ?? '',
-                  examSection: item.records[0]?.examSection ?? '',
-                  records: item.records
-                })
-              }
-            >
-              <View>
-                <Text style={styles.sectionHeaderText}>{item.title}</Text>
-                <Text style={styles.sectionMeta}>{item.count} student{item.count === 1 ? '' : 's'}</Text>
-              </View>
-            </TouchableRipple>
-          </Surface>
+          <Pressable
+            style={({ pressed }) => [styles.sessionCard, pressed && styles.pressed]}
+            onPress={() =>
+              navigation.navigate('AttendanceSessionDetails', {
+                title: item.title,
+                sessionId: item.sessionId,
+                date: item.date,
+                subject: item.subject,
+                examYear: item.examYear,
+                examSemester: item.examSemester,
+                examBranch: item.examBranch,
+                examSection: item.examSection,
+                records: []
+              })
+            }
+          >
+            <TextIcon label="BK" tone="gold" />
+            <View style={styles.sessionCopy}>
+              <Text style={styles.sessionSubject} numberOfLines={1}>{item.subject}</Text>
+              <Text style={styles.sessionMeta}>{item.displayDate}</Text>
+            </View>
+            <View style={styles.countBadge}>
+              <Text style={styles.countText}>{item.presentCount}/{item.totalCount}</Text>
+            </View>
+            <Text style={styles.chevron}>{'>'}</Text>
+          </Pressable>
         )}
       />
-    </View>
+    </ScreenShell>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 12, backgroundColor: colors.bg },
-  input: {
-    marginBottom: 8
-  },
-  sectionHeader: {
-    backgroundColor: colors.card,
-    borderRadius: 10,
-    marginTop: 8,
-    marginBottom: 6,
-    overflow: 'hidden'
-  },
-  sectionPress: { padding: 10 },
-  sectionHeaderText: { color: colors.text, fontWeight: '700' },
-  sectionMeta: { color: colors.textMuted, marginTop: 4 },
-  empty: { marginTop: 18, textAlign: 'center', color: colors.textMuted }
+  listContent: { padding: 18, paddingBottom: 28 },
+  filterCard: { backgroundColor: '#FFFFFF', borderRadius: 24, borderWidth: 1, borderColor: ACR.border, padding: 14, shadowColor: '#1C1917', shadowOpacity: 0.06, shadowRadius: 10, shadowOffset: { width: 0, height: 5 }, elevation: 2 },
+  filterTitle: { color: ACR.ink, fontSize: 16, fontWeight: '900', marginBottom: 10 },
+  input: { marginBottom: 10, backgroundColor: '#FFFFFF' },
+  clearButton: { alignSelf: 'flex-start', borderRadius: 999, borderWidth: 1, borderColor: ACR.rose, paddingHorizontal: 14, paddingVertical: 9 },
+  clearButtonDisabled: { borderColor: ACR.border },
+  clearText: { color: ACR.rose, fontSize: 12, fontWeight: '900' },
+  clearTextDisabled: { color: ACR.ghost },
+  sessionCard: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: ACR.border, borderRadius: 18, padding: 14, marginBottom: 10, flexDirection: 'row', alignItems: 'center', gap: 12, shadowColor: '#1C1917', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 1 },
+  sessionCopy: { flex: 1 },
+  sessionSubject: { color: ACR.ink, fontSize: 15, fontWeight: '900' },
+  sessionMeta: { color: ACR.muted, fontSize: 12, fontWeight: '700', marginTop: 3 },
+  countBadge: { minWidth: 42, paddingHorizontal: 10, paddingVertical: 7, borderRadius: 999, backgroundColor: '#ECFDF5', alignItems: 'center' },
+  countText: { color: ACR.green, fontWeight: '900' },
+  chevron: { color: ACR.blue, fontSize: 22, fontWeight: '900' },
+  pressed: { transform: [{ scale: 0.98 }], opacity: 0.9 }
 });

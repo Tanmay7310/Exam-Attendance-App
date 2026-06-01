@@ -12,13 +12,15 @@ SELECT 'TCH-101', 'Dr. A. Sharma', 'Data Structures', u.id
 FROM users u WHERE u.username = 'teacher1'
 ON DUPLICATE KEY UPDATE name = VALUES(name);
 
-INSERT INTO students (scholar_number, name, enrollment_number, department, section) VALUES
-('SCH001', 'Riya Verma', 'ENR001', 'CSE', 'A'),
-('SCH002', 'Arjun Das', 'ENR002', 'CSE', 'A'),
-('SCH003', 'Nisha Sen', 'ENR003', 'ECE', 'B'),
-('SCH004', 'Karan Iyer', 'ENR004', 'ME', 'C')
+INSERT INTO students (scholar_number, name, enrollment_number, department, year, semester, section) VALUES
+('SCH001', 'Riya Verma', 'ENR001', 'Computer Science and Engineering', '1', '1', '1'),
+('SCH002', 'Arjun Das', 'ENR002', 'Computer Science and Engineering', '1', '1', '1'),
+('SCH003', 'Nisha Sen', 'ENR003', 'Electronics and Communication Engineering', '1', '1', '2'),
+('SCH004', 'Karan Iyer', 'ENR004', 'Mechanical Engineering', '1', '1', '3')
 ON DUPLICATE KEY UPDATE
 name = VALUES(name),
 enrollment_number = VALUES(enrollment_number),
 department = VALUES(department),
+year = VALUES(year),
+semester = VALUES(semester),
 section = VALUES(section);

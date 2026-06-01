@@ -1,8 +1,14 @@
 # Node / React Native
 node_modules/
 .expo/
+mobile/.expo/
 dist/
 build/
+web-build/
+mobile/web-build/
+mobile/android/.gradle/
+mobile/android/build/
+mobile/android/app/build/
 
 # Java
 backend/target/
@@ -20,3 +26,14 @@ backend/.mvn/wrapper/maven-wrapper.jar
 # OS
 .DS_Store
 Thumbs.db
+
+# Generated local artifacts
+*.log
+/*.zip
+/*.png
+/*.pdf
+*.make
+expo-*.log
+backend-*.log
+device-*.png
+tmp-*.pdf

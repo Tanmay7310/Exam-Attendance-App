@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const parsed: LoginResponse = JSON.parse(cached);
         setAuth(parsed);
         setAuthToken(parsed.token);
-        flushOfflineScans().catch(() => undefined);
+        flushOfflineScans(parsed).catch(() => undefined);
       }
       setLoading(false);
     })();
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setAuth(data);
     setAuthToken(data.token);
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    flushOfflineScans().catch(() => undefined);
+    flushOfflineScans(data).catch(() => undefined);
   };
 
   const logout = async () => {

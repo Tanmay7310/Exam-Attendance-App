@@ -19,6 +19,10 @@ import { AdminAttendanceDetailsScreen } from '../screens/admin/AdminAttendanceDe
 import { StudentManagementScreen } from '../screens/admin/StudentManagementScreen';
 import { AddStudentScreen } from '../screens/admin/AddStudentScreen';
 import { StudentsScreen } from '../screens/admin/StudentsScreen';
+import { StudentSemestersScreen } from '../screens/admin/StudentSemestersScreen';
+import { StudentBranchesScreen } from '../screens/admin/StudentBranchesScreen';
+import { StudentSectionsScreen } from '../screens/admin/StudentSectionsScreen';
+import { StudentSectionStudentsScreen } from '../screens/admin/StudentSectionStudentsScreen';
 import { PromoteStudentsScreen } from '../screens/admin/PromoteStudentsScreen';
 import { PromotionHistoryScreen } from '../screens/admin/PromotionHistoryScreen';
 import { PromotionBatchDetailsScreen } from '../screens/admin/PromotionBatchDetailsScreen';
@@ -47,45 +51,49 @@ export const AppNavigator = () => {
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
       ) : auth.role === 'TEACHER' ? (
         <>
-          <Stack.Screen name="TeacherDashboard" component={TeacherDashboardScreen} options={{ title: 'Teacher Dashboard' }} />
-          <Stack.Screen name="EnterExamDetails" component={EnterExamDetailsScreen} options={{ title: 'Enter Exam Details' }} />
+          <Stack.Screen name="TeacherDashboard" component={TeacherDashboardScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="EnterExamDetails" component={EnterExamDetailsScreen} options={{ headerShown: false }} />
           <Stack.Screen
             name="Scan"
             component={ScanScreen}
-            options={{ title: 'Scan Student Code', headerBackVisible: false, gestureEnabled: false }}
+            options={{ headerShown: false, headerBackVisible: false, gestureEnabled: false }}
           />
-          <Stack.Screen name="AttendanceList" component={AttendanceListScreen} options={{ title: 'Session Attendance' }} />
-          <Stack.Screen name="AttendanceSessionDetails" component={AttendanceSessionDetailsScreen} options={{ title: 'Attendance Details' }} />
+          <Stack.Screen name="AttendanceList" component={AttendanceListScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AttendanceSessionDetails" component={AttendanceSessionDetailsScreen} options={{ headerShown: false }} />
         </>
       ) : (
         <>
-          <Stack.Screen name="AdminLanding" component={AdminLandingScreen} options={{ title: 'Admin' }} />
-          <Stack.Screen name="EnterExamDetails" component={EnterExamDetailsScreen} options={{ title: 'Enter Exam Details' }} />
+          <Stack.Screen name="AdminLanding" component={AdminLandingScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="EnterExamDetails" component={EnterExamDetailsScreen} options={{ headerShown: false }} />
           <Stack.Screen
             name="Scan"
             component={ScanScreen}
-            options={{ title: 'Scan Student Code', headerBackVisible: false, gestureEnabled: false }}
+            options={{ headerShown: false, headerBackVisible: false, gestureEnabled: false }}
           />
-          <Stack.Screen name="AttendanceList" component={AttendanceListScreen} options={{ title: 'Session Attendance' }} />
-          <Stack.Screen name="AttendanceSessionDetails" component={AttendanceSessionDetailsScreen} options={{ title: 'Attendance Details' }} />
-          <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} options={{ title: 'Admin Dashboard' }} />
-          <Stack.Screen name="TeacherControls" component={TeacherControlsScreen} options={{ title: 'Teacher Management' }} />
-          <Stack.Screen name="TeacherManagement" component={TeacherManagementScreen} options={{ title: 'Teacher Management' }} />
-          <Stack.Screen name="Teachers" component={TeachersScreen} options={{ title: 'Teachers' }} />
-          <Stack.Screen name="StudentManagement" component={StudentManagementScreen} options={{ title: 'Student Management' }} />
-          <Stack.Screen name="AddStudent" component={AddStudentScreen} options={{ title: 'Add Student' }} />
-          <Stack.Screen name="Students" component={StudentsScreen} options={{ title: 'Students' }} />
-          <Stack.Screen name="PromoteStudents" component={PromoteStudentsScreen} options={{ title: 'Promote Students' }} />
-          <Stack.Screen name="PromotionHistory" component={PromotionHistoryScreen} options={{ title: 'Promotion History' }} />
-          <Stack.Screen name="PromotionBatchDetails" component={PromotionBatchDetailsScreen} options={{ title: 'Promotion Batch Details' }} />
-          <Stack.Screen name="AddSubjects" component={AddSubjectsScreen} options={{ title: 'Add Subjects' }} />
-          <Stack.Screen name="AddNewSubjects" component={AddNewSubjectsScreen} options={{ title: 'Add New Subjects' }} />
-          <Stack.Screen name="SubjectsCourses" component={SubjectsCoursesScreen} options={{ title: 'Courses' }} />
-          <Stack.Screen name="SubjectsSemesters" component={SubjectsSemestersScreen} options={{ title: 'Semesters' }} />
-          <Stack.Screen name="SubjectsList" component={SubjectsListScreen} options={{ title: 'Subjects' }} />
-          <Stack.Screen name="AttendanceMonitoring" component={AttendanceMonitoringScreen} options={{ title: 'Attendance Monitoring' }} />
-          <Stack.Screen name="AdminAttendanceSubjects" component={AdminAttendanceSubjectsScreen} options={{ title: 'Attendance Subjects' }} />
-          <Stack.Screen name="AdminAttendanceDetails" component={AdminAttendanceDetailsScreen} options={{ title: 'Attendance Details' }} />
+          <Stack.Screen name="AttendanceList" component={AttendanceListScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AttendanceSessionDetails" component={AttendanceSessionDetailsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="TeacherControls" component={TeacherControlsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="TeacherManagement" component={TeacherManagementScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Teachers" component={TeachersScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="StudentManagement" component={StudentManagementScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AddStudent" component={AddStudentScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Students" component={StudentsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="StudentSemesters" component={StudentSemestersScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="StudentBranches" component={StudentBranchesScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="StudentSections" component={StudentSectionsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="StudentSectionStudents" component={StudentSectionStudentsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="PromoteStudents" component={PromoteStudentsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="PromotionHistory" component={PromotionHistoryScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="PromotionBatchDetails" component={PromotionBatchDetailsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AddSubjects" component={AddSubjectsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AddNewSubjects" component={AddNewSubjectsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="SubjectsCourses" component={SubjectsCoursesScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="SubjectsSemesters" component={SubjectsSemestersScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="SubjectsList" component={SubjectsListScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AttendanceMonitoring" component={AttendanceMonitoringScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AdminAttendanceSubjects" component={AdminAttendanceSubjectsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AdminAttendanceDetails" component={AdminAttendanceDetailsScreen} options={{ headerShown: false }} />
         </>
       )}
     </Stack.Navigator>

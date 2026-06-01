@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface AttendanceSessionRepository extends JpaRepository<AttendanceSession, Long> {
     List<AttendanceSession> findByTeacherAndSessionDate(Teacher teacher, LocalDate sessionDate);
+    List<AttendanceSession> findByTeacherOrderBySessionDateDescCreatedAtDesc(Teacher teacher);
     Optional<AttendanceSession> findFirstByTeacherAndSessionDateOrderByCreatedAtAsc(Teacher teacher, LocalDate sessionDate);
     Optional<AttendanceSession> findByTeacherAndSessionDateAndExamSubjectAndExamYearAndExamSemesterAndExamBranchAndExamSection(
             Teacher teacher,

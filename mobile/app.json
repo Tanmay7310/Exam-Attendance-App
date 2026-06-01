@@ -19,9 +19,12 @@
       }
     },
     "android": {
+      "newArchEnabled": false,
+      "softwareKeyboardLayoutMode": "resize",
       "permissions": [
         "CAMERA"
-      ]
+      ],
+      "package": "com.anonymous.examattendance"
     },
     "plugins": [
       "expo-camera"

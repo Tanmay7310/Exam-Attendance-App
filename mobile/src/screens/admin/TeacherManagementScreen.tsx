@@ -1,35 +1,42 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import { Button, Text, TextInput } from 'react-native-paper';
 import { api } from '../../api/client';
+import { AcropolisBackBar, IconMark, ScreenShell, SectionLabel } from '../../components/AcropolisUI';
+import { AdminFormCard, AdminOutlineButton, AdminPrimaryButton, AdminTextField } from '../../components/AdminModuleUI';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
-import { buttonStyles } from '../../styles/buttonStyles';
-import { colors } from '../../styles/theme';
+import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
 
-export const TeacherManagementScreen = () => {
+export const TeacherManagementScreen = ({ navigation }: any) => {
   const { logout } = useAuth();
   const { showToast } = useToast();
   const [form, setForm] = useState({ username: '', password: '', teacherCode: '', name: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [importing, setImporting] = useState(false);
 
   const addTeacher = async () => {
+    if (submitting) return;
+    if (!form.username.trim() || !form.password.trim() || !form.teacherCode.trim() || !form.name.trim()) {
+      showToast('Please fill all required teacher fields.', { type: 'info' });
+      return;
+    }
+
     try {
+      setSubmitting(true);
       await api.post('/api/admin/teachers', { ...form, subject: 'N/A' });
       setForm({ username: '', password: '', teacherCode: '', name: '' });
       showToast('Teacher added.', { type: 'success' });
     } catch (e: any) {
-      const status = e?.response?.status;
-      if (status === 401 || status === 403) {
-        showToast('Session expired. Please login again.', { type: 'error' });
-        await logout();
-        return;
-      }
-      showToast(e?.response?.data?.message ?? e?.message ?? 'Unable to add teacher', { type: 'error' });
+      if (await handleSessionExpired(e, logout, showToast)) return;
+      showToast(getApiErrorMessage(e, 'Unable to add teacher'), { type: 'error' });
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const importTeachers = async () => {
+    if (importing) return;
     try {
       const picked = await DocumentPicker.getDocumentAsync({
         type: [
@@ -41,9 +48,7 @@ export const TeacherManagementScreen = () => {
         copyToCacheDirectory: true
       });
 
-      if (picked.canceled || !picked.assets?.length) {
-        return;
-      }
+      if (picked.canceled || !picked.assets?.length) return;
 
       const file = picked.assets[0];
       const formData = new FormData();
@@ -53,59 +58,57 @@ export const TeacherManagementScreen = () => {
         type: file.mimeType ?? 'application/octet-stream'
       } as any);
 
+      setImporting(true);
       const { data } = await api.post('/api/admin/teachers/import', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
 
       const imported = data?.importedCount ?? 0;
       const skipped = data?.skippedCount ?? 0;
       const errors = Array.isArray(data?.errors) ? data.errors as string[] : [];
-      const sampleErrors = errors.slice(0, 3).join('\n');
+      const sampleErrors = errors.slice(0, 3).join(' | ');
 
       showToast(`Import completed. Imported: ${imported}, Skipped: ${skipped}`, { type: 'success', duration: 3200 });
-      if (sampleErrors) {
-        showToast(`Sample issues: ${sampleErrors.replace(/\n/g, ' | ')}`, { type: 'info', duration: 3800 });
-      }
+      if (sampleErrors) showToast(`Sample issues: ${sampleErrors}`, { type: 'info', duration: 3800 });
     } catch (e: any) {
-      const status = e?.response?.status;
-      if (status === 401 || status === 403) {
-        showToast('Session expired. Please login again.', { type: 'error' });
-        await logout();
-        return;
-      }
-      showToast(e?.response?.data?.message ?? 'Unable to import teachers from file', { type: 'error' });
+      if (await handleSessionExpired(e, logout, showToast)) return;
+      showToast(getApiErrorMessage(e, 'Unable to import teachers from file'), { type: 'error' });
+    } finally {
+      setImporting(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Button mode="contained" style={styles.importButton} contentStyle={buttonStyles.content} onPress={importTeachers}>
-        Import Teachers (Excel/PDF)
-      </Button>
-      <Text style={styles.h2}>Add Teacher</Text>
-      {['username', 'password', 'teacherCode', 'name'].map((field) => (
-        <TextInput
-          key={field}
-          label={field}
-          mode="outlined"
-          style={styles.input}
-          value={(form as any)[field]}
-          onChangeText={(text) => setForm((p) => ({ ...p, [field]: text }))}
-          secureTextEntry={field === 'password'}
-        />
-      ))}
-      <Button mode="contained" contentStyle={buttonStyles.content} onPress={addTeacher}>Add</Button>
-    </View>
+    <ScreenShell>
+      <AcropolisBackBar title="Teacher Management" subtitle="Add faculty accounts" onBack={() => navigation.goBack()} />
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <SectionLabel title="Teacher Import" />
+        <View style={styles.importCard}>
+          <IconMark kind="teacher" tone="indigo" size={48} />
+          <View style={styles.importCopy}>
+            <AdminOutlineButton label={importing ? 'Importing...' : 'Import Teachers (Excel/PDF)'} onPress={importTeachers} disabled={importing || submitting} />
+          </View>
+        </View>
+
+        <SectionLabel title="Add New Teacher" />
+        <AdminFormCard title="Faculty Details" helper="Subject is stored as N/A for backend compatibility.">
+          <AdminTextField label="Username *" value={form.username} onChangeText={(text) => setForm((p) => ({ ...p, username: text }))} autoCapitalize="none" />
+          <AdminTextField label="Password *" value={form.password} onChangeText={(text) => setForm((p) => ({ ...p, password: text }))} secureTextEntry />
+          <View style={styles.twoCol}>
+            <AdminTextField label="Teacher Code *" value={form.teacherCode} onChangeText={(text) => setForm((p) => ({ ...p, teacherCode: text }))} style={styles.flexField} autoCapitalize="characters" />
+            <AdminTextField label="Full Name *" value={form.name} onChangeText={(text) => setForm((p) => ({ ...p, name: text }))} style={styles.flexField} />
+          </View>
+          <AdminPrimaryButton label="Add Teacher" onPress={addTeacher} loading={submitting} disabled={submitting || importing} />
+        </AdminFormCard>
+      </ScrollView>
+    </ScreenShell>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 12, backgroundColor: colors.bg },
-  h2: { fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 8 },
-  input: {
-    marginBottom: 7
-  },
-  importButton: { borderRadius: 12, marginBottom: 12 }
+  content: { padding: 18, paddingBottom: 28 },
+  importCard: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#EDE8E0', borderRadius: 18, padding: 13, flexDirection: 'row', gap: 12, marginBottom: 2, shadowColor: '#1C1917', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 1 },
+  importCopy: { flex: 1 },
+  twoCol: { flexDirection: 'row', gap: 10 },
+  flexField: { flex: 1 }
 });
