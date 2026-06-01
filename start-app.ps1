@@ -1,6 +1,9 @@
 param(
+    [ValidateSet('Lan', 'Usb')]
+    [string]$Mode = 'Lan',
     [int]$BackendPort = 8080,
-    [int]$ExpoPort = 8081
+    [int]$ExpoPort = 8081,
+    [bool]$LaunchAndroid = ($Mode -eq 'Usb')
 )
 
 $repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -15,11 +18,16 @@ if (-not (Test-Path $mobileScript)) {
 }
 
 $backendCmd = "Set-Location '$repoRoot'; powershell -ExecutionPolicy Bypass -File '.\\start-backend-mysql.ps1' -Port $BackendPort"
-$mobileCmd = "Set-Location '$repoRoot'; powershell -ExecutionPolicy Bypass -File '.\\start-mobile-lan.ps1' -Port $ExpoPort -BackendPort $BackendPort"
+$launchAndroidLiteral = if ($LaunchAndroid) { '`$true' } else { '`$false' }
+$mobileCmd = "Set-Location '$repoRoot'; powershell -ExecutionPolicy Bypass -File '.\\start-mobile-lan.ps1' -Mode $Mode -Port $ExpoPort -BackendPort $BackendPort -LaunchAndroid $launchAndroidLiteral"
 
 Start-Process powershell -ArgumentList '-NoExit', '-Command', $backendCmd | Out-Null
 Start-Process powershell -ArgumentList '-NoExit', '-Command', $mobileCmd | Out-Null
 
 Write-Host 'Started backend and mobile startup terminals.'
+Write-Host "Mode: $Mode"
+Write-Host "Backend port: $BackendPort"
+Write-Host "Expo port: $ExpoPort"
+Write-Host "Launch Android: $LaunchAndroid"
 Write-Host "Backend script: $backendScript"
 Write-Host "Mobile script: $mobileScript"

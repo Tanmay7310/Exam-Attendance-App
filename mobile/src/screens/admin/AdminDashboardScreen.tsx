@@ -6,6 +6,7 @@ import { api } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { AdminAttendance, StudentItem, SubjectItem, TeacherItem } from '../../types';
+import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
 
 type DashboardStats = {
   teachers: number | null;
@@ -61,13 +62,8 @@ export const AdminDashboardScreen = ({ navigation }: any) => {
       });
       setLastSyncLabel(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
     } catch (e: any) {
-      const status = e?.response?.status;
-      if (status === 401 || status === 403) {
-        showToast('Session expired. Please login again.', { type: 'error' });
-        await logout();
-        return;
-      }
-      showToast(e?.response?.data?.message ?? 'Unable to refresh admin dashboard counts.', { type: 'error' });
+      if (await handleSessionExpired(e, logout, showToast)) return;
+      showToast(getApiErrorMessage(e, 'Unable to refresh admin dashboard counts.'), { type: 'error' });
     } finally {
       setLoadingStats(false);
     }

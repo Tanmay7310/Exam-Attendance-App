@@ -11,6 +11,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { buttonStyles } from '../../styles/buttonStyles';
 import { colors } from '../../styles/theme';
+import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
 import { createOfflineScanItem, enqueueOfflineScan, flushOfflineScans, getOfflineQueueSize, isOfflineError } from '../../utils/offlineQueue';
 
 type ExamDetails = {
@@ -74,21 +75,6 @@ export const ScanScreen = ({ route, navigation }: any) => {
     }, [tryFlush])
   );
 
-  const getErrorMessage = (e: any) => {
-    const status = e?.response?.status;
-    const body = e?.response?.data;
-
-    if (status === 401 || status === 403) {
-      return 'Session expired. Please login again.';
-    }
-
-    if (typeof body === 'string' && body.trim().length > 0) {
-      return body;
-    }
-
-    return body?.message ?? body?.error ?? e?.message ?? `Request failed (${status ?? 'network'})`;
-  };
-
   if (!examDetails) {
     return (
       <View style={styles.center}>
@@ -136,12 +122,7 @@ export const ScanScreen = ({ route, navigation }: any) => {
       const message = `${name} (${scholar}) ${baseMessage}`;
       showToast(message, { type: data?.duplicate ? 'info' : 'success', duration: 2600 });
     } catch (e: any) {
-      const status = e?.response?.status;
-      if (status === 401 || status === 403) {
-        showToast('Session expired. Please login again.', { type: 'error' });
-        await logout();
-        return;
-      }
+      if (await handleSessionExpired(e, logout, showToast)) return;
 
       if (isOfflineError(e)) {
         const role = auth?.role ?? 'TEACHER';
@@ -151,7 +132,7 @@ export const ScanScreen = ({ route, navigation }: any) => {
         return;
       }
 
-      showToast(getErrorMessage(e), { type: 'error' });
+      showToast(getApiErrorMessage(e, 'Scan request failed.'), { type: 'error' });
     }
   };
 

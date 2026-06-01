@@ -69,8 +69,16 @@ export const AddStudentScreen = ({ navigation }: any) => {
 
   const addStudent = async () => {
     if (submitting) return;
+    if (!form.name.trim()) {
+      showToast('Please enter full name.', { type: 'info' });
+      return;
+    }
     if (!form.scholarNumber || form.scholarNumber === SCHOLAR_PREFIX) {
       showToast('Please enter Scholar Number after AITR.', { type: 'info' });
+      return;
+    }
+    if (!form.enrollmentNumber.trim()) {
+      showToast('Please enter enrollment number.', { type: 'info' });
       return;
     }
     if (!form.department) {

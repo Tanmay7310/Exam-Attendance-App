@@ -7,6 +7,7 @@ import { AdminCard, AdminEmpty, AdminPickerFrame, AdminPrimaryButton, AdminStatT
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { PromotionClassContext, StudentPromotionBatchDetail, StudentPromotionCandidate, StudentPromotionPreviewResponse, SubjectItem } from '../../types';
+import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
 
 const YEAR_OPTIONS = ['1', '2', '3', '4'];
 const SEMESTER_OPTIONS = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -43,13 +44,7 @@ export const PromoteStudentsScreen = ({ navigation }: any) => {
   }, [subjects]);
 
   const handleAuthError = useCallback(async (error: any) => {
-    const status = error?.response?.status;
-    if (status === 401 || status === 403) {
-      showToast('Session expired. Please login again.', { type: 'error' });
-      await logout();
-      return true;
-    }
-    return false;
+    return handleSessionExpired(error, logout, showToast);
   }, [logout, showToast]);
 
   const loadBranches = useCallback(async () => {
@@ -59,7 +54,7 @@ export const PromoteStudentsScreen = ({ navigation }: any) => {
       setSubjects(Array.isArray(data) ? data : []);
     } catch (error: any) {
       if (await handleAuthError(error)) return;
-      showToast(error?.response?.data?.message ?? 'Unable to load branch catalog.', { type: 'error' });
+      showToast(getApiErrorMessage(error, 'Unable to load branch catalog.'), { type: 'error' });
       setSubjects([]);
     } finally {
       setLoadingBranches(false);
@@ -90,7 +85,7 @@ export const PromoteStudentsScreen = ({ navigation }: any) => {
       showToast(`Preview loaded: ${data?.candidateCount ?? allIds.length} students`, { type: 'success' });
     } catch (error: any) {
       if (await handleAuthError(error)) return;
-      showToast(error?.response?.data?.message ?? 'Unable to preview promotion.', { type: 'error' });
+      showToast(getApiErrorMessage(error, 'Unable to preview promotion.'), { type: 'error' });
       setPreview(null);
       setSelectedIds([]);
     } finally {
@@ -112,7 +107,7 @@ export const PromoteStudentsScreen = ({ navigation }: any) => {
       setSelectedIds([]);
     } catch (error: any) {
       if (await handleAuthError(error)) return;
-      showToast(error?.response?.data?.message ?? 'Unable to execute promotion.', { type: 'error' });
+      showToast(getApiErrorMessage(error, 'Unable to execute promotion.'), { type: 'error' });
     } finally {
       setExecuting(false);
     }

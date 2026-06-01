@@ -7,6 +7,7 @@ import { AdminFormCard, AdminOutlineButton, AdminPrimaryButton, AdminTextField }
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { ImportSubjectsResponse } from '../../types';
+import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
 
 export const AddNewSubjectsScreen = ({ navigation }: any) => {
   const { logout } = useAuth();
@@ -32,13 +33,8 @@ export const AddNewSubjectsScreen = ({ navigation }: any) => {
       setName(''); setSubjectCode(''); setBranch(''); setSemester('');
       showToast('Subject added successfully.', { type: 'success' });
     } catch (e: any) {
-      const status = e?.response?.status;
-      if (status === 401 || status === 403) {
-        showToast('Session expired. Please login again.', { type: 'error' });
-        await logout();
-        return;
-      }
-      const message = (typeof e?.response?.data === 'string' && e.response.data.trim()) || e?.response?.data?.message || e?.message || 'Unable to add subject.';
+      if (await handleSessionExpired(e, logout, showToast)) return;
+      const message = getApiErrorMessage(e, 'Unable to add subject.');
       showToast(e?.message === 'Network Error' ? `Network error. API: ${API_BASE_URL}` : message, { type: 'error', duration: e?.message === 'Network Error' ? 4200 : undefined });
     } finally {
       setSubmitting(false);
@@ -49,7 +45,11 @@ export const AddNewSubjectsScreen = ({ navigation }: any) => {
     if (importing) return;
     try {
       const picked = await DocumentPicker.getDocumentAsync({
-        type: ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+        type: [
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ],
         multiple: false,
         copyToCacheDirectory: true
       });
@@ -71,13 +71,8 @@ export const AddNewSubjectsScreen = ({ navigation }: any) => {
       if (batchId) showToast(`Import Batch: ${batchId}`, { type: 'info', duration: 2800 });
       if (preview) showToast(`Sample issues: ${preview}`, { type: 'info', duration: 4200 });
     } catch (e: any) {
-      const status = e?.response?.status;
-      if (status === 401 || status === 403) {
-        showToast('Session expired. Please login again.', { type: 'error' });
-        await logout();
-        return;
-      }
-      const message = (typeof e?.response?.data === 'string' && e.response.data.trim()) || e?.response?.data?.message || e?.message || 'Unable to import subjects from file.';
+      if (await handleSessionExpired(e, logout, showToast)) return;
+      const message = getApiErrorMessage(e, 'Unable to import subjects from file.');
       showToast(e?.message === 'Network Error' ? `Network error. API: ${API_BASE_URL}` : message, { type: 'error', duration: e?.message === 'Network Error' ? 4200 : undefined });
     } finally {
       setImporting(false);
@@ -104,7 +99,7 @@ export const AddNewSubjectsScreen = ({ navigation }: any) => {
           <IconMark kind="book" tone="amber" size={48} />
           <View style={styles.importCopy}>
             <Text style={styles.importTitle}>Import Subjects</Text>
-            <Text style={styles.importMeta}>Upload normalized Excel subject sheets.</Text>
+            <Text style={styles.importMeta}>Upload normalized Excel or Word subject files.</Text>
           </View>
           <AdminOutlineButton label={importing ? 'Importing...' : 'Import'} onPress={importSubjects} disabled={importing || submitting} tone="blue" style={styles.importButton} />
         </View>

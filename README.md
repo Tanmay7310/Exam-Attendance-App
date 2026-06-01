@@ -126,42 +126,70 @@ Optional custom port:
 powershell -ExecutionPolicy Bypass -File .\start-backend-mysql.ps1 -Port 8082
 ```
 
-### 1.1) Start Mobile With Stable LAN Host (Recommended)
+### 1.1) Start Mobile With Stable LAN Host
 
 From repository root:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\start-mobile-lan.ps1
+powershell -ExecutionPolicy Bypass -File .\start-mobile-lan.ps1 -Mode Lan
 ```
 
 This command:
 - detects your active LAN IPv4 address
 - pins Expo host to that IP
 - sets `EXPO_PUBLIC_API_BASE_URL` to `http://<lan-ip>:8080`
-- starts Expo on port `8081`
+- starts Expo development build mode on port `8081`
 
 Optional custom Expo and backend ports:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\start-mobile-lan.ps1 -Port 8082 -BackendPort 8083
+powershell -ExecutionPolicy Bypass -File .\start-mobile-lan.ps1 -Mode Lan -Port 8082 -BackendPort 8083
 ```
 
-### 1.2) Start Backend + Mobile Together
+### 1.2) Start Mobile With USB/Wired Development Build
+
+Use this when the phone is connected by USB and USB debugging is enabled:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\start-mobile-lan.ps1 -Mode Usb
+```
+
+This command:
+- verifies an authorized Android device is available through `adb`
+- configures `adb reverse` for Expo and backend ports
+- sets `EXPO_PUBLIC_API_BASE_URL` to `http://localhost:8080`
+- starts Expo development build mode on port `8081`
+- optionally launches the installed Android app when `-LaunchAndroid $true` is used
+
+Optional custom Expo and backend ports:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\start-mobile-lan.ps1 -Mode Usb -Port 8081 -BackendPort 8082 -LaunchAndroid $true
+```
+
+### 1.3) Start Backend + Mobile Together
 
 From repository root:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\start-app.ps1
+powershell -ExecutionPolicy Bypass -File .\start-app.ps1 -Mode Lan
 ```
 
 This opens two terminals and starts:
 - backend (MySQL + Spring Boot)
-- mobile (Expo LAN with pinned host)
+- mobile (Expo development build with the selected network mode)
+
+Wired/USB mode:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\start-app.ps1 -Mode Usb
+```
 
 Optional custom ports:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\start-app.ps1 -BackendPort 8082 -ExpoPort 8081
+powershell -ExecutionPolicy Bypass -File .\start-app.ps1 -Mode Usb -BackendPort 8082 -ExpoPort 8081
+powershell -ExecutionPolicy Bypass -File .\start-app.ps1 -Mode Lan -BackendPort 8082 -ExpoPort 8081
 ```
 
 ### 2) Configure Mobile Base URL
@@ -180,6 +208,17 @@ Fresh databases can use `database/schema.sql`. Existing databases should apply t
 ### Native Android / Development Build Note
 
 The project includes a native Android folder (`mobile/android`), so treat it as a development-build project when building APKs. If you change native-facing values in `mobile/app.json` such as permissions, package name, splash, plugins, or orientation, sync those changes into the native project with the appropriate Expo prebuild/development-build workflow before shipping a native build.
+
+`npx expo-doctor` may warn that config fields are not automatically synced because this is no longer an Expo-Go-only/CNG project. For presentation builds, verify the native Android files directly after config changes and rebuild the development APK with:
+
+```powershell
+Set-Location "D:\Exam Attendance app\mobile"
+npx expo run:android
+```
+
+### Theme Note
+
+The current Acropolis UI is intentionally fixed to the light institutional theme for consistent projector and mobile presentation output. Do not claim automatic dark-mode support unless the hardcoded Acropolis color tokens and Paper theme are converted to a real system-aware theme.
 
 ### 3) Start Mobile (Manual)
 

@@ -7,6 +7,7 @@ import { ACR, AcropolisBackBar, ScreenShell, SectionLabel } from '../../componen
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { SubjectItem } from '../../types';
+import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
 
 export const EnterExamDetailsScreen = ({ navigation, route }: any) => {
   const returnTo = route?.params?.returnTo;
@@ -75,13 +76,8 @@ export const EnterExamDetailsScreen = ({ navigation, route }: any) => {
       const { data } = await api.get<SubjectItem[]>(endpoint);
       setSubjects(Array.isArray(data) ? data : []);
     } catch (e: any) {
-      const status = e?.response?.status;
-      if (status === 401 || status === 403) {
-        showToast('Session expired. Please login again.', { type: 'error' });
-        await logout();
-        return;
-      }
-      showToast(e?.response?.data?.message ?? 'Unable to load branches and semesters.', { type: 'error' });
+      if (await handleSessionExpired(e, logout, showToast)) return;
+      showToast(getApiErrorMessage(e, 'Unable to load branches and semesters.'), { type: 'error' });
       setSubjects([]);
     } finally {
       setLoadingCatalog(false);

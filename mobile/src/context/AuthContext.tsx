@@ -21,14 +21,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     (async () => {
-      const cached = await AsyncStorage.getItem(STORAGE_KEY);
-      if (cached) {
-        const parsed: LoginResponse = JSON.parse(cached);
-        setAuth(parsed);
-        setAuthToken(parsed.token);
-        flushOfflineScans(parsed).catch(() => undefined);
+      try {
+        const cached = await AsyncStorage.getItem(STORAGE_KEY);
+        if (cached) {
+          const parsed: LoginResponse = JSON.parse(cached);
+          if (!parsed?.token || !parsed?.role) {
+            throw new Error('Invalid cached auth payload');
+          }
+          setAuth(parsed);
+          setAuthToken(parsed.token);
+          flushOfflineScans(parsed).catch(() => undefined);
+        }
+      } catch {
+        await AsyncStorage.removeItem(STORAGE_KEY).catch(() => undefined);
+        setAuthToken(undefined);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     })();
   }, []);
 

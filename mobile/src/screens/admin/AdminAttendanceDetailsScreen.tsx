@@ -31,14 +31,9 @@ export const AdminAttendanceDetailsScreen = ({ route, navigation }: any) => {
   }, [sessionId]);
 
   React.useEffect(() => {
-    loadSessionDetails().catch((e: any) => {
-      const status = e?.response?.status;
-      if (status === 401 || status === 403) {
-        showToast('Session expired. Please login again.', { type: 'error' });
-        logout().catch(() => undefined);
-        return;
-      }
-      showToast(e?.response?.data?.message ?? 'Unable to load session roster.', { type: 'error' });
+    loadSessionDetails().catch(async (e: any) => {
+      if (await handleSessionExpired(e, logout, showToast)) return;
+      showToast(getApiErrorMessage(e, 'Unable to load session roster.'), { type: 'error' });
     });
   }, [loadSessionDetails, logout, showToast]);
 
