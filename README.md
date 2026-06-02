@@ -207,9 +207,9 @@ Fresh databases can use `database/schema.sql`. Existing databases should apply t
 
 ### Native Android / Development Build Note
 
-The project includes a native Android folder (`mobile/android`), so treat it as a development-build project when building APKs. If you change native-facing values in `mobile/app.json` such as permissions, package name, splash, plugins, or orientation, sync those changes into the native project with the appropriate Expo prebuild/development-build workflow before shipping a native build.
+The mobile app uses Expo SDK 56 with the native Android project treated as generated output. `mobile/android/` and `mobile/ios/` are ignored by Git; keep native-facing values in `mobile/app.json` as the source of truth.
 
-`npx expo-doctor` may warn that config fields are not automatically synced because this is no longer an Expo-Go-only/CNG project. For presentation builds, verify the native Android files directly after config changes and rebuild the development APK with:
+Use `start-app.ps1` for normal development. Rebuild the Android development client only after changing native dependencies or app config values such as permissions, package name, splash, plugins, keyboard mode, or orientation:
 
 ```powershell
 Set-Location "D:\Exam Attendance app\mobile"
@@ -218,7 +218,7 @@ npx expo run:android
 
 ### Theme Note
 
-The current Acropolis UI is intentionally fixed to the light institutional theme for consistent projector and mobile presentation output. Do not claim automatic dark-mode support unless the hardcoded Acropolis color tokens and Paper theme are converted to a real system-aware theme.
+The app follows the Android/iOS system theme automatically. React Native Paper, React Navigation, and the shared Acropolis UI tokens switch between light and dark surfaces while preserving the royal-blue/gold institutional brand.
 
 ### 3) Start Mobile (Manual)
 

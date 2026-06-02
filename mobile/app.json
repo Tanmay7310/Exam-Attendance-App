@@ -4,11 +4,7 @@
     "slug": "exam-attendance",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "resizeMode": "contain",
-      "backgroundColor": "#f8fafc"
-    },
+    "userInterfaceStyle": "automatic",
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -19,7 +15,6 @@
       }
     },
     "android": {
-      "newArchEnabled": false,
       "softwareKeyboardLayoutMode": "resize",
       "permissions": [
         "CAMERA"
@@ -27,7 +22,21 @@
       "package": "com.anonymous.examattendance"
     },
     "plugins": [
-      "expo-camera"
+      "expo-camera",
+      "expo-asset",
+      "expo-sharing",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F9F7F4",
+          "image": "./assets/splash.png",
+          "dark": {
+            "backgroundColor": "#0B1220",
+            "image": "./assets/splash.png"
+          },
+          "resizeMode": "contain"
+        }
+      ]
     ]
   }
 }

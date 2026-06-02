@@ -7,10 +7,12 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { SessionAttendanceSummary } from '../../types';
 import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
+import { useAppTheme } from '../../styles/appTheme';
 
 export const AdminAttendanceSubjectsScreen = ({ route, navigation }: any) => {
   const { logout } = useAuth();
   const { showToast } = useToast();
+  const theme = useAppTheme();
   const date: string = route?.params?.date ?? '';
   const teacherId: string = route?.params?.teacherId ?? '';
   const subjectFilter: string = route?.params?.subjectFilter ?? '';
@@ -85,7 +87,7 @@ export const AdminAttendanceSubjectsScreen = ({ route, navigation }: any) => {
         ListEmptyComponent={<EmptyState title="No attendance records found" />}
         renderItem={({ item }) => (
           <Pressable
-            style={({ pressed }) => [styles.subjectCard, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.subjectCard, { backgroundColor: theme.card, borderColor: theme.border, shadowColor: theme.shadow }, pressed && styles.pressed]}
             onPress={() =>
               navigation.navigate('AdminAttendanceDetails', {
                 title: `Date: ${date} | Subject: ${item.subject}`,
@@ -102,11 +104,11 @@ export const AdminAttendanceSubjectsScreen = ({ route, navigation }: any) => {
           >
             <IconMark kind="book" tone="indigo" size={48} />
             <View style={styles.subjectCopy}>
-              <Text style={styles.subjectTitle}>{item.title}</Text>
-              <Text style={styles.subjectMeta}>{item.meta}</Text>
-              <Text style={styles.subjectMeta}>{item.presentCount}/{item.totalCount} present</Text>
+              <Text style={[styles.subjectTitle, { color: theme.ink }]}>{item.title}</Text>
+              <Text style={[styles.subjectMeta, { color: theme.muted }]}>{item.meta}</Text>
+              <Text style={[styles.subjectMeta, { color: theme.muted }]}>{item.presentCount}/{item.totalCount} present</Text>
             </View>
-            <Text style={styles.chevron}>{'>'}</Text>
+            <Text style={[styles.chevron, { color: theme.ghost }]}>{'>'}</Text>
           </Pressable>
         )}
       />

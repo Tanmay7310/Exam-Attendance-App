@@ -20,4 +20,6 @@ public class CreateTeacherRequest {
 
     @NotBlank
     private String subject;
+
+    private Boolean admin;
 }

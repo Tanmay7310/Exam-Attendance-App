@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { AdminAttendance, StudentItem, SubjectItem, TeacherItem } from '../../types';
 import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
+import { useAppTheme } from '../../styles/appTheme';
 
 type LandingStats = {
   teachers: number | null;
@@ -42,6 +43,7 @@ const formatCount = (value: number | null) => value == null ? '--' : String(valu
 export const AdminLandingScreen = ({ navigation }: any) => {
   const { auth, logout } = useAuth();
   const { showToast } = useToast();
+  const theme = useAppTheme();
   const adminName = auth?.username ?? 'Admin User';
   const [stats, setStats] = useState<LandingStats>({ teachers: null, sessions: null, departments: null });
 
@@ -127,12 +129,12 @@ export const AdminLandingScreen = ({ navigation }: any) => {
         />
 
         <SectionLabel title="Account" />
-        <Pressable onPress={logout} style={({ pressed }) => [styles.signOutRow, pressed && styles.pressed]}>
+        <Pressable onPress={logout} style={({ pressed }) => [styles.signOutRow, { backgroundColor: theme.card, borderColor: theme.border }, pressed && styles.pressed]}>
           <View>
-            <Text style={styles.signOutTitle}>Sign Out</Text>
-            <Text style={styles.signOutSubtitle}>End the current administrator session.</Text>
+            <Text style={[styles.signOutTitle, { color: theme.rose }]}>Sign Out</Text>
+            <Text style={[styles.signOutSubtitle, { color: theme.muted }]}>End the current administrator session.</Text>
           </View>
-          <Text style={styles.signOutArrow}>{'>'}</Text>
+          <Text style={[styles.signOutArrow, { color: theme.rose }]}>{'>'}</Text>
         </Pressable>
       </ScrollView>
     </ScreenShell>
@@ -147,25 +149,31 @@ const Stat = ({ value, label, caption }: { value: string; label: string; caption
   </View>
 );
 
-const AdminTile = ({ title, subtitle, iconKind, tone, onPress }: any) => (
-  <Pressable onPress={onPress} style={({ pressed }) => [styles.tile, pressed && styles.pressed]}>
-    <IconMark kind={iconKind} tone={tone} size={48} />
-    <Text style={styles.tileTitle}>{title}</Text>
-    <Text style={styles.tileSubtitle}>{subtitle}</Text>
-    <Text style={styles.tileArrow}>{'>'}</Text>
-  </Pressable>
-);
+const AdminTile = ({ title, subtitle, iconKind, tone, onPress }: any) => {
+  const theme = useAppTheme();
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.tile, { backgroundColor: theme.card, borderColor: theme.border, shadowColor: theme.shadow }, pressed && styles.pressed]}>
+      <IconMark kind={iconKind} tone={tone} size={48} />
+      <Text style={[styles.tileTitle, { color: theme.ink }]}>{title}</Text>
+      <Text style={[styles.tileSubtitle, { color: theme.muted }]}>{subtitle}</Text>
+      <Text style={[styles.tileArrow, { color: theme.ghost }]}>{'>'}</Text>
+    </Pressable>
+  );
+};
 
-const AdminRow = ({ title, subtitle, iconKind, tone, onPress }: any) => (
-  <Pressable onPress={onPress} style={({ pressed }) => [styles.rowCard, pressed && styles.pressed]}>
-    <IconMark kind={iconKind} tone={tone} size={48} />
-    <View style={styles.rowCopy}>
-      <Text style={styles.rowTitle}>{title}</Text>
-      <Text style={styles.rowSubtitle}>{subtitle}</Text>
-    </View>
-    <Text style={styles.rowArrow}>{'>'}</Text>
-  </Pressable>
-);
+const AdminRow = ({ title, subtitle, iconKind, tone, onPress }: any) => {
+  const theme = useAppTheme();
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.rowCard, { backgroundColor: theme.card, borderColor: theme.border, shadowColor: theme.shadow }, pressed && styles.pressed]}>
+      <IconMark kind={iconKind} tone={tone} size={48} />
+      <View style={styles.rowCopy}>
+        <Text style={[styles.rowTitle, { color: theme.ink }]}>{title}</Text>
+        <Text style={[styles.rowSubtitle, { color: theme.muted }]}>{subtitle}</Text>
+      </View>
+      <Text style={[styles.rowArrow, { color: theme.ghost }]}>{'>'}</Text>
+    </Pressable>
+  );
+};
 
 const styles = StyleSheet.create({
   content: { padding: 18, paddingBottom: 28 },

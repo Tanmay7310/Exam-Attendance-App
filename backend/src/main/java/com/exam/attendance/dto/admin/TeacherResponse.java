@@ -11,4 +11,5 @@ public class TeacherResponse {
     private String teacherCode;
     private String name;
     private String subject;
+    private String role;
 }

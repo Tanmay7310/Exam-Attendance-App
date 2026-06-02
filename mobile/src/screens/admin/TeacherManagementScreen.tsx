@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { api } from '../../api/client';
 import { AcropolisBackBar, IconMark, ScreenShell, SectionLabel } from '../../components/AcropolisUI';
@@ -7,11 +7,13 @@ import { AdminFormCard, AdminOutlineButton, AdminPrimaryButton, AdminTextField }
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
+import { useAppTheme } from '../../styles/appTheme';
 
 export const TeacherManagementScreen = ({ navigation }: any) => {
   const { logout } = useAuth();
   const { showToast } = useToast();
-  const [form, setForm] = useState({ username: '', password: '', teacherCode: '', name: '' });
+  const theme = useAppTheme();
+  const [form, setForm] = useState({ username: '', password: '', teacherCode: '', name: '', admin: false });
   const [submitting, setSubmitting] = useState(false);
   const [importing, setImporting] = useState(false);
 
@@ -25,8 +27,8 @@ export const TeacherManagementScreen = ({ navigation }: any) => {
     try {
       setSubmitting(true);
       await api.post('/api/admin/teachers', { ...form, subject: 'N/A' });
-      setForm({ username: '', password: '', teacherCode: '', name: '' });
-      showToast('Teacher added.', { type: 'success' });
+      setForm({ username: '', password: '', teacherCode: '', name: '', admin: false });
+      showToast(form.admin ? 'Admin faculty account added.' : 'Teacher added.', { type: 'success' });
     } catch (e: any) {
       if (await handleSessionExpired(e, logout, showToast)) return;
       showToast(getApiErrorMessage(e, 'Unable to add teacher'), { type: 'error' });
@@ -83,7 +85,7 @@ export const TeacherManagementScreen = ({ navigation }: any) => {
       <AcropolisBackBar title="Teacher Management" subtitle="Add faculty accounts" onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
         <SectionLabel title="Teacher Import" />
-        <View style={styles.importCard}>
+        <View style={[styles.importCard, { backgroundColor: theme.card, borderColor: theme.border, shadowColor: theme.shadow }]}>
           <IconMark kind="teacher" tone="indigo" size={48} />
           <View style={styles.importCopy}>
             <AdminOutlineButton label={importing ? 'Importing...' : 'Import Teachers (Excel/PDF)'} onPress={importTeachers} disabled={importing || submitting} />
@@ -98,6 +100,19 @@ export const TeacherManagementScreen = ({ navigation }: any) => {
             <AdminTextField label="Teacher Code *" value={form.teacherCode} onChangeText={(text) => setForm((p) => ({ ...p, teacherCode: text }))} style={styles.flexField} autoCapitalize="characters" />
             <AdminTextField label="Full Name *" value={form.name} onChangeText={(text) => setForm((p) => ({ ...p, name: text }))} style={styles.flexField} />
           </View>
+          <View style={[styles.adminAccessRow, { backgroundColor: theme.blueSoft, borderColor: theme.border }]}>
+            <View style={styles.adminAccessCopy}>
+              <Text style={[styles.adminAccessTitle, { color: theme.ink }]}>Grant admin access</Text>
+              <Text style={[styles.adminAccessHelper, { color: theme.muted }]}>This faculty account will be able to access all admin controls.</Text>
+            </View>
+            <Switch
+              value={form.admin}
+              onValueChange={(admin) => setForm((p) => ({ ...p, admin }))}
+              disabled={submitting || importing}
+              trackColor={{ false: theme.border, true: theme.blue }}
+              thumbColor={form.admin ? '#FFFFFF' : theme.ghost}
+            />
+          </View>
           <AdminPrimaryButton label="Add Teacher" onPress={addTeacher} loading={submitting} disabled={submitting || importing} />
         </AdminFormCard>
       </ScrollView>
@@ -110,5 +125,9 @@ const styles = StyleSheet.create({
   importCard: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#EDE8E0', borderRadius: 18, padding: 13, flexDirection: 'row', gap: 12, marginBottom: 2, shadowColor: '#1C1917', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 1 },
   importCopy: { flex: 1 },
   twoCol: { flexDirection: 'row', gap: 10 },
-  flexField: { flex: 1 }
+  flexField: { flex: 1 },
+  adminAccessRow: { borderWidth: 1, borderRadius: 16, padding: 13, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  adminAccessCopy: { flex: 1 },
+  adminAccessTitle: { fontSize: 13, fontWeight: '900' },
+  adminAccessHelper: { fontSize: 11, fontWeight: '700', marginTop: 3, lineHeight: 15 }
 });

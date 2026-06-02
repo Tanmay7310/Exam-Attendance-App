@@ -18,7 +18,7 @@ if (-not (Test-Path $mobileScript)) {
 }
 
 $backendCmd = "Set-Location '$repoRoot'; powershell -ExecutionPolicy Bypass -File '.\\start-backend-mysql.ps1' -Port $BackendPort"
-$launchAndroidLiteral = if ($LaunchAndroid) { '`$true' } else { '`$false' }
+$launchAndroidLiteral = if ($LaunchAndroid) { '1' } else { '0' }
 $mobileCmd = "Set-Location '$repoRoot'; powershell -ExecutionPolicy Bypass -File '.\\start-mobile-lan.ps1' -Mode $Mode -Port $ExpoPort -BackendPort $BackendPort -LaunchAndroid $launchAndroidLiteral"
 
 Start-Process powershell -ArgumentList '-NoExit', '-Command', $backendCmd | Out-Null

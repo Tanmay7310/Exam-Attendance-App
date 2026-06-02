@@ -9,10 +9,12 @@ import { useToast } from '../../context/ToastContext';
 import { TeacherItem } from '../../types';
 import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
 import { ACR } from '../../components/AcropolisUI';
+import { useAppTheme } from '../../styles/appTheme';
 
 export const TeachersScreen = ({ navigation }: any) => {
   const { logout } = useAuth();
   const { showToast } = useToast();
+  const theme = useAppTheme();
   const [teachers, setTeachers] = useState<TeacherItem[]>([]);
   const [search, setSearch] = useState('');
   const [diagnostics, setDiagnostics] = useState('');
@@ -72,7 +74,22 @@ export const TeachersScreen = ({ navigation }: any) => {
             title={item.name}
             meta={`${item.teacherCode} | ${item.username}`}
             caption={item.subject ? `Subject: ${item.subject}` : undefined}
-            right={<AdminIconAction label="Remove" tone="rose" onPress={() => removeTeacher(item.id)} />}
+            right={
+              <View style={styles.rightActions}>
+                <View style={[
+                  styles.roleBadge,
+                  {
+                    backgroundColor: item.role === 'ADMIN' ? theme.amberSoft : theme.blueSoft,
+                    borderColor: item.role === 'ADMIN' ? theme.goldDeep : theme.blue
+                  }
+                ]}>
+                  <Text style={[styles.roleBadgeText, { color: item.role === 'ADMIN' ? theme.goldDeep : theme.blue }]}>
+                    {item.role === 'ADMIN' ? 'ADMIN' : 'TEACHER'}
+                  </Text>
+                </View>
+                <AdminIconAction label="Remove" tone="rose" onPress={() => removeTeacher(item.id)} />
+              </View>
+            }
           />
         )}
       />
@@ -82,5 +99,8 @@ export const TeachersScreen = ({ navigation }: any) => {
 
 const styles = StyleSheet.create({
   content: { padding: 18, paddingBottom: 28 },
-  debugError: { color: ACR.rose, marginBottom: 8, fontSize: 12, fontWeight: '800' }
+  debugError: { color: ACR.rose, marginBottom: 8, fontSize: 12, fontWeight: '800' },
+  rightActions: { alignItems: 'flex-end', gap: 6 },
+  roleBadge: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 8, paddingVertical: 4 },
+  roleBadgeText: { fontSize: 9, fontWeight: '900', letterSpacing: 0.8 }
 });

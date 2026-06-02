@@ -10,6 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { SessionAttendanceSummary } from '../../types';
 import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
+import { useAppTheme } from '../../styles/appTheme';
 
 const isValidDateParam = (value: string) => {
   if (!value.trim()) return true;
@@ -29,6 +30,7 @@ const isValidDateParam = (value: string) => {
 export const AttendanceMonitoringScreen = ({ navigation }: any) => {
   const { auth, logout } = useAuth();
   const { showToast } = useToast();
+  const theme = useAppTheme();
   const [date, setDate] = useState('');
   const [teacherId, setTeacherId] = useState('');
   const [subject, setSubject] = useState('');
@@ -134,10 +136,10 @@ export const AttendanceMonitoringScreen = ({ navigation }: any) => {
         contentContainerStyle={styles.content}
         ListHeaderComponent={
           <>
-            <View style={[styles.filterCard, hasFilters && styles.filterCardActive]}>
+            <View style={[styles.filterCard, { backgroundColor: theme.card, borderColor: hasFilters ? theme.blue : theme.border, shadowColor: theme.shadow }]}>
               <View style={styles.filterHeader}>
-                <Text style={styles.filterTitle}>Filters</Text>
-                {hasFilters ? <Text style={styles.activeBadge}>Active</Text> : null}
+                <Text style={[styles.filterTitle, { color: theme.ink }]}>Filters</Text>
+                {hasFilters ? <Text style={[styles.activeBadge, { color: theme.blue, backgroundColor: theme.blueSoft, borderColor: theme.blue }]}>Active</Text> : null}
               </View>
               <AdminTextField label="Date (YYYY-MM-DD)" value={date} onChangeText={setDate} style={styles.input} autoCorrect={false} />
               <AdminTextField label="Teacher (ID / Code / Name)" value={teacherId} onChangeText={setTeacherId} style={styles.input} autoCorrect={false} />
@@ -157,7 +159,7 @@ export const AttendanceMonitoringScreen = ({ navigation }: any) => {
         ListEmptyComponent={<EmptyState title="No matching records" subtitle="No attendance records match the current filters." />}
         renderItem={({ item }) => (
           <Pressable
-            style={({ pressed }) => [styles.dateCard, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.dateCard, { backgroundColor: theme.card, borderColor: theme.border, shadowColor: theme.shadow }, pressed && styles.pressed]}
             onPress={() =>
               navigation.navigate('AdminAttendanceSubjects', {
                 date: item.date,
@@ -169,12 +171,12 @@ export const AttendanceMonitoringScreen = ({ navigation }: any) => {
           >
             <IconMark kind="activity" tone="blue" size={48} />
             <View style={styles.dateCopy}>
-              <Text style={styles.dateTitle}>{item.title}</Text>
-              <Text style={styles.dateMeta}>
+              <Text style={[styles.dateTitle, { color: theme.ink }]}>{item.title}</Text>
+              <Text style={[styles.dateMeta, { color: theme.muted }]}>
                 {item.sessionCount} session{item.sessionCount === 1 ? '' : 's'} | {item.presentCount}/{item.totalCount} present
               </Text>
             </View>
-            <Text style={styles.chevron}>{'>'}</Text>
+            <Text style={[styles.chevron, { color: theme.ghost }]}>{'>'}</Text>
           </Pressable>
         )}
       />

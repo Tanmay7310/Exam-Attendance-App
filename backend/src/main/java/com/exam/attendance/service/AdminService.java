@@ -117,10 +117,11 @@ public class AdminService {
             throw new ApiException("Teacher code already exists");
         }
 
+        Role role = Boolean.TRUE.equals(request.getAdmin()) ? Role.ADMIN : Role.TEACHER;
         User user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.TEACHER)
+                .role(role)
                 .enabled(true)
                 .build();
         user = userRepository.save(user);
@@ -139,6 +140,7 @@ public class AdminService {
                 .teacherCode(teacher.getTeacherCode())
                 .name(teacher.getName())
                 .subject(teacher.getSubject())
+                .role(user.getRole().name())
                 .build();
     }
 
@@ -150,6 +152,7 @@ public class AdminService {
                         .teacherCode(teacher.getTeacherCode())
                         .name(teacher.getName())
                         .subject(teacher.getSubject())
+                        .role(teacher.getUser().getRole().name())
                         .build())
                 .toList();
     }
@@ -666,15 +669,25 @@ public class AdminService {
     }
 
     @Transactional
-    public void removeTeacher(Long teacherId) {
+    public void removeTeacher(Long teacherId, String currentUsername) {
         Teacher teacher = teacherRepository.findById(teacherId)
                 .orElseThrow(() -> new ApiException("Teacher not found"));
+        User user = teacher.getUser();
+
+        if (user.getRole() == Role.ADMIN) {
+            if (user.getUsername().equals(currentUsername)) {
+                throw new ApiException("You cannot remove your own admin account");
+            }
+            if (userRepository.countByRoleAndEnabledTrue(Role.ADMIN) <= 1) {
+                throw new ApiException("Cannot remove the last admin account");
+            }
+        }
 
         if (!attendanceRecordRepository.findBySession_Teacher_Id(teacherId).isEmpty()) {
             throw new ApiException("Cannot remove teacher with attendance records");
         }
 
-        Long userId = teacher.getUser().getId();
+        Long userId = user.getId();
         teacherRepository.delete(teacher);
         userRepository.deleteById(userId);
     }

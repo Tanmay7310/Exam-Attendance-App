@@ -1,25 +1,9 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from '../styles/theme';
+import { lightThemeTokens, type AppThemeTokens, useAppTheme } from '../styles/appTheme';
 
-export const ACR = {
-  royal: '#1E3A8A',
-  royalDark: '#172F73',
-  blue: '#2563EB',
-  gold: '#D4AF37',
-  goldDeep: '#C4A35A',
-  ivory: '#F9F7F4',
-  card: '#FFFFFF',
-  border: '#EDE8E0',
-  ink: '#1C1917',
-  muted: '#8B8070',
-  ghost: '#A09890',
-  blueSoft: '#EFF6FF',
-  amberSoft: '#FFFBEB',
-  green: '#059669',
-  rose: '#B91C1C'
-};
+export const ACR = lightThemeTokens;
 
 type HeaderProps = {
   title: string;
@@ -51,121 +35,167 @@ type ModuleCardProps = {
 
 export type IconKind = 'scan' | 'file' | 'settings' | 'activity' | 'users' | 'teacher' | 'book' | 'student' | 'plus' | 'history';
 
-export const ScreenShell = ({ children, style }: { children: React.ReactNode; style?: ViewStyle }) => (
-  <KeyboardAvoidingView
-    style={[styles.screen, style]}
-    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-  >
-    {children}
-  </KeyboardAvoidingView>
-);
+export type SelectOption = {
+  label: string;
+  value: string;
+};
 
-export const AcropolisHomeBar = ({ title, subtitle, onLogout, right }: HeaderProps) => (
-  <>
-    <SafeAreaView edges={['top']} style={styles.homeBar}>
-      <BannerPattern />
-      <View style={styles.homeRow}>
-        <ColumnCrest />
-        <View style={styles.homeTitleWrap}>
-          <Text style={styles.homeTitle}>{title}</Text>
-          {subtitle ? <Text style={styles.homeSubtitle}>{subtitle}</Text> : null}
+export const ScreenShell = ({ children, style }: { children: React.ReactNode; style?: ViewStyle }) => {
+  const theme = useAppTheme();
+  return (
+    <KeyboardAvoidingView
+      style={[styles.screen, { backgroundColor: theme.bg }, style]}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      {children}
+    </KeyboardAvoidingView>
+  );
+};
+
+export const AcropolisHomeBar = ({ title, subtitle, onLogout, right }: HeaderProps) => {
+  const theme = useAppTheme();
+  return (
+    <>
+      <SafeAreaView edges={['top']} style={[styles.homeBar, { backgroundColor: theme.royal }]}>
+        <BannerPattern />
+        <View style={styles.homeRow}>
+          <ColumnCrest />
+          <View style={styles.homeTitleWrap}>
+            <Text style={styles.homeTitle}>{title}</Text>
+            {subtitle ? <Text style={[styles.homeSubtitle, { color: theme.headerSubtle }]}>{subtitle}</Text> : null}
+          </View>
+          {right ?? (
+            onLogout ? (
+              <Pressable onPress={onLogout} style={styles.headerIconButton}>
+                <Text style={styles.headerIconText}>OUT</Text>
+              </Pressable>
+            ) : null
+          )}
         </View>
-        {right ?? (
-          onLogout ? (
-            <Pressable onPress={onLogout} style={styles.headerIconButton}>
-              <Text style={styles.headerIconText}>OUT</Text>
-            </Pressable>
-          ) : null
-        )}
-      </View>
-    </SafeAreaView>
-    <GoldCornice />
-  </>
-);
+      </SafeAreaView>
+      <GoldCornice />
+    </>
+  );
+};
 
-export const AcropolisBackBar = ({ title, subtitle, onBack, right }: HeaderProps) => (
-  <>
-    <SafeAreaView edges={['top']} style={styles.backBar}>
-      <BannerPattern />
-      <View style={styles.backRow}>
-        <Pressable onPress={onBack} style={styles.backButton}>
-          <Text style={styles.backText}>{'<'}</Text>
-        </Pressable>
-        <View style={styles.backTitleWrap}>
-          <Text style={styles.backTitle}>{title}</Text>
-          {subtitle ? <Text style={styles.backSubtitle}>{subtitle}</Text> : null}
+export const AcropolisBackBar = ({ title, subtitle, onBack, right }: HeaderProps) => {
+  const theme = useAppTheme();
+  return (
+    <>
+      <SafeAreaView edges={['top']} style={[styles.backBar, { backgroundColor: theme.royal }]}>
+        <BannerPattern />
+        <View style={styles.backRow}>
+          <Pressable onPress={onBack} style={styles.backButton}>
+            <Text style={styles.backText}>{'<'}</Text>
+          </Pressable>
+          <View style={styles.backTitleWrap}>
+            <Text style={styles.backTitle}>{title}</Text>
+            {subtitle ? <Text style={[styles.backSubtitle, { color: theme.headerSubtle }]}>{subtitle}</Text> : null}
+          </View>
+          <View style={styles.rightSlot}>{right}</View>
         </View>
-        <View style={styles.rightSlot}>{right}</View>
-      </View>
-    </SafeAreaView>
-    <GoldCornice />
-  </>
-);
+      </SafeAreaView>
+      <GoldCornice />
+    </>
+  );
+};
 
-export const GoldCornice = () => (
-  <View style={styles.cornice}>
-    <View style={styles.corniceLine} />
-    <View style={styles.corniceAccent} />
-  </View>
-);
+export const GoldCornice = () => {
+  const theme = useAppTheme();
+  return (
+    <View style={[styles.cornice, { backgroundColor: theme.royalDark }]}>
+      <View style={[styles.corniceLine, { backgroundColor: theme.gold }]} />
+      <View style={styles.corniceAccent} />
+    </View>
+  );
+};
 
-export const HeroCard = ({ children, style }: { children: React.ReactNode; style?: ViewStyle }) => (
-  <View style={[styles.heroCard, style]}>
-    <BannerPattern />
-    {children}
-  </View>
-);
+export const HeroCard = ({ children, style }: { children: React.ReactNode; style?: ViewStyle }) => {
+  const theme = useAppTheme();
+  return (
+    <View style={[styles.heroCard, { backgroundColor: theme.royal, shadowColor: theme.shadow }, style]}>
+      <BannerPattern />
+      {children}
+    </View>
+  );
+};
 
-export const SectionLabel = ({ title, action }: { title: string; action?: React.ReactNode }) => (
-  <View style={styles.sectionLabelRow}>
-    <Text style={styles.sectionLabel}>{title}</Text>
-    <View style={styles.goldRule} />
-    {action}
-  </View>
-);
+export const SectionLabel = ({ title, action }: { title: string; action?: React.ReactNode }) => {
+  const theme = useAppTheme();
+  return (
+    <View style={styles.sectionLabelRow}>
+      <Text style={[styles.sectionLabel, { color: theme.goldDeep }]}>{title}</Text>
+      <View style={[styles.goldRule, { backgroundColor: theme.goldDeep }]} />
+      {action}
+    </View>
+  );
+};
 
-export const TextIcon = ({ label, tone = 'blue' }: { label: string; tone?: 'blue' | 'gold' | 'green' | 'red' | 'dark' }) => (
-  <View style={[styles.textIcon, iconToneStyles[tone]]}>
-    <Text style={[styles.textIconText, iconTextToneStyles[tone]]}>{label}</Text>
-  </View>
-);
+export const TextIcon = ({ label, tone = 'blue' }: { label: string; tone?: 'blue' | 'gold' | 'green' | 'red' | 'dark' }) => {
+  const theme = useAppTheme();
+  const palette = getTextIconPalette(theme)[tone];
+  return (
+    <View style={[styles.textIcon, { backgroundColor: palette.bg, borderColor: palette.border }]}>
+      <Text style={[styles.textIconText, { color: palette.color }]}>{label}</Text>
+    </View>
+  );
+};
 
-export const ActionCard = ({ title, subtitle, icon, iconNode, tone = 'light', onPress }: ActionCardProps) => (
-  <Pressable onPress={onPress} style={({ pressed }) => [styles.actionCard, tone === 'dark' && styles.actionCardDark, pressed && styles.pressed]}>
-    {iconNode ?? <TextIcon label={icon ?? ''} tone={tone === 'dark' ? 'gold' : 'blue'} />}
-    <Text style={[styles.actionTitle, tone === 'dark' && styles.actionTitleDark]}>{title}</Text>
-    {subtitle ? <Text style={[styles.actionSubtitle, tone === 'dark' && styles.actionSubtitleDark]}>{subtitle}</Text> : null}
-  </Pressable>
-);
+export const ActionCard = ({ title, subtitle, icon, iconNode, tone = 'light', onPress }: ActionCardProps) => {
+  const theme = useAppTheme();
+  const dark = tone === 'dark';
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [
+      styles.actionCard,
+      {
+        backgroundColor: dark ? theme.royal : theme.card,
+        borderColor: dark ? theme.royal : theme.border,
+        shadowColor: theme.shadow
+      },
+      pressed && styles.pressed
+    ]}>
+      {iconNode ?? <TextIcon label={icon ?? ''} tone={dark ? 'gold' : 'blue'} />}
+      <Text style={[styles.actionTitle, { color: dark ? '#FFFFFF' : theme.ink }]}>{title}</Text>
+      {subtitle ? <Text style={[styles.actionSubtitle, { color: dark ? theme.headerSubtle : theme.muted }]}>{subtitle}</Text> : null}
+    </Pressable>
+  );
+};
 
-export const QrCodeMark = () => (
-  <View style={styles.qrBox}>
+export const QrCodeMark = () => {
+  const theme = useAppTheme();
+  return (
+  <View style={[styles.qrBox, { backgroundColor: theme.blueSoft }]}>
     <View style={styles.qrIconCanvas}>
-      <View style={[styles.qrCorner, styles.qrCornerTopLeft]} />
-      <View style={[styles.qrCorner, styles.qrCornerTopRight]} />
-      <View style={[styles.qrCorner, styles.qrCornerBottomLeft]} />
-      <View style={[styles.qrDot, styles.qrDotOne]} />
-      <View style={[styles.qrDot, styles.qrDotTwo]} />
-      <View style={[styles.qrDot, styles.qrDotThree]} />
-      <View style={[styles.qrMiniLine, styles.qrMiniLineOne]} />
-      <View style={[styles.qrMiniLine, styles.qrMiniLineTwo]} />
+      <View style={[styles.qrCorner, { borderColor: theme.blue }, styles.qrCornerTopLeft]} />
+      <View style={[styles.qrCorner, { borderColor: theme.blue }, styles.qrCornerTopRight]} />
+      <View style={[styles.qrCorner, { borderColor: theme.blue }, styles.qrCornerBottomLeft]} />
+      <View style={[styles.qrDot, { backgroundColor: theme.blue }, styles.qrDotOne]} />
+      <View style={[styles.qrDot, { backgroundColor: theme.blue }, styles.qrDotTwo]} />
+      <View style={[styles.qrDot, { backgroundColor: theme.blue }, styles.qrDotThree]} />
+      <View style={[styles.qrMiniLine, { backgroundColor: theme.blue }, styles.qrMiniLineOne]} />
+      <View style={[styles.qrMiniLine, { backgroundColor: theme.blue }, styles.qrMiniLineTwo]} />
     </View>
   </View>
-);
+  );
+};
 
-export const FileTextMark = () => (
-  <View style={styles.fileTextBox}>
-    <View style={styles.fileIconCanvas}>
-      <View style={styles.fileFold} />
-      <View style={styles.fileLineOne} />
-      <View style={styles.fileLineTwo} />
-      <View style={styles.fileLineThree} />
+export const FileTextMark = () => {
+  const theme = useAppTheme();
+  return (
+  <View style={[styles.fileTextBox, { backgroundColor: theme.blueSoft }]}>
+    <View style={[styles.fileIconCanvas, { borderColor: theme.blue }]}>
+      <View style={[styles.fileFold, { borderColor: theme.blue, backgroundColor: theme.blueSoft }]} />
+      <View style={[styles.fileLineOne, { backgroundColor: theme.blue }]} />
+      <View style={[styles.fileLineTwo, { backgroundColor: theme.blue }]} />
+      <View style={[styles.fileLineThree, { backgroundColor: theme.blue }]} />
     </View>
   </View>
-);
+  );
+};
 
 export const IconMark = ({ kind, tone = 'blue', size = 48 }: { kind: IconKind; tone?: 'blue' | 'indigo' | 'green' | 'amber' | 'rose'; size?: number }) => {
-  const palette = iconPalette[tone];
+  const theme = useAppTheme();
+  const palette = getIconPalette(theme)[tone];
   const boxStyle = { width: size, height: size, borderRadius: Math.round(size * 0.25), backgroundColor: palette.bg, borderColor: palette.border };
   const markColor = palette.color;
 
@@ -186,42 +216,157 @@ export const IconMark = ({ kind, tone = 'blue', size = 48 }: { kind: IconKind; t
 };
 
 export const ModuleCard = ({ title, subtitle, stat, statLabel, iconKind, tone = 'blue', badge, onPress }: ModuleCardProps) => {
-  const palette = iconPalette[tone];
+  const theme = useAppTheme();
+  const palette = getIconPalette(theme)[tone];
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.moduleCard, pressed && styles.pressed]}>
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.moduleCard, { backgroundColor: theme.card, borderColor: theme.border, shadowColor: theme.shadow }, pressed && styles.pressed]}>
       <View style={[styles.moduleAccent, { backgroundColor: palette.color }]} />
       <IconMark kind={iconKind} tone={tone} size={56} />
       <View style={styles.moduleCopy}>
         <View style={styles.moduleTitleRow}>
-          <Text style={styles.moduleTitle}>{title}</Text>
+          <Text style={[styles.moduleTitle, { color: theme.ink }]}>{title}</Text>
           {badge ? <Text style={styles.moduleBadge}>{badge}</Text> : null}
         </View>
-        <Text style={styles.moduleSubtitle}>{subtitle}</Text>
+        <Text style={[styles.moduleSubtitle, { color: theme.muted }]}>{subtitle}</Text>
         {stat ? (
-          <View style={styles.moduleStatRow}>
+          <View style={[styles.moduleStatRow, { borderTopColor: theme.border }]}>
             <Text style={[styles.moduleStat, { color: palette.color }]}>{stat}</Text>
-            <Text style={styles.moduleStatLabel}>{statLabel}</Text>
+            <Text style={[styles.moduleStatLabel, { color: theme.ghost }]}>{statLabel}</Text>
           </View>
         ) : null}
       </View>
-      <Text style={styles.moduleChevron}>{'>'}</Text>
+      <Text style={[styles.moduleChevron, { color: theme.ghost }]}>{'>'}</Text>
     </Pressable>
   );
 };
 
-export const Pill = ({ label, active, onPress, tone = 'blue' }: { label: string; active?: boolean; onPress?: () => void; tone?: 'blue' | 'green' | 'red' }) => (
-  <Pressable onPress={onPress} disabled={!onPress} style={[styles.pill, active && pillActiveStyles[tone]]}>
-    <Text style={[styles.pillText, active && styles.pillTextActive]}>{label}</Text>
-  </Pressable>
-);
+export const Pill = ({ label, active, onPress, tone = 'blue' }: { label: string; active?: boolean; onPress?: () => void; tone?: 'blue' | 'green' | 'red' }) => {
+  const theme = useAppTheme();
+  const activeColor = tone === 'green' ? theme.green : tone === 'red' ? theme.rose : theme.ink;
+  return (
+    <Pressable onPress={onPress} disabled={!onPress} style={[styles.pill, { backgroundColor: theme.card, borderColor: theme.border }, active && { backgroundColor: activeColor, borderColor: activeColor }]}>
+      <Text style={[styles.pillText, { color: active ? '#FFFFFF' : theme.muted }]}>{label}</Text>
+    </Pressable>
+  );
+};
 
-export const EmptyState = ({ title, subtitle }: { title: string; subtitle?: string }) => (
-  <View style={styles.emptyState}>
-    <TextIcon label="i" tone="gold" />
-    <Text style={styles.emptyTitle}>{title}</Text>
-    {subtitle ? <Text style={styles.emptySubtitle}>{subtitle}</Text> : null}
-  </View>
-);
+export const EmptyState = ({ title, subtitle }: { title: string; subtitle?: string }) => {
+  const theme = useAppTheme();
+  return (
+    <View style={[styles.emptyState, { backgroundColor: theme.card, borderColor: theme.border }]}>
+      <TextIcon label="i" tone="gold" />
+      <Text style={[styles.emptyTitle, { color: theme.ink }]}>{title}</Text>
+      {subtitle ? <Text style={[styles.emptySubtitle, { color: theme.muted }]}>{subtitle}</Text> : null}
+    </View>
+  );
+};
+
+export const AcropolisSelectField = ({
+  label,
+  value,
+  placeholder,
+  options,
+  disabled,
+  helperText,
+  onSelect
+}: {
+  label: string;
+  value: string;
+  placeholder: string;
+  options: SelectOption[];
+  disabled?: boolean;
+  helperText?: string;
+  onSelect: (value: string) => void;
+}) => {
+  const theme = useAppTheme();
+  const [open, setOpen] = React.useState(false);
+  const selected = options.find((option) => option.value === value);
+  const displayValue = selected?.label ?? value;
+  const canOpen = !disabled && options.length > 0;
+
+  return (
+    <>
+      <Pressable
+        onPress={() => {
+          if (canOpen) setOpen(true);
+        }}
+        disabled={!canOpen}
+        style={({ pressed }) => [
+          styles.selectField,
+          {
+            backgroundColor: theme.input,
+            borderColor: value ? theme.blue : theme.border,
+            opacity: disabled ? 0.6 : 1
+          },
+          pressed && canOpen && styles.pressed
+        ]}
+      >
+        <View style={styles.selectTopRow}>
+          <Text style={[styles.selectLabel, { color: theme.goldDeep }]}>{label}</Text>
+          {value ? <Text style={[styles.selectStatus, { color: theme.blue }]}>Selected</Text> : null}
+        </View>
+        <View style={styles.selectValueRow}>
+          <View style={styles.selectCopy}>
+            <Text style={[styles.selectValue, { color: value ? theme.ink : theme.ghost }]} numberOfLines={2}>
+              {value ? displayValue : placeholder}
+            </Text>
+            {helperText ? <Text style={[styles.selectHelper, { color: theme.muted }]} numberOfLines={2}>{helperText}</Text> : null}
+          </View>
+          <Text style={[styles.selectChevron, { color: canOpen ? theme.blue : theme.ghost }]}>v</Text>
+        </View>
+      </Pressable>
+
+      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+        <Pressable style={styles.selectBackdrop} onPress={() => setOpen(false)}>
+          <Pressable style={[styles.selectSheet, { backgroundColor: theme.card, borderColor: theme.border, shadowColor: theme.shadow }]} onPress={() => undefined}>
+            <View style={[styles.selectSheetHandle, { backgroundColor: theme.border }]} />
+            <Text style={[styles.selectSheetEyebrow, { color: theme.goldDeep }]}>{label}</Text>
+            <Text style={[styles.selectSheetTitle, { color: theme.ink }]}>Choose an option</Text>
+            <FlatList
+              data={options}
+              keyExtractor={(item) => item.value}
+              style={styles.selectList}
+              contentContainerStyle={styles.selectListContent}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => {
+                const isSelected = item.value === value;
+                return (
+                  <Pressable
+                    onPress={() => {
+                      onSelect(item.value);
+                      setOpen(false);
+                    }}
+                    style={({ pressed }) => [
+                      styles.selectOption,
+                      {
+                        backgroundColor: isSelected ? theme.blueSoft : theme.cardAlt,
+                        borderColor: isSelected ? theme.blue : theme.border
+                      },
+                      pressed && styles.pressed
+                    ]}
+                  >
+                    <Text style={[styles.selectOptionLabel, { color: isSelected ? theme.blue : theme.ink }]} numberOfLines={2}>
+                      {item.label}
+                    </Text>
+                    {isSelected ? <Text style={[styles.selectOptionCheck, { color: theme.goldDeep }]}>Selected</Text> : null}
+                  </Pressable>
+                );
+              }}
+              ListEmptyComponent={
+                <View style={[styles.selectEmpty, { backgroundColor: theme.cardAlt, borderColor: theme.border }]}>
+                  <Text style={[styles.selectEmptyText, { color: theme.muted }]}>No options available</Text>
+                </View>
+              }
+            />
+            <Pressable onPress={() => setOpen(false)} style={[styles.selectCancel, { backgroundColor: theme.royal }]}>
+              <Text style={styles.selectCancelText}>Cancel</Text>
+            </Pressable>
+          </Pressable>
+        </Pressable>
+      </Modal>
+    </>
+  );
+};
 
 export const initialsOf = (value?: string) => {
   const parts = (value ?? '').trim().split(/\s+/).filter(Boolean);
@@ -252,35 +397,21 @@ const ColumnCrest = () => (
   </View>
 );
 
-const iconToneStyles = StyleSheet.create({
-  blue: { backgroundColor: '#EFF6FF', borderColor: '#DBEAFE' },
-  gold: { backgroundColor: '#FFFBEB', borderColor: '#FDE68A' },
-  green: { backgroundColor: '#ECFDF5', borderColor: '#BBF7D0' },
-  red: { backgroundColor: '#FEF2F2', borderColor: '#FECACA' },
-  dark: { backgroundColor: '#1E3A8A', borderColor: '#28499F' }
+const getTextIconPalette = (theme: AppThemeTokens) => ({
+  blue: { bg: theme.blueSoft, border: theme.isDark ? '#1D4D80' : '#DBEAFE', color: theme.blue },
+  gold: { bg: theme.amberSoft, border: theme.isDark ? '#5F481B' : '#FDE68A', color: theme.goldDeep },
+  green: { bg: theme.greenSoft, border: theme.isDark ? '#145A42' : '#BBF7D0', color: theme.green },
+  red: { bg: theme.roseSoft, border: theme.isDark ? '#6B2132' : '#FECACA', color: theme.rose },
+  dark: { bg: theme.royal, border: theme.royalDark, color: '#FFFFFF' }
 });
 
-const iconTextToneStyles = StyleSheet.create({
-  blue: { color: ACR.blue },
-  gold: { color: ACR.goldDeep },
-  green: { color: ACR.green },
-  red: { color: ACR.rose },
-  dark: { color: '#FFFFFF' }
+const getIconPalette = (theme: AppThemeTokens) => ({
+  blue: { bg: theme.blueSoft, border: theme.isDark ? '#1D4D80' : '#DBEAFE', color: theme.blue },
+  indigo: { bg: theme.isDark ? '#1B2142' : '#EEF2FF', border: theme.isDark ? '#303A73' : '#C7D2FE', color: theme.isDark ? '#A5B4FC' : '#4F46E5' },
+  green: { bg: theme.greenSoft, border: theme.isDark ? '#145A42' : '#A7F3D0', color: theme.green },
+  amber: { bg: theme.amberSoft, border: theme.isDark ? '#5F481B' : '#FDE68A', color: theme.isDark ? theme.gold : '#D97706' },
+  rose: { bg: theme.roseSoft, border: theme.isDark ? '#6B2132' : '#FECACA', color: theme.rose }
 });
-
-const pillActiveStyles = StyleSheet.create({
-  blue: { backgroundColor: ACR.ink, borderColor: ACR.ink },
-  green: { backgroundColor: ACR.green, borderColor: ACR.green },
-  red: { backgroundColor: ACR.rose, borderColor: ACR.rose }
-});
-
-const iconPalette = {
-  blue: { bg: '#EFF6FF', border: '#DBEAFE', color: '#2563EB' },
-  indigo: { bg: '#EEF2FF', border: '#C7D2FE', color: '#4F46E5' },
-  green: { bg: '#ECFDF5', border: '#A7F3D0', color: '#059669' },
-  amber: { bg: '#FFFBEB', border: '#FDE68A', color: '#D97706' },
-  rose: { bg: '#FEF2F2', border: '#FECACA', color: '#B91C1C' }
-};
 
 const SettingsGlyph = ({ color }: { color: string }) => (
   <View style={[styles.glyphCircle, { borderColor: color }]}>
@@ -334,7 +465,7 @@ const HistoryGlyph = ({ color }: { color: string }) => (
 );
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.bg },
+  screen: { flex: 1 },
   homeBar: { backgroundColor: ACR.royal, overflow: 'hidden' },
   backBar: { backgroundColor: ACR.royal, overflow: 'hidden' },
   homeRow: { minHeight: 76, paddingHorizontal: 18, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', gap: 12 },
@@ -420,6 +551,29 @@ const styles = StyleSheet.create({
   emptyState: { alignItems: 'center', justifyContent: 'center', padding: 24, borderRadius: 20, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: ACR.border, marginTop: 12 },
   emptyTitle: { color: ACR.ink, fontWeight: '900', marginTop: 12, fontSize: 16 },
   emptySubtitle: { color: ACR.muted, marginTop: 4, textAlign: 'center' },
+  selectField: { borderWidth: 1, borderRadius: 18, paddingHorizontal: 14, paddingTop: 12, paddingBottom: 13 },
+  selectTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
+  selectLabel: { fontSize: 11, fontWeight: '900', letterSpacing: 1.1, textTransform: 'uppercase' },
+  selectStatus: { fontSize: 10, fontWeight: '900', letterSpacing: 0.7, textTransform: 'uppercase' },
+  selectValueRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 9 },
+  selectCopy: { flex: 1, minWidth: 0 },
+  selectValue: { fontSize: 15, fontWeight: '900', lineHeight: 20 },
+  selectHelper: { fontSize: 11, fontWeight: '700', lineHeight: 15, marginTop: 3 },
+  selectChevron: { fontSize: 18, fontWeight: '900' },
+  selectBackdrop: { flex: 1, backgroundColor: 'rgba(2,6,23,0.55)', justifyContent: 'flex-end', padding: 14 },
+  selectSheet: { borderWidth: 1, borderRadius: 26, padding: 16, maxHeight: '78%', shadowOpacity: 0.25, shadowRadius: 18, shadowOffset: { width: 0, height: -8 }, elevation: 10 },
+  selectSheetHandle: { width: 42, height: 4, borderRadius: 999, alignSelf: 'center', marginBottom: 14 },
+  selectSheetEyebrow: { fontSize: 11, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1.2 },
+  selectSheetTitle: { fontSize: 20, fontWeight: '900', marginTop: 4 },
+  selectList: { marginTop: 14 },
+  selectListContent: { gap: 9, paddingBottom: 4 },
+  selectOption: { borderWidth: 1, borderRadius: 16, paddingHorizontal: 14, paddingVertical: 13, flexDirection: 'row', alignItems: 'center', gap: 10 },
+  selectOptionLabel: { flex: 1, fontSize: 14, fontWeight: '900', lineHeight: 19 },
+  selectOptionCheck: { fontSize: 10, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 0.8 },
+  selectEmpty: { borderWidth: 1, borderRadius: 16, padding: 16, alignItems: 'center' },
+  selectEmptyText: { fontSize: 13, fontWeight: '800' },
+  selectCancel: { minHeight: 50, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginTop: 12 },
+  selectCancelText: { color: '#FFFFFF', fontSize: 14, fontWeight: '900' },
   moduleCard: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: ACR.border, borderRadius: 22, padding: 14, marginBottom: 12, flexDirection: 'row', alignItems: 'center', gap: 13, shadowColor: '#1C1917', shadowOpacity: 0.06, shadowRadius: 10, shadowOffset: { width: 0, height: 5 }, elevation: 2 },
   moduleAccent: { width: 4, alignSelf: 'stretch', borderRadius: 999, opacity: 0.45 },
   moduleCopy: { flex: 1, minWidth: 0 },

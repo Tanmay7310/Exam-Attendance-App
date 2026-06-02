@@ -35,6 +35,7 @@ export interface TeacherItem {
   teacherCode: string;
   name: string;
   subject: string;
+  role?: Role;
 }
 
 export interface StudentItem {

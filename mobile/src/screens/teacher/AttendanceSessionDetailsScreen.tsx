@@ -9,10 +9,12 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { AttendanceRecord, SessionAttendanceDetails, SessionAttendanceStudentRecord } from '../../types';
 import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
+import { useAppTheme } from '../../styles/appTheme';
 
 export const AttendanceSessionDetailsScreen = ({ route, navigation }: any) => {
   const { auth, logout } = useAuth();
   const { showToast } = useToast();
+  const theme = useAppTheme();
   const title: string = route?.params?.title ?? 'Session Attendance';
   const sessionId: number | undefined = route?.params?.sessionId;
   const date: string = route?.params?.date ?? '';
@@ -212,18 +214,21 @@ export const AttendanceSessionDetailsScreen = ({ route, navigation }: any) => {
             </View>
 
             {sessionDetails && !sessionDetails.rosterResolved ? (
-              <View style={styles.legacyBanner}>
-                <Text style={styles.legacyText}>Absent list unavailable for this legacy session.</Text>
+              <View style={[styles.legacyBanner, { backgroundColor: theme.amberSoft, borderColor: theme.gold }]}>
+                <Text style={[styles.legacyText, { color: theme.goldDeep }]}>Absent list unavailable for this legacy session.</Text>
               </View>
             ) : null}
 
-            <View style={styles.toolsCard}>
+            <View style={[styles.toolsCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
               <TextInput
                 label="Search by student or scholar number"
                 mode="outlined"
                 value={searchTerm}
                 onChangeText={setSearchTerm}
-                style={styles.input}
+                style={[styles.input, { backgroundColor: theme.card }]}
+                textColor={theme.ink}
+                outlineColor={theme.border}
+                activeOutlineColor={theme.blue}
               />
               <View style={styles.filterRow}>
                 <Pill label={`All (${totalCount})`} active={statusFilter === 'ALL'} onPress={() => setStatusFilter('ALL')} />
@@ -251,10 +256,10 @@ export const AttendanceSessionDetailsScreen = ({ route, navigation }: any) => {
             style={styles.portalKeyboard}
             pointerEvents="box-none"
           >
-            <Dialog visible onDismiss={closeAdjustment} style={styles.dialog}>
+            <Dialog visible onDismiss={closeAdjustment} style={[styles.dialog, { backgroundColor: theme.card }]}>
               <Dialog.Title>{pendingAdjustment.status === 'PRESENT' ? 'Mark Present' : 'Mark Absent'}</Dialog.Title>
               <Dialog.Content>
-                <Text style={styles.dialogText}>
+                <Text style={[styles.dialogText, { color: theme.muted }]}>
                   Update {pendingAdjustment.record.studentName} ({pendingAdjustment.record.scholarNumber}) to {pendingAdjustment.status}.
                 </Text>
                 <TextInput
@@ -262,7 +267,10 @@ export const AttendanceSessionDetailsScreen = ({ route, navigation }: any) => {
                   mode="outlined"
                   value={adjustmentReason}
                   onChangeText={setAdjustmentReason}
-                  style={styles.dialogInput}
+                  style={[styles.dialogInput, { backgroundColor: theme.card }]}
+                  textColor={theme.ink}
+                  outlineColor={theme.border}
+                  activeOutlineColor={theme.blue}
                   multiline
                   maxLength={255}
                 />
@@ -281,41 +289,46 @@ export const AttendanceSessionDetailsScreen = ({ route, navigation }: any) => {
   );
 };
 
-const StatTile = ({ label, value, tone }: { label: string; value: number; tone: 'blue' | 'green' | 'red' }) => (
-  <View style={styles.statTile}>
-    <Text style={[styles.statValue, tone === 'green' && styles.statGreen, tone === 'red' && styles.statRed]}>{value}</Text>
-    <Text style={styles.statLabel}>{label}</Text>
-  </View>
-);
+const StatTile = ({ label, value, tone }: { label: string; value: number; tone: 'blue' | 'green' | 'red' }) => {
+  const theme = useAppTheme();
+  const color = tone === 'green' ? theme.green : tone === 'red' ? theme.rose : theme.blue;
+  return (
+    <View style={[styles.statTile, { backgroundColor: theme.card, borderColor: theme.border }]}>
+      <Text style={[styles.statValue, { color }]}>{value}</Text>
+      <Text style={[styles.statLabel, { color: theme.muted }]}>{label}</Text>
+    </View>
+  );
+};
 
 const StudentRow = ({ item, canAdjust, onAdjust }: { item: SessionAttendanceStudentRecord; canAdjust: boolean; onAdjust: () => void }) => {
   const present = item.status === 'PRESENT';
+  const theme = useAppTheme();
   return (
-    <View style={styles.studentCard}>
-      <View style={styles.avatarWrap}>
-        <Text style={styles.avatarText}>{initialsOf(item.studentName)}</Text>
-        <View style={[styles.statusDot, present ? styles.statusDotPresent : styles.statusDotAbsent]} />
+    <View style={[styles.studentCard, { backgroundColor: theme.card, borderColor: theme.border, shadowColor: theme.shadow }]}>
+      <View style={[styles.avatarWrap, { backgroundColor: theme.isDark ? '#1B2142' : '#E0E7FF' }]}>
+        <Text style={[styles.avatarText, { color: theme.isDark ? '#A5B4FC' : '#3730A3' }]}>{initialsOf(item.studentName)}</Text>
+        <View style={[styles.statusDot, { borderColor: theme.card, backgroundColor: present ? theme.green : theme.rose }]} />
       </View>
       <View style={styles.studentCopy}>
-        <Text style={styles.studentName} numberOfLines={1}>{item.studentName}</Text>
-        <Text style={styles.studentMeta}>Scholar: {item.scholarNumber}</Text>
-        {item.enrollmentNumber ? <Text style={styles.studentMeta}>Enrollment: {item.enrollmentNumber}</Text> : null}
-        {item.teacherName || item.teacherCode ? <Text style={styles.studentTeacher}>{item.teacherName} {item.teacherCode ? `| ${item.teacherCode}` : ''}</Text> : null}
+        <Text style={[styles.studentName, { color: theme.ink }]} numberOfLines={1}>{item.studentName}</Text>
+        <Text style={[styles.studentMeta, { color: theme.muted }]}>Scholar: {item.scholarNumber}</Text>
+        {item.enrollmentNumber ? <Text style={[styles.studentMeta, { color: theme.muted }]}>Enrollment: {item.enrollmentNumber}</Text> : null}
+        {item.teacherName || item.teacherCode ? <Text style={[styles.studentTeacher, { color: theme.ghost }]}>{item.teacherName} {item.teacherCode ? `| ${item.teacherCode}` : ''}</Text> : null}
         {item.adjusted ? (
-          <Text style={styles.adjustedText}>Manually adjusted{item.adjustedBy ? ` by ${item.adjustedBy}` : ''}</Text>
+          <Text style={[styles.adjustedText, { color: theme.goldDeep }]}>Manually adjusted{item.adjustedBy ? ` by ${item.adjustedBy}` : ''}</Text>
         ) : null}
       </View>
       <View style={styles.studentStatusCol}>
-        <View style={[styles.statusBadge, present ? styles.presentBadge : styles.absentBadge]}>
-          <Text style={[styles.statusBadgeText, present ? styles.presentBadgeText : styles.absentBadgeText]}>{present ? 'Present' : 'Absent'}</Text>
+        <View style={[styles.statusBadge, { backgroundColor: present ? theme.greenSoft : theme.roseSoft }]}>
+          <Text style={[styles.statusBadgeText, { color: present ? theme.green : theme.rose }]}>{present ? 'Present' : 'Absent'}</Text>
         </View>
-        {item.scannedAt ? <Text style={styles.timeText}>{new Date(item.scannedAt).toLocaleTimeString()}</Text> : null}
+        {item.scannedAt ? <Text style={[styles.timeText, { color: theme.ghost }]}>{new Date(item.scannedAt).toLocaleTimeString()}</Text> : null}
         <Pressable
           onPress={onAdjust}
           disabled={!canAdjust}
-          style={({ pressed }) => [styles.adjustButton, !canAdjust && styles.adjustButtonDisabled, pressed && styles.pressed]}
+          style={({ pressed }) => [styles.adjustButton, { backgroundColor: theme.blueSoft, borderColor: theme.blue }, !canAdjust && { backgroundColor: theme.cardAlt, borderColor: theme.border }, pressed && styles.pressed]}
         >
-          <Text style={[styles.adjustButtonText, !canAdjust && styles.adjustButtonTextDisabled]}>
+          <Text style={[styles.adjustButtonText, { color: canAdjust ? theme.blue : theme.ghost }]}>
             {present ? 'Mark Absent' : 'Mark Present'}
           </Text>
         </Pressable>

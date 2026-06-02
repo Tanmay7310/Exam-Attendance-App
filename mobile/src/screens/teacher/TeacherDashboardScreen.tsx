@@ -2,9 +2,11 @@ import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { ACR, AcropolisHomeBar, FileTextMark, HeroCard, QrCodeMark, ScreenShell, SectionLabel, TextIcon } from '../../components/AcropolisUI';
+import { useAppTheme } from '../../styles/appTheme';
 
 export const TeacherDashboardScreen = ({ navigation }: any) => {
   const { auth, logout } = useAuth();
+  const theme = useAppTheme();
   const teacherName = auth?.teacherName ?? auth?.username ?? 'Faculty';
   const teacherCode = auth?.teacherCode ?? 'N/A';
   const dateLabel = new Date().toLocaleDateString(undefined, {
@@ -33,9 +35,9 @@ export const TeacherDashboardScreen = ({ navigation }: any) => {
           </View>
         </HeroCard>
 
-        <View style={styles.dateStrip}>
-          <Text style={styles.dateLabel}>Today</Text>
-          <Text style={styles.dateValue}>{dateLabel}</Text>
+        <View style={[styles.dateStrip, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.dateLabel, { color: theme.goldDeep }]}>Today</Text>
+          <Text style={[styles.dateValue, { color: theme.ink }]}>{dateLabel}</Text>
         </View>
 
         <SectionLabel title="Quick Actions" />
@@ -53,33 +55,32 @@ export const TeacherDashboardScreen = ({ navigation }: any) => {
         </View>
 
         <SectionLabel title="Account" />
-        <Pressable onPress={logout} style={({ pressed }) => [styles.logoutRow, pressed && styles.pressed]}>
+        <Pressable onPress={logout} style={({ pressed }) => [styles.logoutRow, { backgroundColor: theme.card, borderColor: theme.border }, pressed && styles.pressed]}>
           <View>
-            <Text style={styles.logoutTitle}>Sign Out</Text>
-            <Text style={styles.logoutSubtitle}>End the current authenticated session.</Text>
+            <Text style={[styles.logoutTitle, { color: theme.rose }]}>Sign Out</Text>
+            <Text style={[styles.logoutSubtitle, { color: theme.muted }]}>End the current authenticated session.</Text>
           </View>
-          <Text style={styles.logoutArrow}>{'>'}</Text>
+          <Text style={[styles.logoutArrow, { color: theme.rose }]}>{'>'}</Text>
         </Pressable>
       </ScrollView>
-
-      <Pressable onPress={() => navigation.navigate('EnterExamDetails', { returnTo: 'TeacherDashboard' })} style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}>
-        <Text style={styles.fabText}>Enter Exam Details</Text>
-      </Pressable>
     </ScreenShell>
   );
 };
 
-const DashboardActionRow = ({ title, icon, onPress }: { title: string; icon: React.ReactNode; onPress: () => void }) => (
-  <Pressable onPress={onPress} style={({ pressed }) => [styles.actionRow, pressed && styles.actionRowPressed]}>
-    {icon}
-    <View style={styles.actionRowCopy}>
-      <Text style={styles.actionRowTitle}>{title}</Text>
-    </View>
-  </Pressable>
-);
+const DashboardActionRow = ({ title, icon, onPress }: { title: string; icon: React.ReactNode; onPress: () => void }) => {
+  const theme = useAppTheme();
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.actionRow, { backgroundColor: theme.card, borderColor: theme.border, shadowColor: theme.shadow }, pressed && styles.actionRowPressed]}>
+      {icon}
+      <View style={styles.actionRowCopy}>
+        <Text style={[styles.actionRowTitle, { color: theme.ink }]}>{title}</Text>
+      </View>
+    </Pressable>
+  );
+};
 
 const styles = StyleSheet.create({
-  content: { padding: 18, paddingBottom: 104 },
+  content: { padding: 18, paddingBottom: 28 },
   heroTopRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   heroCopy: { flex: 1 },
   heroKicker: { color: ACR.gold, fontSize: 11, fontWeight: '900', letterSpacing: 1.2, textTransform: 'uppercase' },
@@ -100,8 +101,5 @@ const styles = StyleSheet.create({
   logoutTitle: { color: ACR.rose, fontSize: 15, fontWeight: '900' },
   logoutSubtitle: { color: ACR.muted, fontSize: 12, marginTop: 3 },
   logoutArrow: { color: ACR.rose, fontSize: 22, fontWeight: '900' },
-  pressed: { opacity: 0.85 },
-  fab: { position: 'absolute', left: 18, right: 18, bottom: 22, minHeight: 58, borderRadius: 18, backgroundColor: ACR.blue, alignItems: 'center', justifyContent: 'center', shadowColor: ACR.blue, shadowOpacity: 0.28, shadowRadius: 16, shadowOffset: { width: 0, height: 8 }, elevation: 5 },
-  fabPressed: { transform: [{ scale: 0.98 }] },
-  fabText: { color: '#FFFFFF', fontSize: 16, fontWeight: '900' }
+  pressed: { opacity: 0.85 }
 });

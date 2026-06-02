@@ -157,8 +157,8 @@ public class AdminController {
     }
 
     @DeleteMapping("/teachers/{teacherId}")
-    public void removeTeacher(@PathVariable Long teacherId) {
-        adminService.removeTeacher(teacherId);
+    public void removeTeacher(@PathVariable Long teacherId, Authentication authentication) {
+        adminService.removeTeacher(teacherId, authentication.getName());
     }
 
     @DeleteMapping("/students/{studentId}")

@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { AdminAttendance, StudentItem, SubjectItem, TeacherItem } from '../../types';
 import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
+import { useAppTheme } from '../../styles/appTheme';
 
 type DashboardStats = {
   teachers: number | null;
@@ -40,6 +41,7 @@ const countSessions = (rows: AdminAttendance[]) => {
 export const AdminDashboardScreen = ({ navigation }: any) => {
   const { logout } = useAuth();
   const { showToast } = useToast();
+  const theme = useAppTheme();
   const [stats, setStats] = useState<DashboardStats>(initialStats);
   const [loadingStats, setLoadingStats] = useState(false);
   const [lastSyncLabel, setLastSyncLabel] = useState('Not synced yet');
@@ -132,12 +134,12 @@ export const AdminDashboardScreen = ({ navigation }: any) => {
         />
 
         <SectionLabel title="Account" />
-        <Pressable onPress={logout} style={({ pressed }) => [styles.signOutRow, pressed && styles.pressed]}>
+        <Pressable onPress={logout} style={({ pressed }) => [styles.signOutRow, { backgroundColor: theme.card, borderColor: theme.border }, pressed && styles.pressed]}>
           <View>
-            <Text style={styles.signOutTitle}>Sign Out</Text>
-            <Text style={styles.signOutSubtitle}>End the current administrator session.</Text>
+            <Text style={[styles.signOutTitle, { color: theme.rose }]}>Sign Out</Text>
+            <Text style={[styles.signOutSubtitle, { color: theme.muted }]}>End the current administrator session.</Text>
           </View>
-          <Text style={styles.signOutArrow}>{'>'}</Text>
+          <Text style={[styles.signOutArrow, { color: theme.rose }]}>{'>'}</Text>
         </Pressable>
       </ScrollView>
     </ScreenShell>

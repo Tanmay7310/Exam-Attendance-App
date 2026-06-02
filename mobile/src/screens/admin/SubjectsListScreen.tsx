@@ -8,10 +8,12 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { SubjectItem } from '../../types';
 import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
+import { useAppTheme } from '../../styles/appTheme';
 
 export const SubjectsListScreen = ({ route, navigation }: any) => {
   const { logout } = useAuth();
   const { showToast } = useToast();
+  const theme = useAppTheme();
   const branch: string = route?.params?.branch ?? '';
   const semester: string = route?.params?.semester ?? '';
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
@@ -166,15 +168,18 @@ export const SubjectsListScreen = ({ route, navigation }: any) => {
             style={styles.portalKeyboard}
             pointerEvents="box-none"
           >
-            <Dialog visible onDismiss={() => closeEdit()} style={styles.dialog}>
+            <Dialog visible onDismiss={() => closeEdit()} style={[styles.dialog, { backgroundColor: theme.card }]}>
               <Dialog.Title>Edit Subject</Dialog.Title>
               <Dialog.Content>
-                <TextInput label="Subject Name" mode="outlined" style={styles.input} value={editName} onChangeText={setEditName} autoCorrect={false} />
+                <TextInput label="Subject Name" mode="outlined" style={[styles.input, { backgroundColor: theme.card }]} value={editName} onChangeText={setEditName} autoCorrect={false} textColor={theme.ink} outlineColor={theme.border} activeOutlineColor={theme.blue} />
                 <TextInput
                   key={`subject-code-${editing.id}`}
                   label="Subject Code"
                   mode="outlined"
-                  style={styles.input}
+                  style={[styles.input, { backgroundColor: theme.card }]}
+                  textColor={theme.ink}
+                  outlineColor={theme.border}
+                  activeOutlineColor={theme.blue}
                   defaultValue={editCode}
                   onChangeText={setEditCode}
                   autoCorrect={false}
@@ -191,10 +196,10 @@ export const SubjectsListScreen = ({ route, navigation }: any) => {
             </Dialog>
           </KeyboardAvoidingView>
         ) : null}
-        <Dialog visible={!!pendingDelete} onDismiss={closeDeleteDialog} style={styles.dialog}>
+        <Dialog visible={!!pendingDelete} onDismiss={closeDeleteDialog} style={[styles.dialog, { backgroundColor: theme.card }]}>
           <Dialog.Title>Delete Subject</Dialog.Title>
           <Dialog.Content>
-            <Text style={styles.confirmText}>Delete "{pendingDelete?.name}" ({pendingDelete?.subjectCode})?</Text>
+            <Text style={[styles.confirmText, { color: theme.ink }]}>Delete "{pendingDelete?.name}" ({pendingDelete?.subjectCode})?</Text>
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={closeDeleteDialog} disabled={deletingId !== null}>Cancel</Button>

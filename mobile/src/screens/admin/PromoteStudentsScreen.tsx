@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { PromotionClassContext, StudentPromotionBatchDetail, StudentPromotionCandidate, StudentPromotionPreviewResponse, SubjectItem } from '../../types';
 import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
+import { useAppTheme } from '../../styles/appTheme';
 
 const YEAR_OPTIONS = ['1', '2', '3', '4'];
 const SEMESTER_OPTIONS = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -24,6 +25,7 @@ const getNextContext = (from: PromotionClassContext): PromotionClassContext => {
 export const PromoteStudentsScreen = ({ navigation }: any) => {
   const { logout } = useAuth();
   const { showToast } = useToast();
+  const theme = useAppTheme();
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
   const [loadingBranches, setLoadingBranches] = useState(false);
   const [loadingPreview, setLoadingPreview] = useState(false);
@@ -115,7 +117,7 @@ export const PromoteStudentsScreen = ({ navigation }: any) => {
 
   const renderPicker = (label: string, value: string, onValueChange: (value: string) => void, options: string[], placeholder: string) => (
     <AdminPickerFrame label={label} style={styles.flexField}>
-      <Picker selectedValue={value} onValueChange={(next) => onValueChange(String(next))} style={styles.picker}>
+      <Picker selectedValue={value} onValueChange={(next) => onValueChange(String(next))} style={[styles.picker, { color: theme.ink }]}>
         <Picker.Item label={placeholder} value="" />
         {options.map((option) => <Picker.Item key={option} label={option} value={option} />)}
       </Picker>
@@ -125,14 +127,14 @@ export const PromoteStudentsScreen = ({ navigation }: any) => {
   const renderCandidate = (item: StudentPromotionCandidate) => {
     const checked = selectedIds.includes(item.id);
     return (
-      <Pressable key={item.id} onPress={() => toggleSelected(item.id)} style={[styles.candidateCard, checked && styles.candidateSelected]}>
-        <View style={[styles.checkCircle, checked && styles.checkCircleSelected]}>{checked ? <View style={styles.checkDot} /> : null}</View>
+      <Pressable key={item.id} onPress={() => toggleSelected(item.id)} style={[styles.candidateCard, { backgroundColor: checked ? theme.blueSoft : theme.card, borderColor: checked ? theme.blue : theme.border }, checked && styles.candidateSelected]}>
+        <View style={[styles.checkCircle, { borderColor: checked ? theme.blue : theme.border }, checked && { backgroundColor: theme.blue }]}>{checked ? <View style={styles.checkDot} /> : null}</View>
         <View style={styles.candidateCopy}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.meta}>Scholar: {item.scholarNumber}</Text>
-          <Text style={styles.meta}>Enrollment: {item.enrollmentNumber} | Sec {item.section}</Text>
+          <Text style={[styles.name, { color: theme.ink }]}>{item.name}</Text>
+          <Text style={[styles.meta, { color: theme.muted }]}>Scholar: {item.scholarNumber}</Text>
+          <Text style={[styles.meta, { color: theme.muted }]}>Enrollment: {item.enrollmentNumber} | Sec {item.section}</Text>
         </View>
-        <View style={styles.badge}><Text style={styles.badgeText}>Y{item.year} S{item.semester}</Text></View>
+        <View style={[styles.badge, { backgroundColor: theme.greenSoft, borderColor: theme.green }]}><Text style={[styles.badgeText, { color: theme.green }]}>Y{item.year} S{item.semester}</Text></View>
       </Pressable>
     );
   };
@@ -145,7 +147,7 @@ export const PromoteStudentsScreen = ({ navigation }: any) => {
         <AdminCard style={styles.panel}>
           <View style={styles.twoCol}>{renderPicker('Year', from.year, (value) => setFrom((prev) => ({ ...prev, year: value })), YEAR_OPTIONS, 'Select Year')}{renderPicker('Semester', from.semester, (value) => setFrom((prev) => ({ ...prev, semester: value })), SEMESTER_OPTIONS, 'Select Semester')}</View>
           <AdminPickerFrame label="Branch">
-            <Picker selectedValue={from.branch} onValueChange={(value) => setFrom((prev) => ({ ...prev, branch: String(value) }))} style={styles.picker}>
+              <Picker selectedValue={from.branch} onValueChange={(value) => setFrom((prev) => ({ ...prev, branch: String(value) }))} style={[styles.picker, { color: theme.ink }]}>
               <Picker.Item label={loadingBranches ? 'Loading Branches...' : 'Select Branch'} value="" />
               {branchOptions.map((option) => <Picker.Item key={option} label={option} value={option} />)}
             </Picker>
@@ -166,7 +168,7 @@ export const PromoteStudentsScreen = ({ navigation }: any) => {
               <AdminPrimaryButton label="Autofill Next Semester" onPress={() => setTo(getNextContext(from))} tone="green" />
               <View style={styles.twoCol}>{renderPicker('Year', to.year, (value) => setTo((prev) => ({ ...prev, year: value })), YEAR_OPTIONS, 'Select Year')}{renderPicker('Semester', to.semester, (value) => setTo((prev) => ({ ...prev, semester: value })), SEMESTER_OPTIONS, 'Select Semester')}</View>
               <AdminPickerFrame label="Branch">
-                <Picker selectedValue={to.branch} onValueChange={(value) => setTo((prev) => ({ ...prev, branch: String(value) }))} style={styles.picker}>
+                <Picker selectedValue={to.branch} onValueChange={(value) => setTo((prev) => ({ ...prev, branch: String(value) }))} style={[styles.picker, { color: theme.ink }]}>
                   <Picker.Item label={loadingBranches ? 'Loading Branches...' : 'Select Branch'} value="" />
                   {branchOptions.map((option) => <Picker.Item key={option} label={option} value={option} />)}
                 </Picker>
@@ -178,7 +180,7 @@ export const PromoteStudentsScreen = ({ navigation }: any) => {
             <SectionLabel title="Candidates" />
             <View style={styles.selectionRow}>
               <Pressable onPress={() => setSelectedIds((preview.candidates ?? []).map((candidate) => candidate.id))} style={styles.miniButton}><Text style={styles.miniButtonText}>Select All</Text></Pressable>
-              <Pressable onPress={() => setSelectedIds([])} style={styles.miniButtonNeutral}><Text style={styles.miniButtonNeutralText}>Clear</Text></Pressable>
+              <Pressable onPress={() => setSelectedIds([])} style={[styles.miniButtonNeutral, { backgroundColor: theme.card, borderColor: theme.border }]}><Text style={[styles.miniButtonNeutralText, { color: theme.muted }]}>Clear</Text></Pressable>
             </View>
             {preview.candidates.length === 0 ? <AdminEmpty title="No students found" subtitle="Adjust source class filters above." /> : preview.candidates.map(renderCandidate)}
           </>

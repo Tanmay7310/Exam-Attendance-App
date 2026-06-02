@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -10,7 +10,7 @@ import { ACR } from '../../components/AcropolisUI';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { buttonStyles } from '../../styles/buttonStyles';
-import { colors } from '../../styles/theme';
+import { useAppTheme } from '../../styles/appTheme';
 import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
 import { createOfflineScanItem, enqueueOfflineScan, flushOfflineScans, getOfflineQueueSize, isOfflineError } from '../../utils/offlineQueue';
 
@@ -25,6 +25,7 @@ type ExamDetails = {
 export const ScanScreen = ({ route, navigation }: any) => {
   const { auth, logout } = useAuth();
   const { showToast } = useToast();
+  const theme = useAppTheme();
   const [permission, requestPermission] = useCameraPermissions();
   const [manualScholar, setManualScholar] = useState('');
   const [scanLock, setScanLock] = useState(false);
@@ -77,8 +78,8 @@ export const ScanScreen = ({ route, navigation }: any) => {
 
   if (!examDetails) {
     return (
-      <View style={styles.center}>
-        <Text style={styles.blockedText}>Please enter exam details before scanning students.</Text>
+      <View style={[styles.center, { backgroundColor: theme.bg }]}>
+        <Text style={[styles.blockedText, { color: theme.ink }]}>Please enter exam details before scanning students.</Text>
         <Button mode="contained" style={styles.btn} contentStyle={buttonStyles.content} onPress={() => navigation.replace('EnterExamDetails', { returnTo })}>
           Go To Enter Exam Details
         </Button>
@@ -165,13 +166,13 @@ export const ScanScreen = ({ route, navigation }: any) => {
   };
 
   if (!permission) {
-    return <View style={styles.center}><Text>Loading camera permissions...</Text></View>;
+    return <View style={[styles.center, { backgroundColor: theme.bg }]}><Text style={{ color: theme.ink }}>Loading camera permissions...</Text></View>;
   }
 
   if (!permission.granted) {
     return (
-      <View style={styles.center}>
-        <Text style={styles.permissionText}>Camera permission is required for barcode scanning.</Text>
+      <View style={[styles.center, { backgroundColor: theme.bg }]}>
+        <Text style={[styles.permissionText, { color: theme.ink }]}>Camera permission is required for barcode scanning.</Text>
         <Button mode="contained" style={styles.btn} contentStyle={buttonStyles.content} onPress={requestPermission}>Allow Camera</Button>
       </View>
     );
@@ -202,7 +203,7 @@ export const ScanScreen = ({ route, navigation }: any) => {
         </View>
 
         <View style={styles.cameraWrap}>
-          <CameraView style={StyleSheet.absoluteFillObject} barcodeScannerSettings={{ barcodeTypes: ['qr', 'code128', 'ean13'] }} onBarcodeScanned={onBarcodeScanned} />
+          <CameraView style={StyleSheet.absoluteFill} barcodeScannerSettings={{ barcodeTypes: ['qr', 'code128', 'ean13'] }} onBarcodeScanned={onBarcodeScanned} />
           <View pointerEvents="none" style={styles.scanOverlay}>
             <Corner style={styles.cornerTopLeft} />
             <Corner style={styles.cornerTopRight} flipX />
@@ -223,18 +224,21 @@ export const ScanScreen = ({ route, navigation }: any) => {
         </View>
       </View>
 
-      <View style={styles.manualSheet}>
-        <Text style={styles.sheetTitle}>Manual Scholar Entry</Text>
+      <View style={[styles.manualSheet, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.sheetTitle, { color: theme.ink }]}>Manual Scholar Entry</Text>
         <TextInput
           label="Manual Scholar Number"
           mode="outlined"
-          style={styles.input}
+          style={[styles.input, { backgroundColor: theme.card }]}
+          textColor={theme.ink}
+          outlineColor={theme.border}
+          activeOutlineColor={theme.blue}
           value={manualScholar}
           onChangeText={setManualScholar}
           autoCapitalize="none"
           autoCorrect={false}
         />
-        <Pressable onPress={() => submitScan(manualScholar.trim(), true)} style={({ pressed }) => [styles.manualButton, pressed && styles.pressed]}>
+        <Pressable onPress={() => submitScan(manualScholar.trim(), true)} style={({ pressed }) => [styles.manualButton, { backgroundColor: theme.blue, shadowColor: theme.blue }, pressed && styles.pressed]}>
           <Text style={styles.manualButtonText}>Mark Attendance Manually</Text>
         </Pressable>
       </View>
@@ -252,9 +256,9 @@ const Corner = ({ style, flipX, flipY }: { style: any; flipX?: boolean; flipY?: 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0B1220' },
   darkShell: { flex: 1, backgroundColor: '#0B1220', paddingHorizontal: 18 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: colors.bg },
-  blockedText: { marginBottom: 12, color: colors.text, textAlign: 'center' },
-  permissionText: { marginBottom: 10, color: colors.text, textAlign: 'center' },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
+  blockedText: { marginBottom: 12, textAlign: 'center' },
+  permissionText: { marginBottom: 10, textAlign: 'center' },
   btn: { borderRadius: 12 },
   scanHeader: { minHeight: 80, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   headerSpacer: { width: 42, height: 42 },
@@ -266,7 +270,7 @@ const styles = StyleSheet.create({
   sessionPill: { borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 16, padding: 12, marginTop: 4 },
   sessionPillText: { color: '#DCE7FF', fontSize: 12, fontWeight: '800' },
   cameraWrap: { marginTop: 18, height: 330, borderRadius: 30, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)', backgroundColor: '#111827' },
-  scanOverlay: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center' },
+  scanOverlay: { ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center' },
   scanLine: { position: 'absolute', left: 44, right: 44, top: '50%', height: 2, backgroundColor: ACR.gold, shadowColor: ACR.gold, shadowOpacity: 0.7, shadowRadius: 8 },
   corner: { position: 'absolute', width: 44, height: 44 },
   cornerHorizontal: { width: 44, height: 4, borderRadius: 2, backgroundColor: '#FFFFFF' },

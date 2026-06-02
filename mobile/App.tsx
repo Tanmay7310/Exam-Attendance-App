@@ -1,13 +1,14 @@
-import React, { useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { AppState } from 'react-native';
+import React, { useEffect, useMemo } from 'react';
+import { DarkTheme as NavigationDarkTheme, DefaultTheme as NavigationDefaultTheme, NavigationContainer } from '@react-navigation/native';
+import { AppState, useColorScheme } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from './src/context/AuthContext';
 import { useAuth } from './src/context/AuthContext';
 import { ToastProvider, useToast } from './src/context/ToastContext';
 import { AppNavigator } from './src/navigation/AppNavigator';
-import { paperTheme } from './src/styles/paperTheme';
+import { AppThemeProvider, appThemes, type ThemeMode } from './src/styles/appTheme';
+import { getPaperTheme } from './src/styles/paperTheme';
 import { flushOfflineScans } from './src/utils/offlineQueue';
 
 const SyncListener = () => {
@@ -46,18 +47,37 @@ const SyncListener = () => {
 };
 
 export default function App() {
+  const colorScheme = useColorScheme();
+  const mode: ThemeMode = colorScheme === 'dark' ? 'dark' : 'light';
+  const tokens = appThemes[mode];
+  const paperTheme = getPaperTheme(mode);
+  const navigationTheme = useMemo(() => ({
+    ...(mode === 'dark' ? NavigationDarkTheme : NavigationDefaultTheme),
+    colors: {
+      ...(mode === 'dark' ? NavigationDarkTheme.colors : NavigationDefaultTheme.colors),
+      primary: tokens.blue,
+      background: tokens.bg,
+      card: tokens.card,
+      text: tokens.ink,
+      border: tokens.border,
+      notification: tokens.rose
+    }
+  }), [mode, tokens]);
+
   return (
     <SafeAreaProvider>
-      <AuthProvider>
-        <PaperProvider theme={paperTheme}>
-          <ToastProvider>
-            <SyncListener />
-            <NavigationContainer>
-              <AppNavigator />
-            </NavigationContainer>
-          </ToastProvider>
-        </PaperProvider>
-      </AuthProvider>
+      <AppThemeProvider tokens={tokens}>
+        <AuthProvider>
+          <PaperProvider theme={paperTheme}>
+            <ToastProvider>
+              <SyncListener />
+              <NavigationContainer theme={navigationTheme}>
+                <AppNavigator />
+              </NavigationContainer>
+            </ToastProvider>
+          </PaperProvider>
+        </AuthProvider>
+      </AppThemeProvider>
     </SafeAreaProvider>
   );
 }

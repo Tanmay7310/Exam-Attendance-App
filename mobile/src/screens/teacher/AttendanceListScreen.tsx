@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { SessionAttendanceSummary } from '../../types';
 import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
+import { useAppTheme } from '../../styles/appTheme';
 
 const formatDateToDdMmYyyy = (date: string) => {
   const match = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -20,6 +21,7 @@ const formatDateToDdMmYyyy = (date: string) => {
 export const AttendanceListScreen = ({ navigation }: any) => {
   const { logout } = useAuth();
   const { showToast } = useToast();
+  const theme = useAppTheme();
   const [sessionSummaries, setSessionSummaries] = useState<SessionAttendanceSummary[]>([]);
   const [dateSearch, setDateSearch] = useState('');
   const [subjectSearch, setSubjectSearch] = useState('');
@@ -101,24 +103,30 @@ export const AttendanceListScreen = ({ navigation }: any) => {
         contentContainerStyle={styles.listContent}
         ListHeaderComponent={
           <>
-            <View style={styles.filterCard}>
-              <Text style={styles.filterTitle}>Find attendance sessions</Text>
+            <View style={[styles.filterCard, { backgroundColor: theme.card, borderColor: theme.border, shadowColor: theme.shadow }]}>
+              <Text style={[styles.filterTitle, { color: theme.ink }]}>Find attendance sessions</Text>
               <TextInput
                 label="Search by Date (DD-MM-YYYY)"
                 mode="outlined"
                 value={dateSearch}
                 onChangeText={setDateSearch}
-                style={styles.input}
+                style={[styles.input, { backgroundColor: theme.card }]}
+                textColor={theme.ink}
+                outlineColor={theme.border}
+                activeOutlineColor={theme.blue}
               />
               <TextInput
                 label="Search by Subject"
                 mode="outlined"
                 value={subjectSearch}
                 onChangeText={setSubjectSearch}
-                style={styles.input}
+                style={[styles.input, { backgroundColor: theme.card }]}
+                textColor={theme.ink}
+                outlineColor={theme.border}
+                activeOutlineColor={theme.blue}
               />
-              <Pressable onPress={clearFilters} disabled={!hasFilters} style={[styles.clearButton, !hasFilters && styles.clearButtonDisabled]}>
-                <Text style={[styles.clearText, !hasFilters && styles.clearTextDisabled]}>Clear Filters</Text>
+              <Pressable onPress={clearFilters} disabled={!hasFilters} style={[styles.clearButton, { borderColor: theme.rose }, !hasFilters && { borderColor: theme.border }]}>
+                <Text style={[styles.clearText, { color: theme.rose }, !hasFilters && { color: theme.ghost }]}>Clear Filters</Text>
               </Pressable>
             </View>
             <SectionLabel title={hasFilters ? `${filteredSessions.length} sessions found` : `${sessions.length} sessions`} />
@@ -127,7 +135,7 @@ export const AttendanceListScreen = ({ navigation }: any) => {
         ListEmptyComponent={<EmptyState title="No attendance entries found" subtitle="Try changing the date or subject filter." />}
         renderItem={({ item }) => (
           <Pressable
-            style={({ pressed }) => [styles.sessionCard, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.sessionCard, { backgroundColor: theme.card, borderColor: theme.border, shadowColor: theme.shadow }, pressed && styles.pressed]}
             onPress={() =>
               navigation.navigate('AttendanceSessionDetails', {
                 title: item.title,
@@ -144,13 +152,13 @@ export const AttendanceListScreen = ({ navigation }: any) => {
           >
             <TextIcon label="BK" tone="gold" />
             <View style={styles.sessionCopy}>
-              <Text style={styles.sessionSubject} numberOfLines={1}>{item.subject}</Text>
-              <Text style={styles.sessionMeta}>{item.displayDate}</Text>
+              <Text style={[styles.sessionSubject, { color: theme.ink }]} numberOfLines={1}>{item.subject}</Text>
+              <Text style={[styles.sessionMeta, { color: theme.muted }]}>{item.displayDate}</Text>
             </View>
-            <View style={styles.countBadge}>
-              <Text style={styles.countText}>{item.presentCount}/{item.totalCount}</Text>
+            <View style={[styles.countBadge, { backgroundColor: theme.greenSoft }]}>
+              <Text style={[styles.countText, { color: theme.green }]}>{item.presentCount}/{item.totalCount}</Text>
             </View>
-            <Text style={styles.chevron}>{'>'}</Text>
+            <Text style={[styles.chevron, { color: theme.blue }]}>{'>'}</Text>
           </Pressable>
         )}
       />

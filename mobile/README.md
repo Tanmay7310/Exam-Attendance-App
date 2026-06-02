@@ -26,10 +26,21 @@ Admin flow:
 npm install
 ```
 
-2) Update backend URL in:
-- `src/api/client.ts`
+2) Start from the repository root when possible:
 
-3) Start Expo:
+```powershell
+Set-Location "D:\Exam Attendance app"
+.\start-app.ps1 -Mode Lan
+```
+
+Use USB mode when the phone is connected and USB debugging is enabled:
+
+```powershell
+Set-Location "D:\Exam Attendance app"
+.\start-app.ps1 -Mode Usb
+```
+
+3) Start Metro manually only if needed:
 
 ```bash
 npm run start
@@ -37,5 +48,8 @@ npm run start
 
 ## Notes
 
-- For Android emulator, backend URL usually is `http://10.0.2.2:8080`
-- For physical device, use your machine LAN IP
+- The app uses Expo SDK 56 and an Android development build, not Expo Go.
+- Native folders are generated output; `android/` and `ios/` are ignored by Git.
+- Rebuild the development client with `npx expo run:android` after native dependency or `app.json` changes.
+- `src/api/client.ts` respects `EXPO_PUBLIC_API_BASE_URL`; the root startup scripts set it automatically for LAN or USB mode.
+- The UI follows system light/dark mode through the shared Acropolis theme tokens and React Native Paper.

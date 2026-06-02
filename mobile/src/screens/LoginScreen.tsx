@@ -4,11 +4,12 @@ import { TextInput } from 'react-native-paper';
 import { ACR } from '../components/AcropolisUI';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { colors } from '../styles/theme';
+import { useAppTheme } from '../styles/appTheme';
 
 export const LoginScreen = () => {
   const { login } = useAuth();
   const { showToast } = useToast();
+  const theme = useAppTheme();
   const [username, setUsername] = useState('teacher1');
   const [password, setPassword] = useState('Teacher@123');
   const [loading, setLoading] = useState(false);
@@ -25,7 +26,7 @@ export const LoginScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <KeyboardAvoidingView style={[styles.container, { backgroundColor: theme.bg }]} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
           <View pointerEvents="none" style={StyleSheet.absoluteFill}>
@@ -50,51 +51,57 @@ export const LoginScreen = () => {
 
           <Text style={styles.institute}>Acropolis Institute of Technology</Text>
           <Text style={styles.instituteGold}>& Research - Indore</Text>
-          <View style={styles.slant} />
+          <View style={[styles.slant, { backgroundColor: theme.bg }]} />
         </View>
 
-        <View style={styles.formArea}>
+        <View style={[styles.formArea, { backgroundColor: theme.bg }]}>
           <View style={styles.titleBlock}>
-            <Text style={styles.title}>Attendance Portal</Text>
-            <Text style={styles.subtitle}>Sign in to manage exam sessions</Text>
+            <Text style={[styles.title, { color: theme.ink }]}>Attendance Portal</Text>
+            <Text style={[styles.subtitle, { color: theme.muted }]}>Sign in to manage exam sessions</Text>
           </View>
 
-          <View style={styles.card}>
-            <Text style={styles.fieldLabel}>Faculty / Staff ID</Text>
+          <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border, shadowColor: theme.shadow }]}>
+            <Text style={[styles.fieldLabel, { color: theme.goldDeep }]}>Faculty / Staff ID</Text>
             <TextInput
               value={username}
               onChangeText={setUsername}
               label="Enter your ID or username"
               mode="outlined"
-              style={styles.input}
+              style={[styles.input, { backgroundColor: theme.card }]}
+              textColor={theme.ink}
+              outlineColor={theme.border}
+              activeOutlineColor={theme.blue}
               autoCapitalize="none"
             />
-            <Text style={styles.fieldLabel}>Password</Text>
+            <Text style={[styles.fieldLabel, { color: theme.goldDeep }]}>Password</Text>
             <TextInput
               value={password}
               onChangeText={setPassword}
               label="Password"
               mode="outlined"
-              style={styles.input}
+              style={[styles.input, { backgroundColor: theme.card }]}
+              textColor={theme.ink}
+              outlineColor={theme.border}
+              activeOutlineColor={theme.blue}
               secureTextEntry
             />
 
             <View style={styles.archDivider}>
-              <View style={styles.dividerLine} />
+              <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
               <View style={styles.dividerMark}>
                 <View style={styles.dividerDot} />
                 <View style={styles.dividerGoldLine} />
                 <View style={styles.dividerDot} />
               </View>
-              <View style={styles.dividerLine} />
+              <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
             </View>
 
-            <Pressable onPress={onSubmit} disabled={loading} style={({ pressed }) => [styles.signInButton, pressed && !loading && styles.pressed, loading && styles.disabledButton]}>
+            <Pressable onPress={onSubmit} disabled={loading} style={({ pressed }) => [styles.signInButton, { backgroundColor: theme.blue, shadowColor: theme.blue }, pressed && !loading && styles.pressed, loading && styles.disabledButton]}>
               <Text style={styles.signInText}>{loading ? 'Signing in...' : 'Sign In  >'}</Text>
             </Pressable>
           </View>
 
-          <Text style={styles.hint}>Use admin1/Admin@123 or teacher1/Teacher@123</Text>
+          <Text style={[styles.hint, { color: theme.ghost }]}>Use admin1/Admin@123 or teacher1/Teacher@123</Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -102,7 +109,7 @@ export const LoginScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
+  container: { flex: 1 },
   scrollContent: { flexGrow: 1 },
   hero: { minHeight: 315, backgroundColor: ACR.royal, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, overflow: 'hidden' },
   heroLine: { position: 'absolute', top: 0, bottom: 0, width: 1, backgroundColor: 'rgba(255,255,255,0.06)' },
@@ -116,7 +123,7 @@ const styles = StyleSheet.create({
   columnPillar: { width: 5, height: 22, borderRadius: 3, backgroundColor: '#FFFFFF' },
   institute: { color: 'rgba(255,255,255,0.68)', textTransform: 'uppercase', letterSpacing: 1.7, fontSize: 12, fontWeight: '800', textAlign: 'center' },
   instituteGold: { color: ACR.gold, textTransform: 'uppercase', letterSpacing: 4, fontSize: 10, fontWeight: '900', marginTop: 7, textAlign: 'center' },
-  slant: { position: 'absolute', left: 0, right: 0, bottom: -1, height: 14, backgroundColor: colors.bg, transform: [{ skewY: '-2deg' }] },
+  slant: { position: 'absolute', left: 0, right: 0, bottom: -1, height: 14, transform: [{ skewY: '-2deg' }] },
   formArea: { flex: 1, paddingHorizontal: 24, paddingTop: 32, paddingBottom: 24 },
   titleBlock: { alignItems: 'center', marginBottom: 22 },
   title: { color: ACR.ink, fontSize: 26, fontWeight: '900', letterSpacing: -0.3 },
