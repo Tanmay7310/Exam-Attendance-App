@@ -9,12 +9,20 @@ import com.exam.attendance.exception.ApiException;
 import com.exam.attendance.repository.*;
 import com.exam.attendance.service.AdminService;
 import com.exam.attendance.service.TeacherService;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
@@ -193,6 +201,34 @@ class AttendanceCorrectionServiceTests {
         assertThat(recordFor(adjusted, promotedLater.getScholarNumber()).getStatus()).isEqualTo("PRESENT");
     }
 
+    @Test
+    void pdfExportsUseSameSessionRecordColumns() throws Exception {
+        Teacher teacher = createTeacher("teacher-seven", "T-1007", "Dr. Seven");
+        Student scanned = createStudent("AITR23-0051", "ENR-0051", "PDF Scanned", "1", "1", "Computer Science and Engineering", "1");
+        Student missed = createStudent("AITR23-0052", "ENR-0052", "PDF Missed", "1", "1", "Computer Science and Engineering", "1");
+
+        AttendanceSession session = scanAndGetSession(teacher, scanned.getScholarNumber());
+        adminService.adjustAttendanceSession(session.getId(), "admin", adjustment(missed.getScholarNumber(), "PRESENT", "Verified manually"));
+
+        assertPdfHasStandardColumns(teacherService.generateSessionPdfReport(teacher.getUser().getUsername(), session.getId()));
+        assertPdfHasStandardColumns(adminService.generateAttendanceSessionPdf(session.getId()));
+        assertPdfHasStandardColumns(adminService.generateAttendancePdf(null, null, null));
+    }
+
+    @Test
+    void excelExportsUseFlatAttendanceColumnsAndAdjustmentReason() throws Exception {
+        Teacher teacher = createTeacher("teacher-eight", "T-1008", "Dr. Eight");
+        Student scanned = createStudent("AITR23-0061", "ENR-0061", "Excel Scanned", "1", "1", "Computer Science and Engineering", "1");
+        Student missed = createStudent("AITR23-0062", "ENR-0062", "Excel Missed", "1", "1", "Computer Science and Engineering", "1");
+
+        AttendanceSession session = scanAndGetSession(teacher, scanned.getScholarNumber());
+        adminService.adjustAttendanceSession(session.getId(), "admin", adjustment(missed.getScholarNumber(), "PRESENT", "Verified for Excel"));
+
+        assertExcelHasStandardColumnsAndReason(teacherService.generateSessionExcelReport(teacher.getUser().getUsername(), session.getId()));
+        assertExcelHasStandardColumnsAndReason(adminService.generateAttendanceSessionExcel(session.getId()));
+        assertExcelHasStandardColumnsAndReason(adminService.generateAttendanceExcel(null, null, null));
+    }
+
     private AttendanceSession scanAndGetSession(Teacher teacher, String scholarNumber) {
         ScanAttendanceResponse response = teacherService.scan(
                 teacher.getUser().getUsername(),
@@ -263,6 +299,50 @@ class AttendanceCorrectionServiceTests {
         assertThat(summary.getAbsentCount()).isEqualTo(details.getAbsentCount());
         assertThat(summary.getTotalCount()).isEqualTo(details.getTotalCount());
         assertThat(summary.isRosterResolved()).isEqualTo(details.isRosterResolved());
+    }
+
+    private void assertPdfHasStandardColumns(byte[] pdfBytes) throws IOException {
+        String text = pdfText(pdfBytes);
+        assertThat(text).contains("S. No.");
+        assertThat(text).contains("Scholar No.");
+        assertThat(text).contains("Enrollment No.");
+        assertThat(text).contains("Student Name");
+        assertThat(text).contains("Status");
+        assertThat(text).contains("Scan Time");
+        assertThat(text).contains("Adjusted");
+        assertThat(text).contains("Reason");
+    }
+
+    private void assertExcelHasStandardColumnsAndReason(byte[] excelBytes) throws IOException {
+        try (Workbook workbook = WorkbookFactory.create(new ByteArrayInputStream(excelBytes))) {
+            Sheet sheet = workbook.getSheet("Attendance");
+            assertThat(sheet).isNotNull();
+
+            Row header = sheet.getRow(2);
+            assertThat(header.getCell(0).getStringCellValue()).isEqualTo("Session ID");
+            assertThat(header.getCell(9).getStringCellValue()).isEqualTo("S. No.");
+            assertThat(header.getCell(10).getStringCellValue()).isEqualTo("Scholar No.");
+            assertThat(header.getCell(11).getStringCellValue()).isEqualTo("Enrollment No.");
+            assertThat(header.getCell(12).getStringCellValue()).isEqualTo("Student Name");
+            assertThat(header.getCell(13).getStringCellValue()).isEqualTo("Status");
+            assertThat(header.getCell(14).getStringCellValue()).isEqualTo("Scan Time");
+            assertThat(header.getCell(15).getStringCellValue()).isEqualTo("Adjusted");
+            assertThat(header.getCell(16).getStringCellValue()).isEqualTo("Reason");
+
+            String sheetText = new StringBuilder()
+                    .append(sheet.getRow(3).getCell(12).getStringCellValue()).append(' ')
+                    .append(sheet.getRow(4).getCell(12).getStringCellValue()).append(' ')
+                    .append(sheet.getRow(3).getCell(16).getStringCellValue()).append(' ')
+                    .append(sheet.getRow(4).getCell(16).getStringCellValue())
+                    .toString();
+            assertThat(sheetText).contains("Verified for Excel");
+        }
+    }
+
+    private String pdfText(byte[] pdfBytes) throws IOException {
+        try (PDDocument document = PDDocument.load(new ByteArrayInputStream(pdfBytes))) {
+            return new PDFTextStripper().getText(document);
+        }
     }
 
     private record SessionAttendanceStudentRecordView(String getStatus, boolean isAdjusted, String getScholarNumber) {

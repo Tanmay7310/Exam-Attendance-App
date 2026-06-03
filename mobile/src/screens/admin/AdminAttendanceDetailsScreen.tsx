@@ -4,14 +4,16 @@ import { Button, Dialog, Portal, TextInput as PaperTextInput } from 'react-nativ
 import { api } from '../../api/client';
 import { ACR, AcropolisBackBar, EmptyState, HeroCard, Pill, ScreenShell, SectionLabel, initialsOf } from '../../components/AcropolisUI';
 import { AdminSearchInput } from '../../components/AdminModuleUI';
+import { ExportFormatDialog } from '../../components/ExportFormatDialog';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { AdminAttendance, SessionAttendanceDetails, SessionAttendanceStudentRecord } from '../../types';
+import { buildSessionAttendanceReportEndpoint, downloadAndShareAttendanceExport, ExportFormat, exportFormatLabel } from '../../utils/attendanceExport';
 import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
 import { useAppTheme } from '../../styles/appTheme';
 
 export const AdminAttendanceDetailsScreen = ({ route, navigation }: any) => {
-  const { logout } = useAuth();
+  const { auth, logout } = useAuth();
   const { showToast } = useToast();
   const theme = useAppTheme();
   const title: string = route?.params?.title ?? 'Attendance Details';
@@ -25,6 +27,8 @@ export const AdminAttendanceDetailsScreen = ({ route, navigation }: any) => {
   const [pendingAdjustment, setPendingAdjustment] = useState<{ record: SessionAttendanceStudentRecord; status: 'PRESENT' | 'ABSENT' } | null>(null);
   const [adjustmentReason, setAdjustmentReason] = useState('');
   const [adjusting, setAdjusting] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [exportDialogVisible, setExportDialogVisible] = useState(false);
 
   const loadSessionDetails = useCallback(async () => {
     if (!sessionId) return;
@@ -115,9 +119,50 @@ export const AdminAttendanceDetailsScreen = ({ route, navigation }: any) => {
     }
   };
 
+  const exportSession = async (format: ExportFormat) => {
+    if (!sessionId) {
+      showToast('Session ID is missing for this export.', { type: 'error' });
+      return;
+    }
+
+    try {
+      setExporting(true);
+      const endpoint = buildSessionAttendanceReportEndpoint(format, 'ADMIN', sessionId);
+      const { fileUri, shared } = await downloadAndShareAttendanceExport({
+        endpoint,
+        token: auth?.token,
+        fileBaseName: `admin-attendance-session-${sessionId}-${sessionDetails?.subject || subject || 'report'}`,
+        format
+      });
+      setExportDialogVisible(false);
+
+      if (!shared) {
+        showToast(`${exportFormatLabel(format)} saved at ${fileUri}`, { type: 'success', duration: 3200 });
+      }
+    } catch (e: any) {
+      if (await handleSessionExpired(e, logout, showToast)) return;
+      showToast(getApiErrorMessage(e, 'Unable to export this session.'), { type: 'error' });
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <ScreenShell>
-      <AcropolisBackBar title="Session Details" subtitle={subject || 'Student Records'} onBack={() => navigation.goBack()} />
+      <AcropolisBackBar
+        title="Session Details"
+        subtitle={subject || 'Student Records'}
+        onBack={() => navigation.goBack()}
+        right={(
+          <Pressable
+            onPress={() => setExportDialogVisible(true)}
+            disabled={exporting || !sessionId}
+            style={({ pressed }) => [styles.exportPill, pressed && styles.pressed, (exporting || !sessionId) && styles.exportPillDisabled]}
+          >
+            <Text style={styles.exportPillText}>{exporting ? 'Exporting' : 'Export'}</Text>
+          </Pressable>
+        )}
+      />
       <FlatList
         data={filteredRecords}
         keyExtractor={(item, index) => `${item.scholarNumber}-${item.status}-${item.adjustedAt ?? item.scannedAt ?? 'absent'}-${index}`}
@@ -211,6 +256,12 @@ export const AdminAttendanceDetailsScreen = ({ route, navigation }: any) => {
           </KeyboardAvoidingView>
         ) : null}
       </Portal>
+      <ExportFormatDialog
+        visible={exportDialogVisible}
+        exporting={exporting}
+        onDismiss={() => setExportDialogVisible(false)}
+        onSelect={exportSession}
+      />
     </ScreenShell>
   );
 };
@@ -276,6 +327,9 @@ const styles = StyleSheet.create({
   progressTrack: { height: 8, backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: 999, overflow: 'hidden', marginTop: 18 },
   progressFill: { height: '100%', backgroundColor: '#FFFFFF', borderRadius: 999 },
   progressLabel: { color: '#DCE7FF', marginTop: 8, fontSize: 12, fontWeight: '800' },
+  exportPill: { minHeight: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12 },
+  exportPillDisabled: { opacity: 0.55 },
+  exportPillText: { color: '#FFFFFF', fontSize: 11, fontWeight: '900' },
   statsRow: { flexDirection: 'row', gap: 10, marginTop: 14 },
   statTile: { flex: 1, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: ACR.border, borderRadius: 18, padding: 13, alignItems: 'center' },
   statValue: { color: ACR.blue, fontSize: 20, fontWeight: '900' },

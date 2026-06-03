@@ -8,6 +8,7 @@ import com.exam.attendance.dto.admin.SubjectResponse;
 import com.exam.attendance.dto.attendance.AttendanceAdjustmentRequest;
 import com.exam.attendance.dto.attendance.SessionAttendanceDetailsResponse;
 import com.exam.attendance.dto.attendance.SessionAttendanceSummaryResponse;
+import com.exam.attendance.service.AttendanceExcelService;
 import com.exam.attendance.service.TeacherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -74,6 +75,30 @@ public class TeacherController {
     public SessionAttendanceDetailsResponse attendanceSessionDetails(@PathVariable Long sessionId,
                                                                      Authentication authentication) {
         return teacherService.getSessionAttendanceDetails(authentication.getName(), sessionId);
+    }
+
+    @GetMapping("/attendance/sessions/{sessionId}/report/pdf")
+    public ResponseEntity<byte[]> attendanceSessionPdf(@PathVariable Long sessionId,
+                                                       Authentication authentication) {
+        byte[] data = teacherService.generateSessionPdfReport(authentication.getName(), sessionId);
+        String filename = "attendance-session-" + sessionId + "-" + LocalDateTime.now().format(PDF_FILE_TS_FORMAT) + ".pdf";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(data);
+    }
+
+    @GetMapping("/attendance/sessions/{sessionId}/report/excel")
+    public ResponseEntity<byte[]> attendanceSessionExcel(@PathVariable Long sessionId,
+                                                         Authentication authentication) {
+        byte[] data = teacherService.generateSessionExcelReport(authentication.getName(), sessionId);
+        String filename = "attendance-session-" + sessionId + "-" + LocalDateTime.now().format(PDF_FILE_TS_FORMAT) + ".xlsx";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType(AttendanceExcelService.CONTENT_TYPE))
+                .body(data);
     }
 
     @PostMapping("/attendance/sessions/{sessionId}/adjust")

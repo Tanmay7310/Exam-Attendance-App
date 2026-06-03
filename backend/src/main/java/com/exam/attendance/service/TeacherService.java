@@ -45,6 +45,7 @@ public class TeacherService {
     private final AttendanceAdjustmentRepository attendanceAdjustmentRepository;
     private final AttendanceRosterService attendanceRosterService;
     private final PdfService pdfService;
+    private final AttendanceExcelService attendanceExcelService;
 
     private record NormalizedExamContext(String year, String semester, String branch, String section) {}
 
@@ -208,6 +209,42 @@ public class TeacherService {
                 .toList();
         String reportSubject = resolveSessionSubject(session);
         return pdfService.generateAttendancePdf(teacher, date, reportSubject, responses);
+    }
+
+    public byte[] generateSessionPdfReport(String username, Long sessionId) {
+        Teacher teacher = getTeacherByUsername(username);
+        AttendanceSession session = attendanceSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ApiException("Attendance session not found"));
+
+        if (!session.getTeacher().getId().equals(teacher.getId())) {
+            throw new ApiException("Attendance session not found");
+        }
+
+        SessionAttendanceDetailsResponse details = buildSessionAttendanceDetails(session);
+        return pdfService.generateSessionAttendancePdf(
+                "Attendance Session Report",
+                session.getTeacher().getName(),
+                session.getTeacher().getTeacherCode(),
+                details
+        );
+    }
+
+    public byte[] generateSessionExcelReport(String username, Long sessionId) {
+        Teacher teacher = getTeacherByUsername(username);
+        AttendanceSession session = attendanceSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ApiException("Attendance session not found"));
+
+        if (!session.getTeacher().getId().equals(teacher.getId())) {
+            throw new ApiException("Attendance session not found");
+        }
+
+        SessionAttendanceDetailsResponse details = buildSessionAttendanceDetails(session);
+        return attendanceExcelService.generateSessionAttendanceExcel(
+                "Attendance Session Report",
+                session.getTeacher().getName(),
+                session.getTeacher().getTeacherCode(),
+                details
+        );
     }
 
     private AttendanceSession resolveSessionForReport(Teacher teacher,

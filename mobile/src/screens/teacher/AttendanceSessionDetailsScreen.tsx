@@ -1,13 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
-import * as FileSystem from 'expo-file-system/legacy';
-import * as Sharing from 'expo-sharing';
 import { Button, Dialog, Portal, TextInput } from 'react-native-paper';
 import { api } from '../../api/client';
 import { ACR, AcropolisBackBar, EmptyState, HeroCard, Pill, ScreenShell, SectionLabel, initialsOf } from '../../components/AcropolisUI';
+import { ExportFormatDialog } from '../../components/ExportFormatDialog';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { AttendanceRecord, SessionAttendanceDetails, SessionAttendanceStudentRecord } from '../../types';
+import { buildSessionAttendanceReportEndpoint, downloadAndShareAttendanceExport, ExportFormat, exportFormatLabel } from '../../utils/attendanceExport';
 import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
 import { useAppTheme } from '../../styles/appTheme';
 
@@ -30,6 +30,8 @@ export const AttendanceSessionDetailsScreen = ({ route, navigation }: any) => {
   const [pendingAdjustment, setPendingAdjustment] = useState<{ record: SessionAttendanceStudentRecord; status: 'PRESENT' | 'ABSENT' } | null>(null);
   const [adjustmentReason, setAdjustmentReason] = useState('');
   const [adjusting, setAdjusting] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [exportDialogVisible, setExportDialogVisible] = useState(false);
 
   const loadSessionDetails = useCallback(async () => {
     if (!sessionId) return;
@@ -85,47 +87,31 @@ export const AttendanceSessionDetailsScreen = ({ route, navigation }: any) => {
     });
   }, [resolvedRecords, searchTerm, statusFilter]);
 
-  const exportPdf = async () => {
-    if (!date) {
-      showToast('Date is missing for this session.', { type: 'error' });
+  const exportSession = async (format: ExportFormat) => {
+    if (!sessionId) {
+      showToast('Session ID is missing for this export.', { type: 'error' });
       return;
     }
 
     try {
-      const safeSubject = subject && subject !== 'N/A' ? subject.replace(/\s+/g, '-') : '';
-      const fileSuffix = safeSubject ? `-${safeSubject}` : '';
-      const fileUri = `${FileSystem.documentDirectory}attendance-${date}${fileSuffix}.pdf`;
-      const queryParams = [`date=${encodeURIComponent(date)}`];
-      if (subject && subject !== 'N/A') {
-        queryParams.push(`subject=${encodeURIComponent(subject)}`);
-      }
-      if (examYear) {
-        queryParams.push(`examYear=${encodeURIComponent(examYear)}`);
-      }
-      if (examSemester) {
-        queryParams.push(`examSemester=${encodeURIComponent(examSemester)}`);
-      }
-      if (examBranch) {
-        queryParams.push(`examBranch=${encodeURIComponent(examBranch)}`);
-      }
-      if (examSection) {
-        queryParams.push(`examSection=${encodeURIComponent(examSection)}`);
-      }
-      const url = `${api.defaults.baseURL}/api/teacher/attendance/report/pdf?${queryParams.join('&')}`;
-      await FileSystem.downloadAsync(url, fileUri, {
-        headers: {
-          Authorization: `Bearer ${auth?.token ?? ''}`
-        }
+      setExporting(true);
+      const endpoint = buildSessionAttendanceReportEndpoint(format, auth?.role, sessionId);
+      const { fileUri, shared } = await downloadAndShareAttendanceExport({
+        endpoint,
+        token: auth?.token,
+        fileBaseName: `attendance-session-${sessionId}-${sessionDetails?.subject || subject || 'report'}`,
+        format
       });
+      setExportDialogVisible(false);
 
-      if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(fileUri);
-      } else {
-        showToast(`PDF saved at ${fileUri}`, { type: 'success', duration: 3200 });
+      if (!shared) {
+        showToast(`${exportFormatLabel(format)} saved at ${fileUri}`, { type: 'success', duration: 3200 });
       }
     } catch (e: any) {
       if (await handleSessionExpired(e, logout, showToast)) return;
-      showToast(getApiErrorMessage(e, 'Unable to generate PDF'), { type: 'error' });
+      showToast(getApiErrorMessage(e, 'Unable to export attendance'), { type: 'error' });
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -178,8 +164,12 @@ export const AttendanceSessionDetailsScreen = ({ route, navigation }: any) => {
         subtitle={subject || 'Attendance Records'}
         onBack={() => navigation.goBack()}
         right={
-          <Pressable onPress={exportPdf} style={styles.exportPill}>
-            <Text style={styles.exportPillText}>PDF</Text>
+          <Pressable
+            onPress={() => setExportDialogVisible(true)}
+            disabled={exporting || !sessionId}
+            style={[styles.exportPill, (exporting || !sessionId) && { opacity: 0.55 }]}
+          >
+            <Text style={styles.exportPillText}>{exporting ? 'Exporting' : 'Export'}</Text>
           </Pressable>
         }
       />
@@ -285,6 +275,12 @@ export const AttendanceSessionDetailsScreen = ({ route, navigation }: any) => {
           </KeyboardAvoidingView>
         ) : null}
       </Portal>
+      <ExportFormatDialog
+        visible={exportDialogVisible}
+        exporting={exporting}
+        onDismiss={() => setExportDialogVisible(false)}
+        onSelect={exportSession}
+      />
     </ScreenShell>
   );
 };

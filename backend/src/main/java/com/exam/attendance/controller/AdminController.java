@@ -24,6 +24,7 @@ import com.exam.attendance.dto.attendance.SessionAttendanceSummaryResponse;
 import com.exam.attendance.dto.teacher.ScanAttendanceRequest;
 import com.exam.attendance.dto.teacher.ScanAttendanceResponse;
 import com.exam.attendance.service.AdminService;
+import com.exam.attendance.service.AttendanceExcelService;
 import com.exam.attendance.service.TeacherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -187,6 +188,28 @@ public class AdminController {
         return adminService.getAttendanceSessionDetails(sessionId);
     }
 
+    @GetMapping("/attendance/sessions/{sessionId}/report/pdf")
+    public ResponseEntity<byte[]> attendanceSessionPdf(@PathVariable Long sessionId) {
+        byte[] data = adminService.generateAttendanceSessionPdf(sessionId);
+        String filename = "admin-attendance-session-" + sessionId + "-" + LocalDateTime.now().format(PDF_FILE_TS_FORMAT) + ".pdf";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(data);
+    }
+
+    @GetMapping("/attendance/sessions/{sessionId}/report/excel")
+    public ResponseEntity<byte[]> attendanceSessionExcel(@PathVariable Long sessionId) {
+        byte[] data = adminService.generateAttendanceSessionExcel(sessionId);
+        String filename = "admin-attendance-session-" + sessionId + "-" + LocalDateTime.now().format(PDF_FILE_TS_FORMAT) + ".xlsx";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType(AttendanceExcelService.CONTENT_TYPE))
+                .body(data);
+    }
+
     @PostMapping("/attendance/sessions/{sessionId}/adjust")
     public SessionAttendanceDetailsResponse adjustAttendanceSession(@PathVariable Long sessionId,
                                                                     @Valid @RequestBody AttendanceAdjustmentRequest request,
@@ -208,6 +231,22 @@ public class AdminController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(MediaType.APPLICATION_PDF)
+                .body(data);
+    }
+
+    @GetMapping("/attendance/report/excel")
+    public ResponseEntity<byte[]> attendanceExcel(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) String teacherId,
+            @RequestParam(required = false) String subject) {
+
+        byte[] data = adminService.generateAttendanceExcel(date, teacherId, subject);
+        String labelDate = date != null ? date.toString() : "all-dates";
+        String filename = "admin-attendance-" + labelDate + "-" + LocalDateTime.now().format(PDF_FILE_TS_FORMAT) + ".xlsx";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType(AttendanceExcelService.CONTENT_TYPE))
                 .body(data);
     }
 }

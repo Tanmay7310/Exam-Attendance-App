@@ -101,6 +101,7 @@ public class AdminService {
     private final StudentPromotionItemRepository studentPromotionItemRepository;
     private final SubjectMasterRepository subjectMasterRepository;
     private final PdfService pdfService;
+    private final AttendanceExcelService attendanceExcelService;
     private static final Map<String, String> BRANCH_ALIAS_MAP = buildBranchAliasMap();
     private static final Map<String, String> YEAR_ALIAS_MAP = buildYearAliasMap();
     private static final Map<String, String> SEMESTER_ALIAS_MAP = buildSemesterAliasMap();
@@ -713,8 +714,55 @@ public class AdminService {
     }
 
     public byte[] generateAttendancePdf(LocalDate date, String teacherId, String subject) {
-        List<AdminAttendanceResponse> rows = getAttendance(date, teacherId, subject);
-        return pdfService.generateAdminAttendancePdf(date, teacherId, subject, rows);
+        List<SessionAttendanceDetailsResponse> sessions = attendanceSessionRepository.findAll().stream()
+                .filter(session -> date == null || session.getSessionDate().equals(date))
+                .filter(session -> matchesTeacherFilter(session.getTeacher(), teacherId))
+                .filter(session -> !StringUtils.hasText(subject) || resolveSessionSubject(session).equalsIgnoreCase(subject.trim()))
+                .sorted(Comparator.comparing(AttendanceSession::getSessionDate).reversed()
+                        .thenComparing(AttendanceSession::getCreatedAt))
+                .map(this::buildSessionAttendanceDetails)
+                .toList();
+        return pdfService.generateAdminAttendancePdf(date, teacherId, subject, sessions);
+    }
+
+    public byte[] generateAttendanceExcel(LocalDate date, String teacherId, String subject) {
+        List<AttendanceExcelService.ExportSession> sessions = attendanceSessionRepository.findAll().stream()
+                .filter(session -> date == null || session.getSessionDate().equals(date))
+                .filter(session -> matchesTeacherFilter(session.getTeacher(), teacherId))
+                .filter(session -> !StringUtils.hasText(subject) || resolveSessionSubject(session).equalsIgnoreCase(subject.trim()))
+                .sorted(Comparator.comparing(AttendanceSession::getSessionDate).reversed()
+                        .thenComparing(AttendanceSession::getCreatedAt))
+                .map(session -> new AttendanceExcelService.ExportSession(
+                        session.getTeacher().getName(),
+                        session.getTeacher().getTeacherCode(),
+                        buildSessionAttendanceDetails(session)
+                ))
+                .toList();
+        return attendanceExcelService.generateAdminAttendanceExcel(date, teacherId, subject, sessions);
+    }
+
+    public byte[] generateAttendanceSessionPdf(Long sessionId) {
+        AttendanceSession session = attendanceSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ApiException("Attendance session not found"));
+        SessionAttendanceDetailsResponse details = buildSessionAttendanceDetails(session);
+        return pdfService.generateSessionAttendancePdf(
+                "Admin Session Attendance Report",
+                session.getTeacher().getName(),
+                session.getTeacher().getTeacherCode(),
+                details
+        );
+    }
+
+    public byte[] generateAttendanceSessionExcel(Long sessionId) {
+        AttendanceSession session = attendanceSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ApiException("Attendance session not found"));
+        SessionAttendanceDetailsResponse details = buildSessionAttendanceDetails(session);
+        return attendanceExcelService.generateSessionAttendanceExcel(
+                "Admin Session Attendance Report",
+                session.getTeacher().getName(),
+                session.getTeacher().getTeacherCode(),
+                details
+        );
     }
 
     public SessionAttendanceDetailsResponse getAttendanceSessionDetails(Long sessionId) {

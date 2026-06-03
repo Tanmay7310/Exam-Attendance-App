@@ -1,14 +1,14 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import * as FileSystem from 'expo-file-system/legacy';
-import * as Sharing from 'expo-sharing';
 import { useFocusEffect } from '@react-navigation/native';
 import { api } from '../../api/client';
 import { ACR, AcropolisBackBar, EmptyState, IconMark, ScreenShell, SectionLabel } from '../../components/AcropolisUI';
 import { AdminOutlineButton, AdminPrimaryButton, AdminTextField } from '../../components/AdminModuleUI';
+import { ExportFormatDialog } from '../../components/ExportFormatDialog';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { SessionAttendanceSummary } from '../../types';
+import { buildAdminAttendanceReportEndpoint, downloadAndShareAttendanceExport, ExportFormat, exportFormatLabel } from '../../utils/attendanceExport';
 import { getApiErrorMessage, handleSessionExpired } from '../../utils/apiErrors';
 import { useAppTheme } from '../../styles/appTheme';
 
@@ -35,6 +35,8 @@ export const AttendanceMonitoringScreen = ({ navigation }: any) => {
   const [teacherId, setTeacherId] = useState('');
   const [subject, setSubject] = useState('');
   const [sessionSummaries, setSessionSummaries] = useState<SessionAttendanceSummary[]>([]);
+  const [exportDialogVisible, setExportDialogVisible] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const fetchSessions = useCallback(async () => {
     const dateValue = date.trim();
@@ -60,7 +62,7 @@ export const AttendanceMonitoringScreen = ({ navigation }: any) => {
     }, [fetchSessions, logout, showToast])
   );
 
-  const exportPdf = async () => {
+  const exportAttendance = async (format: ExportFormat) => {
     try {
       const dateValue = date.trim();
       if (!isValidDateParam(dateValue)) {
@@ -68,29 +70,28 @@ export const AttendanceMonitoringScreen = ({ navigation }: any) => {
         return;
       }
 
-      const params: string[] = [];
-      if (dateValue) params.push(`date=${encodeURIComponent(dateValue)}`);
-      if (teacherId) params.push(`teacherId=${encodeURIComponent(teacherId)}`);
-      if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
-      const query = params.length ? `?${params.join('&')}` : '';
-
-      const fileUri = `${FileSystem.documentDirectory}admin-attendance-${Date.now()}.pdf`;
-      const url = `${api.defaults.baseURL}/api/admin/attendance/report/pdf${query}`;
-
-      await FileSystem.downloadAsync(url, fileUri, {
-        headers: {
-          Authorization: `Bearer ${auth?.token ?? ''}`
-        }
+      setExporting(true);
+      const endpoint = buildAdminAttendanceReportEndpoint(format, {
+        date: dateValue,
+        teacherId,
+        subject
       });
+      const { fileUri, shared } = await downloadAndShareAttendanceExport({
+        endpoint,
+        token: auth?.token,
+        fileBaseName: `admin-attendance-${dateValue || 'all-dates'}-${Date.now()}`,
+        format
+      });
+      setExportDialogVisible(false);
 
-      if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(fileUri);
-      } else {
-        showToast(`PDF saved at ${fileUri}`, { type: 'success', duration: 3200 });
+      if (!shared) {
+        showToast(`${exportFormatLabel(format)} saved at ${fileUri}`, { type: 'success', duration: 3200 });
       }
     } catch (e: any) {
       if (await handleSessionExpired(e, logout, showToast)) return;
-      showToast(getApiErrorMessage(e, 'Unable to generate PDF'), { type: 'error' });
+      showToast(getApiErrorMessage(e, 'Unable to export attendance'), { type: 'error' });
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -149,7 +150,7 @@ export const AttendanceMonitoringScreen = ({ navigation }: any) => {
                   <AdminOutlineButton label="Clear Filters" onPress={clearFilters} disabled={!hasFilters} tone="rose" />
                 </View>
                 <View style={styles.actionButton}>
-                  <AdminPrimaryButton label="Export PDF" onPress={exportPdf} />
+                  <AdminPrimaryButton label={exporting ? 'Exporting' : 'Export'} onPress={() => setExportDialogVisible(true)} disabled={exporting} />
                 </View>
               </View>
             </View>
@@ -179,6 +180,12 @@ export const AttendanceMonitoringScreen = ({ navigation }: any) => {
             <Text style={[styles.chevron, { color: theme.ghost }]}>{'>'}</Text>
           </Pressable>
         )}
+      />
+      <ExportFormatDialog
+        visible={exportDialogVisible}
+        exporting={exporting}
+        onDismiss={() => setExportDialogVisible(false)}
+        onSelect={exportAttendance}
       />
     </ScreenShell>
   );
